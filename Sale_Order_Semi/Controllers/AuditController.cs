@@ -355,7 +355,7 @@ namespace Sale_Order_Semi.Controllers
                         ViewData["details"] = bill.ReturnBillDetail.OrderBy(r => r.entry_no).ToList();
                         ViewData["userName"] = bill.User.real_name;
                         ViewData["status"] = "审核中";
-                        ViewData["return_dep"] = db.Department.Where(d => d.dep_type == "退货事业部" && d.dep_no == bill.return_dept).First().name;
+                        ViewData["return_dep"] = db.Department.Where(d => d.dep_type == "退货事业部" && d.dep_no == bill.return_dept).Count() < 1 ? "不存在" : db.Department.Where(d => d.dep_type == "退货事业部" && d.dep_no == bill.return_dept).First().name;
                         return View("EditReturnBillQty");
                     default:
                         return View("Error");
