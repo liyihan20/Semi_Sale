@@ -42,66 +42,6 @@
             }
         });
 
-        $("#TFT_model").combogrid({
-            valueField: "model",
-            textField: "model",
-            panelWidth: 420,
-            //required: true,
-            columns: [[
-                    { field: 'number', title: '@Html.Lang("pro_num")', width: 120 },
-                    { field: 'name', title: '@Html.Lang("pro_name")', width: 120 },
-                    { field: 'model', title: '@Html.Lang("pro_model")', width: 160 }
-            ]],
-            keyHandler: {
-                query: function () { },
-                enter: function () {
-                    var q = $("#TFT_model").combogrid('getText');
-                    if (q != "") {
-                        $.post("@Url.Content("~/Items/getProductInfo")", { q: q },
-                            function (data) {
-                                $("#TFT_model").combogrid('grid').datagrid('loadData', data);
-                                $("#TFT_model").combogrid('setText', q);
-                            },
-                            "json"
-                            );
-                    }
-                }
-            },
-            onClickRow: function (rowIndex, rowData) {
-                $("#TFT_model").combogrid("setValue", rowData.model);
-            }
-        });
-
-        $("#TP_model").combogrid({
-            valueField: "model",
-            textField: "model",
-            panelWidth: 420,
-            //required: true,
-            columns: [[
-                    { field: 'number', title: '@Html.Lang("pro_num")', width: 120 },
-                    { field: 'name', title: '@Html.Lang("pro_name")', width: 120 },
-                    { field: 'model', title: '@Html.Lang("pro_model")', width: 160 }
-            ]],
-            keyHandler: {
-                query: function () { },
-                enter: function () {
-                    var q = $("#TP_model").combogrid('getText');
-                    if (q != "") {
-                        $.post("@Url.Content("~/Items/getProductInfo")", { q: q },
-                            function (data) {
-                                $("#TP_model").combogrid('grid').datagrid('loadData', data);
-                                $("#TP_model").combogrid('setText', q);
-                            },
-                            "json"
-                            );
-                    }
-                }
-            },
-            onClickRow: function (rowIndex, rowData) {
-                $("#TP_model").combogrid("setValue", rowData.model);
-            }
-        });
-
         $("#mat_no").combogrid({
             valueField: "number",
             textField: "number",
@@ -281,8 +221,6 @@
 
         $("#customer_no").combogrid("setValue", "@bl.customer_no");
         $("#product_no").combogrid("setValue", "@bl.product_no");
-        $("#TFT_model").combogrid("setValue", "@bl.TFT_model");
-        $("#TP_model").combogrid("setValue", "@bl.TP_model");
         $("#clerk_no").combobox("setValue", "@bl.clerk_no");
         $("#clerk_no").combobox("setText", "@bl.clerk_name");
         $.map("@bl.bl_project".split(","), function (item) { $("input[name='bl_project'][value='" + item + "']").attr("checked", true); });
@@ -736,16 +674,10 @@ else {
                         </tr>
                         <tr>
                             <td>
-                                TFT型号:
+                                营业员:
                             </td>
                             <td>
-                                <input name="TFT_model" id="TFT_model" style="width:140px" />
-                            </td>
-                            <td>
-                                TP型号:
-                            </td>
-                            <td>
-                                <input name="TP_model" id="TP_model" style="width:140px" />
+                                <input id="clerk_no" class="remotebox" name="clerk_no" style="width: 140px" required="true" />
                             </td>
                             <td>
                                 制单人:
@@ -753,16 +685,6 @@ else {
                             <td>
                                 <input class="easyui-validatebox" name="create_user" id="create_user" readonly="readonly" style="width:135px" value="@bl.User.real_name" />
                             </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                营业员:
-                            </td>
-                            <td>
-                                <input id="clerk_no" class="remotebox" name="clerk_no" style="width: 140px" required="true" />
-                            </td>
-                            <td></td>
-                            <td></td>
                             <td></td>
                             <td></td>
                         </tr>

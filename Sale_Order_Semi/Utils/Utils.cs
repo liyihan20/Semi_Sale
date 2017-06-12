@@ -1985,15 +1985,7 @@ namespace Sale_Order_Semi.Utils
                 salerId = db.Apply.Where(a => a.sys_no == bl.sys_no).First().user_id;
             }
 
-            //验证字段合法性
-            if ("IMDS".Equals(bl.bus_dep)) {
-                if (string.IsNullOrEmpty(bl.TFT_model)) {
-                    return "IMDS事业部的TFT型号不能为空";
-                }
-                if (string.IsNullOrEmpty(bl.TP_model)) {
-                    return "IMDS事业部的TP型号不能为空";
-                }
-            }
+            //验证字段合法性            
             if (string.IsNullOrEmpty(bl.product_model)) {
                 return "产品型号不能为空";
             }
