@@ -369,6 +369,8 @@
     <Content Include="Scripts\img\uploadify-cancel.png" />
     <Content Include="Scripts\jquery-1.8.0-vsdoc.js" />
     <Content Include="Scripts\jquery-1.8.0.min.js" />
+    <Content Include="Scripts\jquery-1.8.2.js" />
+    <Content Include="Scripts\jquery-1.8.2.min.js" />
     <Content Include="Scripts\jquery-ui-1.8.11.js" />
     <Content Include="Scripts\jquery-ui-1.8.11.min.js" />
     <Content Include="Scripts\jquery.easyui.min.js" />

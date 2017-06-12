@@ -1971,7 +1971,11 @@ namespace Sale_Order_Semi.Utils
             Sale_BL bl = new Sale_BL();
             bl.step_version = stepVersion;
             SetFieldValueToModel(col, bl);//将表单值设置到对象
-            bl.Sale_BL_details.AddRange(JsonConvert.DeserializeObject<List<Sale_BL_details>>(col.Get("Sale_BL_details"))); //将表体反序列化
+
+            string details = col.Get("Sale_BL_details");
+            if (!string.IsNullOrEmpty(details)) {
+                bl.Sale_BL_details.AddRange(JsonConvert.DeserializeObject<List<Sale_BL_details>>(details)); //将表体反序列化
+            }
 
             int? salerId; //营业ID，即下单者ID
             if (stepVersion == 0) {
@@ -1995,6 +1999,12 @@ namespace Sale_Order_Semi.Utils
             }
             if ("有合同协议".Equals(bl.bl_type) && string.IsNullOrWhiteSpace(bl.bl_contract_no)) {
                 return "有合同协议的协议号不能为空";
+            }
+            if (string.IsNullOrEmpty(bl.bl_project)) {
+                return "备料项目至少应选择一项";
+            }
+            if (bl.bl_project.Contains("其它") && string.IsNullOrEmpty(bl.bl_project_other)) {
+                return "备料项目选择了其它，请在相邻文本框中说明其它的内容";
             }
 
             try {

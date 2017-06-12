@@ -8,7 +8,9 @@
     $(function () {
         $("#order_div input[type='text']").attr("readonly", "readonly");
         $("#order_div textarea").attr("readonly", "readonly");
-
+        $.map("@bl.bl_project".split(","), function (item) { $("input[name='bl_project'][value='" + item + "']").attr("checked", true); });
+        $("#order_div input[type='checkbox']").not(":checked").attr("disabled", "disabled");
+        $("#order_div input[type='checkbox']:checked").click(function () { event.preventDefault(); });
         $("#dg_detail").datagrid({
             width: 1000,
             loadMsg: "加载中...",
@@ -60,27 +62,10 @@
                     </tr>
                     <tr>
                         <td>
-                            备料性质:
+                            办事处:
                         </td>
                         <td>
-                            @if (bl.bl_property == null || bl.bl_property == "") {
-                                <span>
-                                    <input type="radio" name="bl_property" value="非全套" disabled /> 非全套 &nbsp;&nbsp;
-                                    <input type="radio" name="bl_property" value="全套" disabled /> 全套
-                                </span>
-                            }
-                            else if (bl.bl_property == "单料") {
-                                <span>
-                                    <input type="radio" name="bl_property" value="非全套" checked disabled /> 非全套 &nbsp;&nbsp;
-                                    <input type="radio" name="bl_property" value="全套" disabled /> 全套
-                                </span>
-                            }
-                            else {
-                                <span>
-                                    <input type="radio" name="bl_property" value="非全套" disabled /> 非全套 &nbsp;&nbsp;
-                                    <input type="radio" name="bl_property" value="全套" checked disabled /> 全套
-                                </span>
-                            }
+                            <input type="text" style="width: 140px" value="@bl.agency_name" />
                         </td>
                         <td>
                             备料类型:
@@ -95,12 +80,12 @@
                             else if (bl.bl_type == "有合同协议") {
                                 <span>
                                     <input type="radio" name="bl_type" value="市场预测" disabled /> 市场预测
-                                    <input type="radio" name="bl_type" value="有合同协议" checked disabled /> 有合同协议 &nbsp;
+                                    <input type="radio" name="bl_type" value="有合同协议" checked /> 有合同协议 &nbsp;
                                 </span>
                             }
                             else {
                                 <span>
-                                    <input type="radio" name="bl_type" value="市场预测" checked disabled /> 市场预测
+                                    <input type="radio" name="bl_type" value="市场预测" checked /> 市场预测
                                     <input type="radio" name="bl_type" value="有合同协议" disabled /> 有合同协议 &nbsp;
                                 </span>
                             }
@@ -234,12 +219,6 @@
                     </tr>
                     <tr>
                         <td>
-                            办事处:
-                        </td>
-                        <td>
-                            <input type="text" style="width: 140px" value="@bl.agency_name" />
-                        </td>
-                        <td>
                             营业员:
                         </td>
                         <td>
@@ -247,15 +226,40 @@
                         </td>
                         <td></td>
                         <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
-                    @*<tr>
-                            <td>
-                                备料项目:
-                            </td>
-                            <td colspan="5">
-                                <textarea cols="92" rows="8" spellcheck="false" style="margin: 0;">@bl.bl_project</textarea>
-                            </td>
-                        </tr>*@
+
+                    <tr>
+                        @*<td>
+                            备料项目:
+                        </td>*@
+                        <td colspan="6">
+                            <fieldset>
+                                <legend>备料项目</legend>
+                                <div>
+                                    <input type="checkbox" name="bl_project" value="全套物料" /><span class="ck_label"> 全套物料</span> &nbsp;
+                                </div>
+                                <div>
+                                    @{string[] p1 = new string[] { "IC", "背光", "玻璃", "TP", "Lens", "电容", "电阻", "二极管", "马达", "镜头", "FPC", "偏光片" };}
+                                    @foreach (var p in p1) {
+                                        <input type="checkbox" name="bl_project" value="@p" /><span class="ck_label">@p</span><span>&nbsp;</span>
+                                    }
+                                </div>
+                                <div>
+                                    @{string[] p2 = new string[] { "连接器", "菲林", "大片玻璃基材", "基板", "POL", "芯片", "防反射膜", "前盖", "光学膜已切" };}
+                                    @foreach (var p in p2) {
+                                        <input type="checkbox" name="bl_project" value="@p" /><span class="ck_label">@p</span><span>&nbsp;</span>
+                                    }
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="bl_project" value="其它" /><span class="ck_label"> 其它</span> &nbsp;
+                                    <input type="text" style="width:200px" name="bl_project_other" value="@bl.bl_project_other" />
+                                </div>
+                            </fieldset>
+                        </td>
+                    </tr>
+
                     <tr>
                         <td>摘要:</td>
                         <td colspan="5">
@@ -263,6 +267,7 @@
                         </td>
                     </tr>
                 </table>
+                @if(bl.Sale_BL_details.Count()>0){
                 <br />
                 <div id="detail_div" class="easyui-panel" title="备料清单明细" style="+position: relative; width: 815px; height: 240px">
                     <table id="dg_detail">
@@ -282,6 +287,7 @@
                         }
                     </table>
                 </div>
+                }
             </div>
             <br />
             <div id="downloadPanel">

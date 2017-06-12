@@ -2,7 +2,7 @@
 @{
     Sale_BL bl = (Sale_BL)ViewData["BL"];
     var d = bl.Sale_BL_details;
-    ViewData["sys_no"]=bl.sys_no;
+    ViewData["sys_no"] = bl.sys_no;
 }
 <script type="text/javascript" src="@Url.Content("~/Scripts/json2.js")"></script>
 <script type="text/javascript">
@@ -285,8 +285,9 @@
         $("#TP_model").combogrid("setValue", "@bl.TP_model");
         $("#clerk_no").combobox("setValue", "@bl.clerk_no");
         $("#clerk_no").combobox("setText", "@bl.clerk_name");
-        $("#agency_div").css("visibility", "visible");
-        $("#agency_div").click(function () { endEditing(); });
+        $.map("@bl.bl_project".split(","), function (item) { $("input[name='bl_project'][value='" + item + "']").attr("checked", true); });
+        $("#agency_div").css("visibility", "visible").click(function () { endEditing(); });
+        $(".ck_label").css("cursor", "pointer").click(function () { $("input[name='bl_project'][value='" + $.trim($(this).html()) + "']").trigger("click"); });
     });
 
     function getBom() {
@@ -408,7 +409,7 @@
                         if (!$('#order_form').form('validate')) {
                             return false;
                         }
-                        param.Sale_BL_details = JSON.stringify($("#dg_detail").datagrid("getRows"));
+                        //param.Sale_BL_details = JSON.stringify($("#dg_detail").datagrid("getRows"));
                         return true;
                     },
                     success: function (data) {
@@ -457,92 +458,92 @@
 }
 else {
     <script type="text/javascript">
-        function okClick(){        
-            $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("confirm_pass")?', function(r){
-                if (r){
-                    $.messager.progress(); 
-                    $('#order_form').form('submit',{
+        function okClick() {
+            $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("confirm_pass")?', function (r) {
+                if (r) {
+                    $.messager.progress();
+                    $('#order_form').form('submit', {
                         url: '@Url.Content("~/Audit/AuditorSaveBLBill")',
-                        onSubmit: function(param){
+                        onSubmit: function (param) {
                             param.step = "@bl.step_version";
                             param.Sale_BL_details = JSON.stringify($("#dg_detail").datagrid("getRows"));
                         },
                         success: function (data) {
-                            var result = eval('('+ data +')');
-                            if(result.suc){
+                            var result = eval('(' + data + ')');
+                            if (result.suc) {
                                 $('#okFlag').val('true');
                                 beginAudit();
-                            }else{
+                            } else {
                                 $.messager.progress("close");
                                 $.messager.show({
                                     title: '@Html.Lang("tip")',
-                                    msg: "@Html.Lang("failure_save"):"+result.msg
+                                    msg: "@Html.Lang("failure_save"):" + result.msg
                                 });
-                        }                        
-                    }
-                    }); 
-            }
+                            }
+                        }
+                    });
+                }
             });
         }
-        function noClick(){
-            $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("confirm_reject")?', function(r){
-                if (r){
+        function noClick() {
+            $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("confirm_reject")?', function (r) {
+                if (r) {
                     $('#okFlag').val('false');
                     beginAudit();
                 }
             });
         }
-   
-        function beginAudit(){        
-            $("#audit_fm").form("submit",{
-                url:"@Url.Content("~/Audit/HandleAgencyAudit")",
-                success:function(data){
+
+        function beginAudit() {
+            $("#audit_fm").form("submit", {
+                url: "@Url.Content("~/Audit/HandleAgencyAudit")",
+                success: function (data) {
                     $.messager.progress('close');
-                    var result=eval("("+data+")"); 
+                    var result = eval("(" + data + ")");
                     $.messager.show({
                         title: '@Html.Lang("tip")',
                         msg: result.msg + ",正在跳转..."
                     });
-                    setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';",1500);
+                    setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';", 1500);
                     //getAuditResult();
                 }
-        });
+            });
         }
 
-        function block(){
-            var reason=$("#agency_comment").val();
-            if($.trim(reason)==""){
+        function block() {
+            var reason = $("#agency_comment").val();
+            if ($.trim(reason) == "") {
                 $.messager.show({
                     title: '@Html.Lang("tip")',
                     msg: "挂起操作必须写明原因，提交失败"
-                });   
-            }else{
-                $.messager.confirm('@Html.Lang("confirm")', '确定要将订单挂起吗?', function(r){
-                    if (r){
+                });
+            } else {
+                $.messager.confirm('@Html.Lang("confirm")', '确定要将订单挂起吗?', function (r) {
+                    if (r) {
                         $.messager.progress();
-                        $("#audit_fm").form("submit",{
-                            url:"@Url.Content("~/Audit/BlockOrder")",
-                            success:function(data){
+                        $("#audit_fm").form("submit", {
+                            url: "@Url.Content("~/Audit/BlockOrder")",
+                            success: function (data) {
                                 $.messager.progress('close');
-                                var result=eval("("+data+")"); 
-                                if(result.success){
+                                var result = eval("(" + data + ")");
+                                if (result.success) {
                                     $.messager.show({
                                         title: '@Html.Lang("tip")',
                                         msg: result.msg + ",正在跳转..."
                                     });
-                                    setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';",1500);
-                                }else{
+                                    setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';", 1500);
+                                } else {
                                     $.messager.show({
                                         title: '@Html.Lang("tip")',
                                         msg: result.msg
                                     });
-                                    setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';",3000);
+                                    setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';", 3000);
                                 }
                             }
-                    });
-                }
-                });  
-        }
+                        });
+                    }
+                });
+            }
         }
     </script>
 }
@@ -591,34 +592,12 @@ else {
                             </td>
                         </tr>
                         <tr>
-                           <td>
-                               备料性质:
-                           </td>
                             <td>
-                                @if (bl.bl_property == null || bl.bl_property == "") {
-                                    <span>
-                                        <input type="radio" name="bl_property" value="非全套" /> 非全套 &nbsp;&nbsp;
-                                        <input type="radio" name="bl_property" value="全套" /> 全套
-                                    </span>
-                                }
-                                else if (bl.bl_property == "单料") {
-                                    <span>
-                                        <input type="radio" name="bl_property" value="非全套" checked /> 非全套 &nbsp;&nbsp;
-                                        <input type="radio" name="bl_property" value="全套" /> 全套
-                                    </span>
-                                }
-                                else {
-                                    <span>
-                                        <input type="radio" name="bl_property" value="非全套" /> 非全套 &nbsp;&nbsp;
-                                        <input type="radio" name="bl_property" value="全套" checked /> 全套
-                                    </span>
-                                }
-                                        @*<input class="easyui-combobox" style="width: 140px" name="bl_property" id="bl_property"
-                data-options="textField:'value',valueField:'value',panelHeight:'auto', editable:false,
-                    data:[
-                    {value:'单料'},{value:'全套'}
-                    ]" value="@bl.bl_property" />*@
-</td>
+                                办事处:
+                            </td>
+                            <td>
+                                <input class="easyui-combobox" id="agency_name" name="agency_name" style="width: 140px" panelwidth="140" valuefield="name" textfield="name" url="@Url.Content("~/Items/getItems?what=agency")" required="true" value="@bl.agency_name" />
+                            </td>
                             <td>
                                 备料类型:
                             </td>
@@ -641,11 +620,6 @@ else {
                                         <input type="radio" name="bl_type" value="有合同协议" /> 有合同协议 &nbsp;
                                     </span>
                                 }
-                                @*<input class="easyui-combobox" style="width: 140px" name="bl_type" id="bl_type"
-                                       data-options="textField:'value',valueField:'value',panelHeight:'auto', editable:false,
-                                           data:[
-                                           {value:'有合同协议'},{value:'市场预测'}
-                                           ]" value="@bl.bl_type" />*@
                             </td>
                             <td>
                                 协议号:
@@ -782,33 +756,45 @@ else {
                         </tr>
                         <tr>
                             <td>
-                                办事处:
-                            </td>
-                            <td>
-                                <input class="easyui-combobox" id="agency_name" name="agency_name" style="width: 140px" panelwidth="140" valuefield="name" textfield="name" url="@Url.Content("~/Items/getItems?what=agency")" required="true" value="@bl.agency_name"/>
-                            </td>
-                            <td>
                                 营业员:
                             </td>
                             <td>
                                 <input id="clerk_no" class="remotebox" name="clerk_no" style="width: 140px" required="true" />
                             </td>
-                            <td></td><td></td>
-                        </tr>
-                        @*<tr>
-                            <td>
-                                备料项目:
-                            </td>
-                            <td colspan="5">
-                                <a id="getBomBt" href="#" class="easyui-linkbutton" iconcls="icon-pencil2">从BOM获取</a>
-                            </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                         <tr>
-                            <td></td>
-                            <td colspan="5">
-                                <textarea cols="90" rows="8" spellcheck="false" name="bl_project" id="bl_project" style="margin: 0;">@bl.bl_project</textarea>
+                            @*<td>
+                                备料项目:
+                            </td>*@
+                            <td colspan="6">
+                                <fieldset>
+                                    <legend>备料项目</legend>
+                                    <div>
+                                        <input type="checkbox" name="bl_project" value="全套物料" /><span class="ck_label"> 全套物料</span> &nbsp;
+                                    </div>
+                                    <div>
+                                        @{string[] p1 = new string[] { "IC", "背光", "玻璃", "TP", "Lens", "电容", "电阻", "二极管", "马达", "镜头", "FPC", "偏光片" };}
+                                        @foreach (var p in p1) {
+                                            <input type="checkbox" name="bl_project" value="@p" /><span class="ck_label">@p</span><span>&nbsp;</span>
+                                        }                                        
+                                    </div>
+                                    <div>
+                                        @{string[] p2 = new string[] { "连接器", "菲林", "大片玻璃基材", "基板", "POL", "芯片", "防反射膜", "前盖", "光学膜已切" };}
+                                        @foreach (var p in p2) {
+                                            <input type="checkbox" name="bl_project" value="@p" /><span class="ck_label">@p</span><span>&nbsp;</span>
+                                        }
+                                    </div>
+                                    <div>
+                                        <input type="checkbox" name="bl_project" value="其它" /><span class="ck_label"> 其它</span> &nbsp;
+                                        <input type="text" style="width:200px" name="bl_project_other" value="@bl.bl_project_other" />
+                                    </div>
+                                </fieldset>                                
                             </td>
-                        </tr>*@
+                        </tr>
                         <tr>
                             <td>摘要:</td>
                             <td colspan="5">
@@ -816,26 +802,28 @@ else {
                             </td>
                         </tr>
                     </table>
-                    <br/>
-                    <div id="detail_div" class="easyui-panel" title="备料清单明细" style="+position: relative; width: 815px; height: 300px">
-                        <table id="dg_detail">
-                            @foreach (var det in bl.Sale_BL_details) {
-                                <tr>
-                                    <td>@det.levels</td>
-                                    <td>@det.fnumber</td>
-                                    <td>@det.fmodel</td>
-                                    <td>@det.fname</td>
-                                    <td>@det.unitname</td>
-                                    <td>@(det.fqty==null?0:Math.Round((decimal)det.fqty,4))</td>
-                                    <td>@(det.total_qty == null ? 0 : Math.Round((decimal)det.total_qty, 4))</td>
-                                    <td>@(det.highest_price == null ? 0 : Math.Round((decimal)det.highest_price, 4))</td>
-                                    <td>@det.comment</td>
-                                    <td>@det.source</td>
-                                </tr>
-                            }
-                        </table>
-                    </div>
-                    <br/>
+                    @if (bl.step_version > 0) {
+                        <br />
+                        <div id="detail_div" class="easyui-panel" title="备料清单明细" style="+position: relative; width: 815px; height: 300px">
+                            <table id="dg_detail">
+                                @foreach (var det in bl.Sale_BL_details) {
+                                    <tr>
+                                        <td>@det.levels</td>
+                                        <td>@det.fnumber</td>
+                                        <td>@det.fmodel</td>
+                                        <td>@det.fname</td>
+                                        <td>@det.unitname</td>
+                                        <td>@(det.fqty == null ? 0 : Math.Round((decimal)det.fqty, 4))</td>
+                                        <td>@(det.total_qty == null ? 0 : Math.Round((decimal)det.total_qty, 4))</td>
+                                        <td>@(det.highest_price == null ? 0 : Math.Round((decimal)det.highest_price, 4))</td>
+                                        <td>@det.comment</td>
+                                        <td>@det.source</td>
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                    }
+                    <br />
                     @if (0 == bl.step_version) {
                         <br />
                         @*上传文件的*@
@@ -855,7 +843,7 @@ else {
                         <a id="submitApply" href="#" class="easyui-linkbutton" iconcls='icon-document' style="margin: 10px 20px;">@Html.Lang("submit_apply")</a>
                     </div>
                 }
-                
+
                 <div style="line-height:18px;margin-top:8px;">
                     <div style="color:red">操作说明：</div>
                     <div>
@@ -864,9 +852,9 @@ else {
                             <2>
                                 . 计划经理只可修改保存【订单数量】和【备料清单明细】，如果有修改，审批OK后会流转给下单营业员确认。<br />
                                 <3>
-                                    .【备料清单】可取自BOM，也可以自己手动录入。<br />      
-                                    <4> 
-                                        .【备料编号】是根据市场部提供的规则，并根据营业所选择的【市场部】字段在流程正常结束后系统生成的。<br/>                             
+                                    .【备料清单】可取自BOM，也可以自己手动录入。<br />
+                                    <4>
+                                        .【备料编号】是根据市场部提供的规则，并根据营业所选择的【市场部】字段在流程正常结束后系统生成的。<br />
                     </div>
                 </div>
             </div>
@@ -887,7 +875,7 @@ else {
 <div id="dlg_details" class="easyui-dialog" title="物料新增对话框" style="width: 520px; padding: 10px 10px" closed="true" buttons="#dlg_details_buttons" modal="true">
     <div class="ftitle">
         新增物料清单
-    </div>  
+    </div>
     <form id="fm_detail">
         <table border="0" cellpadding="2" cellspacing="3" width="450">
             <tr>
@@ -934,8 +922,8 @@ else {
                 </td>
             </tr>
         </table>
-    </form> 
-    <br/>
+    </form>
+    <br />
 </div>
 <div id="dlg_details_buttons">
     <a href="#" class="easyui-linkbutton" iconcls="icon-ok" onclick="saveBomDetails()">
