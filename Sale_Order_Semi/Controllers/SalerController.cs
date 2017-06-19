@@ -235,7 +235,7 @@ namespace Sale_Order_Semi.Controllers
                     bl.sys_no = newSysNo;
                     bl.bl_date = DateTime.Now;
                     bl.step_version = 0;
-                    bl.bill_no = "";                    
+                    bl.bill_no = "";
                     ViewData["BL"] = bl;
                     return View("CreateBLBill");
                 default:
@@ -1607,6 +1607,7 @@ namespace Sale_Order_Semi.Controllers
             bl.step_version = step;
             ViewData["BL"] = bl;
             ViewData["applyId"] = apply_id;
+            ViewData["stepName"] = db.ApplyDetails.Where(ad => ad.apply_id == apply_id && ad.step == step).First().step_name;
             ViewData["blockInfo"] = db.BlockOrder.Where(b => b.sys_no == sys_no).OrderBy(b => b.step).ToList();
             return View("CreateBLBill");
         }

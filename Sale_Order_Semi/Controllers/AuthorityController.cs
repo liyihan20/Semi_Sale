@@ -1364,7 +1364,7 @@ namespace Sale_Order_Semi.Controllers
             var list = db.vw_auditor_relations.Where(a => a.id >= 0);
             if (!string.IsNullOrEmpty(value))
             {
-                list = list.Where(l => l.auditor_name.Contains(value.Trim()) || l.department_name.Contains(value.Trim()) || l.step_name.Contains(value.Trim()));
+                list = list.Where(l => l.auditor_name.Contains(value.Trim()) || l.department_name.Contains(value.Trim()) || l.step_name.Contains(value.Trim()) || l.relate_type.Contains(value.Trim()));
             }
             return Json(list.OrderBy(l => l.step_value).ToList());
         }

@@ -594,5 +594,19 @@ namespace Sale_Order_Semi.Controllers
             return Json(result);
         }
 
+        //获取备料单的计划和订料
+        public JsonResult GetAuditorsWithStep(string stepName, string depName)
+        {
+            var result = (from v in db.vw_auditor_relations
+                          where v.step_name == stepName
+                          && v.department_name.Contains(depName)
+                          select new
+                          {
+                              auditorId = v.auditor_id,
+                              auditorName = v.auditor_name
+                          }).ToList();
+            return Json(result);
+        }
+
     }
 }

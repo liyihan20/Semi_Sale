@@ -3,6 +3,7 @@
     Sale_BL bl = (Sale_BL)ViewData["BL"];
     var d = bl.Sale_BL_details;
     ViewData["sys_no"] = bl.sys_no;
+    string stepName = (string)ViewData["stepName"] ?? "";
 }
 <script type="text/javascript" src="@Url.Content("~/Scripts/json2.js")"></script>
 <script type="text/javascript">
@@ -219,6 +220,20 @@
             }
         });
 
+        $("#bus_dep").combobox({
+            onChange: function (newValue, oldValue) {
+                if (newValue != oldValue) {
+                    $.post("@Url.Content("~/Items/GetAuditorsWithStep")", { stepName: 'BL_事业部计划员', depName: newValue },
+                        function (data) {
+                            $('#planner_id').combobox("setValue", "");
+                            $('#planner_id').combobox("setText", "");
+                            $('#planner_id').combobox("loadData",data);
+                        }, "json"
+                    );
+                }
+            }
+        });
+
         $("#customer_no").combogrid("setValue", "@bl.customer_no");
         $("#product_no").combogrid("setValue", "@bl.product_no");
         $("#clerk_no").combobox("setValue", "@bl.clerk_no");
@@ -348,6 +363,7 @@
                             return false;
                         }
                         //param.Sale_BL_details = JSON.stringify($("#dg_detail").datagrid("getRows"));
+                        param.planner_name = $("#planner_id").combobox("getText");
                         return true;
                     },
                     success: function (data) {
@@ -680,13 +696,17 @@ else {
                                 <input id="clerk_no" class="remotebox" name="clerk_no" style="width: 140px" required="true" />
                             </td>
                             <td>
+                                计划员:
+                            </td>
+                            <td>
+                                <input class="easyui-combobox" id="planner_id" name="planner_id" style="width: 140px" panelwidth="140" valuefield="auditorId" textfield="auditorName" editable="false" required="true" value="@bl.planner_id" />
+                            </td>
+                            <td>
                                 制单人:
                             </td>
                             <td>
                                 <input class="easyui-validatebox" name="create_user" id="create_user" readonly="readonly" style="width:135px" value="@bl.User.real_name" />
                             </td>
-                            <td></td>
-                            <td></td>
                         </tr>
                         <tr>
                             @*<td>
@@ -702,7 +722,7 @@ else {
                                         @{string[] p1 = new string[] { "IC", "背光", "玻璃", "TP", "Lens", "电容", "电阻", "二极管", "马达", "镜头", "FPC", "偏光片" };}
                                         @foreach (var p in p1) {
                                             <input type="checkbox" name="bl_project" value="@p" /><span class="ck_label">@p</span><span>&nbsp;</span>
-                                        }                                        
+                                        }
                                     </div>
                                     <div>
                                         @{string[] p2 = new string[] { "连接器", "菲林", "大片玻璃基材", "基板", "POL", "芯片", "防反射膜", "前盖", "光学膜已切" };}
@@ -714,7 +734,7 @@ else {
                                         <input type="checkbox" name="bl_project" value="其它" /><span class="ck_label"> 其它</span> &nbsp;
                                         <input type="text" style="width:200px" name="bl_project_other" value="@bl.bl_project_other" />
                                     </div>
-                                </fieldset>                                
+                                </fieldset>
                             </td>
                         </tr>
                         <tr>
@@ -724,7 +744,7 @@ else {
                             </td>
                         </tr>
                     </table>
-                    @if (bl.step_version > 0) {
+                    @if (stepName.Contains("订料员")) {
                         <br />
                         <div id="detail_div" class="easyui-panel" title="备料清单明细" style="+position: relative; width: 815px; height: 300px">
                             <table id="dg_detail">
@@ -794,7 +814,7 @@ else {
 </div>
 
 @*弹出的手工新增bom*@
-<div id="dlg_details" class="easyui-dialog" title="物料新增对话框" style="width: 520px; padding: 10px 10px" closed="true" buttons="#dlg_details_buttons" modal="true">
+><div id="dlg_details" class="easyui-dialog" title="物料新增对话框" style="width: 520px; padding: 10px 10px" closed="true" buttons="#dlg_details_buttons" modal="true">
     <div class="ftitle">
         新增物料清单
     </div>
