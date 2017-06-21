@@ -12,12 +12,7 @@
               <DbSource ConnectionRef="SaleOrder_platformConnectionString (Web.config)" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
                 <SelectCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="true">
-                    <CommandText>SELECT   t1.id, t1.sys_no, t1.original_user_id, t1.update_user_id, t1.step_version, t1.bill_no, t1.customer_no, t1.customer_name, 
-                t1.bl_date, t1.plan_order_date, t1.qty, t1.product_no, t1.product_model, t1.fetch_date, t1.product_use, t1.trade_type_no, 
-                t1.market_dep, t1.bus_dep, t1.deal_price, t1.product_type, t1.project_group, t1.TFT_model, t1.TP_model, t1.bl_project, 
-                t1.comment, t1.product_name, t1.trade_type_name, t1.bl_property, t1.bl_type, t1.bl_contract_no, t2.id AS id1,t2.bl_id, 
-                t2.levels, t2.fnumber, t2.fmodel, t2.fname, t2.unitname, t2.fqty, t2.total_qty, t2.highest_price, t2.comment AS comment1, 
-                t2.source
+                    <CommandText>SELECT   *
 FROM      Sale_BL AS t1 LEFT OUTER JOIN
                 Sale_BL_details AS t2 ON t1.id = t2.bl_id
 WHERE   (t1.sys_no = @sys_no)</CommandText>
@@ -71,6 +66,18 @@ WHERE   (t1.sys_no = @sys_no)</CommandText>
               <Mapping SourceColumn="source" DataSetColumn="source" />
               <Mapping SourceColumn="id1" DataSetColumn="id1" />
               <Mapping SourceColumn="comment1" DataSetColumn="comment1" />
+              <Mapping SourceColumn="agency_name" DataSetColumn="agency_name" />
+              <Mapping SourceColumn="clerk_name" DataSetColumn="clerk_name" />
+              <Mapping SourceColumn="clerk_no" DataSetColumn="clerk_no" />
+              <Mapping SourceColumn="bl_project_other" DataSetColumn="bl_project_other" />
+              <Mapping SourceColumn="planner_id" DataSetColumn="planner_id" />
+              <Mapping SourceColumn="planner_name" DataSetColumn="planner_name" />
+              <Mapping SourceColumn="order_names" DataSetColumn="order_names" />
+              <Mapping SourceColumn="order_ids" DataSetColumn="order_ids" />
+              <Mapping SourceColumn="order_qty" DataSetColumn="order_qty" />
+              <Mapping SourceColumn="k3_qty" DataSetColumn="k3_qty" />
+              <Mapping SourceColumn="order_id" DataSetColumn="order_id" />
+              <Mapping SourceColumn="order_name" DataSetColumn="order_name" />
             </Mappings>
             <Sources />
           </TableAdapter>
@@ -82,7 +89,7 @@ WHERE   (t1.sys_no = @sys_no)</CommandText>
   <xs:element name="BLDT" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="BLDT" msprop:Generator_UserDSName="BLDT">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="Sale_BL" msprop:Generator_TableClassName="Sale_BLDataTable" msprop:Generator_TableVarName="tableSale_BL" msprop:Generator_RowChangedName="Sale_BLRowChanged" msprop:Generator_TablePropName="Sale_BL" msprop:Generator_RowDeletingName="Sale_BLRowDeleting" msprop:Generator_RowChangingName="Sale_BLRowChanging" msprop:Generator_RowEvHandlerName="Sale_BLRowChangeEventHandler" msprop:Generator_RowDeletedName="Sale_BLRowDeleted" msprop:Generator_RowClassName="Sale_BLRow" msprop:Generator_UserTableName="Sale_BL" msprop:Generator_RowEvArgName="Sale_BLRowChangeEvent">
+        <xs:element name="Sale_BL" msprop:Generator_TableClassName="Sale_BLDataTable" msprop:Generator_TableVarName="tableSale_BL" msprop:Generator_TablePropName="Sale_BL" msprop:Generator_RowDeletingName="Sale_BLRowDeleting" msprop:Generator_RowChangingName="Sale_BLRowChanging" msprop:Generator_RowEvHandlerName="Sale_BLRowChangeEventHandler" msprop:Generator_RowDeletedName="Sale_BLRowDeleted" msprop:Generator_UserTableName="Sale_BL" msprop:Generator_RowChangedName="Sale_BLRowChanged" msprop:Generator_RowEvArgName="Sale_BLRowChangeEvent" msprop:Generator_RowClassName="Sale_BLRow">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="id" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_ColumnVarNameInTable="columnid" msprop:Generator_ColumnPropNameInRow="id" msprop:Generator_ColumnPropNameInTable="idColumn" msprop:Generator_UserColumnName="id" type="xs:int" />
@@ -287,7 +294,7 @@ WHERE   (t1.sys_no = @sys_no)</CommandText>
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="id1" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_ColumnVarNameInTable="columnid1" msprop:Generator_ColumnPropNameInRow="id1" msprop:Generator_ColumnPropNameInTable="id1Column" msprop:Generator_UserColumnName="id1" type="xs:int" />
+              <xs:element name="id1" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_ColumnVarNameInTable="columnid1" msprop:Generator_ColumnPropNameInRow="id1" msprop:Generator_ColumnPropNameInTable="id1Column" msprop:Generator_UserColumnName="id1" type="xs:int" minOccurs="0" />
               <xs:element name="comment1" msprop:Generator_ColumnVarNameInTable="columncomment1" msprop:Generator_ColumnPropNameInRow="comment1" msprop:Generator_ColumnPropNameInTable="comment1Column" msprop:Generator_UserColumnName="comment1" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
@@ -295,10 +302,70 @@ WHERE   (t1.sys_no = @sys_no)</CommandText>
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
+              <xs:element name="agency_name" msprop:Generator_ColumnVarNameInTable="columnagency_name" msprop:Generator_ColumnPropNameInRow="agency_name" msprop:Generator_ColumnPropNameInTable="agency_nameColumn" msprop:Generator_UserColumnName="agency_name" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="clerk_name" msprop:Generator_ColumnVarNameInTable="columnclerk_name" msprop:Generator_ColumnPropNameInRow="clerk_name" msprop:Generator_ColumnPropNameInTable="clerk_nameColumn" msprop:Generator_UserColumnName="clerk_name" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="clerk_no" msprop:Generator_ColumnVarNameInTable="columnclerk_no" msprop:Generator_ColumnPropNameInRow="clerk_no" msprop:Generator_ColumnPropNameInTable="clerk_noColumn" msprop:Generator_UserColumnName="clerk_no" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="bl_project_other" msprop:Generator_ColumnVarNameInTable="columnbl_project_other" msprop:Generator_ColumnPropNameInRow="bl_project_other" msprop:Generator_ColumnPropNameInTable="bl_project_otherColumn" msprop:Generator_UserColumnName="bl_project_other" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="100" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="planner_id" msprop:Generator_ColumnVarNameInTable="columnplanner_id" msprop:Generator_ColumnPropNameInRow="planner_id" msprop:Generator_ColumnPropNameInTable="planner_idColumn" msprop:Generator_UserColumnName="planner_id" type="xs:int" minOccurs="0" />
+              <xs:element name="planner_name" msprop:Generator_ColumnVarNameInTable="columnplanner_name" msprop:Generator_ColumnPropNameInRow="planner_name" msprop:Generator_ColumnPropNameInTable="planner_nameColumn" msprop:Generator_UserColumnName="planner_name" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="20" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="order_names" msprop:Generator_ColumnVarNameInTable="columnorder_names" msprop:Generator_ColumnPropNameInRow="order_names" msprop:Generator_ColumnPropNameInTable="order_namesColumn" msprop:Generator_UserColumnName="order_names" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="order_ids" msprop:Generator_ColumnVarNameInTable="columnorder_ids" msprop:Generator_ColumnPropNameInRow="order_ids" msprop:Generator_ColumnPropNameInTable="order_idsColumn" msprop:Generator_UserColumnName="order_ids" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="order_qty" msprop:Generator_ColumnVarNameInTable="columnorder_qty" msprop:Generator_ColumnPropNameInRow="order_qty" msprop:Generator_ColumnPropNameInTable="order_qtyColumn" msprop:Generator_UserColumnName="order_qty" type="xs:decimal" minOccurs="0" />
+              <xs:element name="k3_qty" msprop:Generator_ColumnVarNameInTable="columnk3_qty" msprop:Generator_ColumnPropNameInRow="k3_qty" msprop:Generator_ColumnPropNameInTable="k3_qtyColumn" msprop:Generator_UserColumnName="k3_qty" type="xs:decimal" minOccurs="0" />
+              <xs:element name="order_id" msprop:Generator_ColumnVarNameInTable="columnorder_id" msprop:Generator_ColumnPropNameInRow="order_id" msprop:Generator_ColumnPropNameInTable="order_idColumn" msprop:Generator_UserColumnName="order_id" type="xs:int" minOccurs="0" />
+              <xs:element name="order_name" msprop:Generator_ColumnVarNameInTable="columnorder_name" msprop:Generator_ColumnPropNameInRow="order_name" msprop:Generator_ColumnPropNameInTable="order_nameColumn" msprop:Generator_UserColumnName="order_name" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="30" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="BL_Auditors" msprop:Generator_TableClassName="BL_AuditorsDataTable" msprop:Generator_TableVarName="tableBL_Auditors" msprop:Generator_RowChangedName="BL_AuditorsRowChanged" msprop:Generator_TablePropName="BL_Auditors" msprop:Generator_RowDeletingName="BL_AuditorsRowDeleting" msprop:Generator_RowChangingName="BL_AuditorsRowChanging" msprop:Generator_RowEvHandlerName="BL_AuditorsRowChangeEventHandler" msprop:Generator_RowDeletedName="BL_AuditorsRowDeleted" msprop:Generator_RowClassName="BL_AuditorsRow" msprop:Generator_UserTableName="BL_Auditors" msprop:Generator_RowEvArgName="BL_AuditorsRowChangeEvent">
+        <xs:element name="BL_Auditors" msprop:Generator_TableClassName="BL_AuditorsDataTable" msprop:Generator_TableVarName="tableBL_Auditors" msprop:Generator_TablePropName="BL_Auditors" msprop:Generator_RowDeletingName="BL_AuditorsRowDeleting" msprop:Generator_RowChangingName="BL_AuditorsRowChanging" msprop:Generator_RowEvHandlerName="BL_AuditorsRowChangeEventHandler" msprop:Generator_RowDeletedName="BL_AuditorsRowDeleted" msprop:Generator_UserTableName="BL_Auditors" msprop:Generator_RowChangedName="BL_AuditorsRowChanged" msprop:Generator_RowEvArgName="BL_AuditorsRowChangeEvent" msprop:Generator_RowClassName="BL_AuditorsRow">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="auditorKey" msprop:Generator_ColumnVarNameInTable="columnauditorKey" msprop:Generator_ColumnPropNameInRow="auditorKey" msprop:Generator_ColumnPropNameInTable="auditorKeyColumn" msprop:Generator_UserColumnName="auditorKey" type="xs:string" />
@@ -308,6 +375,8 @@ WHERE   (t1.sys_no = @sys_no)</CommandText>
               <xs:element name="billReceiver" msprop:Generator_ColumnVarNameInTable="columnbillReceiver" msprop:Generator_ColumnPropNameInRow="billReceiver" msprop:Generator_ColumnPropNameInTable="billReceiverColumn" msprop:Generator_UserColumnName="billReceiver" type="xs:string" minOccurs="0" />
               <xs:element name="costContrller" msprop:Generator_ColumnVarNameInTable="columncostContrller" msprop:Generator_ColumnPropNameInRow="costContrller" msprop:Generator_ColumnPropNameInTable="costContrllerColumn" msprop:Generator_UserColumnName="costContrller" type="xs:string" minOccurs="0" />
               <xs:element name="planManager" msprop:Generator_ColumnVarNameInTable="columnplanManager" msprop:Generator_ColumnPropNameInRow="planManager" msprop:Generator_ColumnPropNameInTable="planManagerColumn" msprop:Generator_UserColumnName="planManager" type="xs:string" minOccurs="0" />
+              <xs:element name="planner" msprop:Generator_ColumnVarNameInTable="columnplanner" msprop:Generator_ColumnPropNameInRow="planner" msprop:Generator_ColumnPropNameInTable="plannerColumn" msprop:Generator_UserColumnName="planner" type="xs:string" minOccurs="0" />
+              <xs:element name="order" msprop:Generator_ColumnVarNameInTable="columnorder" msprop:Generator_ColumnPropNameInRow="order" msprop:Generator_ColumnPropNameInTable="orderColumn" msprop:Generator_UserColumnName="order" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

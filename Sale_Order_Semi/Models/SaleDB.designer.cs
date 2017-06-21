@@ -114,9 +114,6 @@ namespace Sale_Order_Semi.Models
     partial void InsertReturnBillDetail(ReturnBillDetail instance);
     partial void UpdateReturnBillDetail(ReturnBillDetail instance);
     partial void DeleteReturnBillDetail(ReturnBillDetail instance);
-    partial void InsertProcessAuthority(ProcessAuthority instance);
-    partial void UpdateProcessAuthority(ProcessAuthority instance);
-    partial void DeleteProcessAuthority(ProcessAuthority instance);
     partial void InsertHasAttachment(HasAttachment instance);
     partial void UpdateHasAttachment(HasAttachment instance);
     partial void DeleteHasAttachment(HasAttachment instance);
@@ -150,6 +147,9 @@ namespace Sale_Order_Semi.Models
     partial void InsertSale_BL_details(Sale_BL_details instance);
     partial void UpdateSale_BL_details(Sale_BL_details instance);
     partial void DeleteSale_BL_details(Sale_BL_details instance);
+    partial void InsertProcessAuthority(ProcessAuthority instance);
+    partial void UpdateProcessAuthority(ProcessAuthority instance);
+    partial void DeleteProcessAuthority(ProcessAuthority instance);
     #endregion
 		
 		public SaleDBDataContext() : 
@@ -534,14 +534,6 @@ namespace Sale_Order_Semi.Models
 			}
 		}
 		
-		public System.Data.Linq.Table<ProcessAuthority> ProcessAuthority
-		{
-			get
-			{
-				return this.GetTable<ProcessAuthority>();
-			}
-		}
-		
 		public System.Data.Linq.Table<VwDepHasAuditNoInK3> VwDepHasAuditNoInK3
 		{
 			get
@@ -651,6 +643,14 @@ namespace Sale_Order_Semi.Models
 			get
 			{
 				return this.GetTable<Sale_BL_details>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ProcessAuthority> ProcessAuthority
+		{
+			get
+			{
+				return this.GetTable<ProcessAuthority>();
 			}
 		}
 		
@@ -892,8 +892,6 @@ namespace Sale_Order_Semi.Models
 		
 		private EntitySet<ReturnBill> _ReturnBill;
 		
-		private EntitySet<ProcessAuthority> _ProcessAuthority;
-		
 		private EntitySet<ModelContract> _ModelContract;
 		
 		private EntitySet<Apply> _Apply;
@@ -903,6 +901,8 @@ namespace Sale_Order_Semi.Models
 		private EntitySet<Sale_BL_stock> _Sale_BL_stock;
 		
 		private EntitySet<Sale_BL> _Sale_BL;
+		
+		private EntitySet<ProcessAuthority> _ProcessAuthority;
 		
 		private EntityRef<Department> _Department1;
 		
@@ -948,12 +948,12 @@ namespace Sale_Order_Semi.Models
 			this._BlockOrder = new EntitySet<BlockOrder>(new Action<BlockOrder>(this.attach_BlockOrder), new Action<BlockOrder>(this.detach_BlockOrder));
 			this._Order = new EntitySet<Order>(new Action<Order>(this.attach_Order), new Action<Order>(this.detach_Order));
 			this._ReturnBill = new EntitySet<ReturnBill>(new Action<ReturnBill>(this.attach_ReturnBill), new Action<ReturnBill>(this.detach_ReturnBill));
-			this._ProcessAuthority = new EntitySet<ProcessAuthority>(new Action<ProcessAuthority>(this.attach_ProcessAuthority), new Action<ProcessAuthority>(this.detach_ProcessAuthority));
 			this._ModelContract = new EntitySet<ModelContract>(new Action<ModelContract>(this.attach_ModelContract), new Action<ModelContract>(this.detach_ModelContract));
 			this._Apply = new EntitySet<Apply>(new Action<Apply>(this.attach_Apply), new Action<Apply>(this.detach_Apply));
 			this._SampleBill = new EntitySet<SampleBill>(new Action<SampleBill>(this.attach_SampleBill), new Action<SampleBill>(this.detach_SampleBill));
 			this._Sale_BL_stock = new EntitySet<Sale_BL_stock>(new Action<Sale_BL_stock>(this.attach_Sale_BL_stock), new Action<Sale_BL_stock>(this.detach_Sale_BL_stock));
 			this._Sale_BL = new EntitySet<Sale_BL>(new Action<Sale_BL>(this.attach_Sale_BL), new Action<Sale_BL>(this.detach_Sale_BL));
+			this._ProcessAuthority = new EntitySet<ProcessAuthority>(new Action<ProcessAuthority>(this.attach_ProcessAuthority), new Action<ProcessAuthority>(this.detach_ProcessAuthority));
 			this._Department1 = default(EntityRef<Department>);
 			OnCreated();
 		}
@@ -1332,19 +1332,6 @@ namespace Sale_Order_Semi.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_ProcessAuthority", Storage="_ProcessAuthority", ThisKey="id", OtherKey="user_id")]
-		public EntitySet<ProcessAuthority> ProcessAuthority
-		{
-			get
-			{
-				return this._ProcessAuthority;
-			}
-			set
-			{
-				this._ProcessAuthority.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_ModelContract", Storage="_ModelContract", ThisKey="id", OtherKey="user_id")]
 		public EntitySet<ModelContract> ModelContract
 		{
@@ -1407,6 +1394,19 @@ namespace Sale_Order_Semi.Models
 			set
 			{
 				this._Sale_BL.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Sale_process_authority", Storage="_ProcessAuthority", ThisKey="id", OtherKey="user_id")]
+		public EntitySet<ProcessAuthority> ProcessAuthority
+		{
+			get
+			{
+				return this._ProcessAuthority;
+			}
+			set
+			{
+				this._ProcessAuthority.Assign(value);
 			}
 		}
 		
@@ -1584,18 +1584,6 @@ namespace Sale_Order_Semi.Models
 			entity.User = null;
 		}
 		
-		private void attach_ProcessAuthority(ProcessAuthority entity)
-		{
-			this.SendPropertyChanging();
-			entity.User = this;
-		}
-		
-		private void detach_ProcessAuthority(ProcessAuthority entity)
-		{
-			this.SendPropertyChanging();
-			entity.User = null;
-		}
-		
 		private void attach_ModelContract(ModelContract entity)
 		{
 			this.SendPropertyChanging();
@@ -1651,6 +1639,18 @@ namespace Sale_Order_Semi.Models
 		}
 		
 		private void detach_Sale_BL(Sale_BL entity)
+		{
+			this.SendPropertyChanging();
+			entity.User = null;
+		}
+		
+		private void attach_ProcessAuthority(ProcessAuthority entity)
+		{
+			this.SendPropertyChanging();
+			entity.User = this;
+		}
+		
+		private void detach_ProcessAuthority(ProcessAuthority entity)
 		{
 			this.SendPropertyChanging();
 			entity.User = null;
@@ -19583,181 +19583,6 @@ namespace Sale_Order_Semi.Models
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Sale_process_authority")]
-	public partial class ProcessAuthority : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _id;
-		
-		private System.Nullable<int> _user_id;
-		
-		private string _bill_type;
-		
-		private System.Nullable<int> _return_dept_id;
-		
-		private EntityRef<User> _User;
-		
-    #region 可扩展性方法定义
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnidChanging(int value);
-    partial void OnidChanged();
-    partial void Onuser_idChanging(System.Nullable<int> value);
-    partial void Onuser_idChanged();
-    partial void Onbill_typeChanging(string value);
-    partial void Onbill_typeChanged();
-    partial void Onreturn_dept_idChanging(System.Nullable<int> value);
-    partial void Onreturn_dept_idChanged();
-    #endregion
-		
-		public ProcessAuthority()
-		{
-			this._User = default(EntityRef<User>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int id
-		{
-			get
-			{
-				return this._id;
-			}
-			set
-			{
-				if ((this._id != value))
-				{
-					this.OnidChanging(value);
-					this.SendPropertyChanging();
-					this._id = value;
-					this.SendPropertyChanged("id");
-					this.OnidChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_user_id", DbType="Int")]
-		public System.Nullable<int> user_id
-		{
-			get
-			{
-				return this._user_id;
-			}
-			set
-			{
-				if ((this._user_id != value))
-				{
-					if (this._User.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.Onuser_idChanging(value);
-					this.SendPropertyChanging();
-					this._user_id = value;
-					this.SendPropertyChanged("user_id");
-					this.Onuser_idChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_bill_type", DbType="VarChar(10)")]
-		public string bill_type
-		{
-			get
-			{
-				return this._bill_type;
-			}
-			set
-			{
-				if ((this._bill_type != value))
-				{
-					this.Onbill_typeChanging(value);
-					this.SendPropertyChanging();
-					this._bill_type = value;
-					this.SendPropertyChanged("bill_type");
-					this.Onbill_typeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_return_dept_id", DbType="Int")]
-		public System.Nullable<int> return_dept_id
-		{
-			get
-			{
-				return this._return_dept_id;
-			}
-			set
-			{
-				if ((this._return_dept_id != value))
-				{
-					this.Onreturn_dept_idChanging(value);
-					this.SendPropertyChanging();
-					this._return_dept_id = value;
-					this.SendPropertyChanged("return_dept_id");
-					this.Onreturn_dept_idChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_ProcessAuthority", Storage="_User", ThisKey="user_id", OtherKey="id", IsForeignKey=true)]
-		public User User
-		{
-			get
-			{
-				return this._User.Entity;
-			}
-			set
-			{
-				User previousValue = this._User.Entity;
-				if (((previousValue != value) 
-							|| (this._User.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._User.Entity = null;
-						previousValue.ProcessAuthority.Remove(this);
-					}
-					this._User.Entity = value;
-					if ((value != null))
-					{
-						value.ProcessAuthority.Add(this);
-						this._user_id = value.id;
-					}
-					else
-					{
-						this._user_id = default(Nullable<int>);
-					}
-					this.SendPropertyChanged("User");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.vw_depHasAudit_noInK3")]
 	public partial class VwDepHasAuditNoInK3
 	{
@@ -27330,6 +27155,181 @@ namespace Sale_Order_Semi.Models
 						this._bl_id = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("Sale_BL");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Sale_process_authority")]
+	public partial class ProcessAuthority : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _id;
+		
+		private System.Nullable<int> _user_id;
+		
+		private string _bill_type;
+		
+		private System.Nullable<int> _dept_no;
+		
+		private EntityRef<User> _User;
+		
+    #region 可扩展性方法定义
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnidChanging(int value);
+    partial void OnidChanged();
+    partial void Onuser_idChanging(System.Nullable<int> value);
+    partial void Onuser_idChanged();
+    partial void Onbill_typeChanging(string value);
+    partial void Onbill_typeChanged();
+    partial void Ondept_noChanging(System.Nullable<int> value);
+    partial void Ondept_noChanged();
+    #endregion
+		
+		public ProcessAuthority()
+		{
+			this._User = default(EntityRef<User>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int id
+		{
+			get
+			{
+				return this._id;
+			}
+			set
+			{
+				if ((this._id != value))
+				{
+					this.OnidChanging(value);
+					this.SendPropertyChanging();
+					this._id = value;
+					this.SendPropertyChanged("id");
+					this.OnidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_user_id", DbType="Int")]
+		public System.Nullable<int> user_id
+		{
+			get
+			{
+				return this._user_id;
+			}
+			set
+			{
+				if ((this._user_id != value))
+				{
+					if (this._User.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.Onuser_idChanging(value);
+					this.SendPropertyChanging();
+					this._user_id = value;
+					this.SendPropertyChanged("user_id");
+					this.Onuser_idChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_bill_type", DbType="VarChar(10)")]
+		public string bill_type
+		{
+			get
+			{
+				return this._bill_type;
+			}
+			set
+			{
+				if ((this._bill_type != value))
+				{
+					this.Onbill_typeChanging(value);
+					this.SendPropertyChanging();
+					this._bill_type = value;
+					this.SendPropertyChanged("bill_type");
+					this.Onbill_typeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_dept_no", DbType="Int")]
+		public System.Nullable<int> dept_no
+		{
+			get
+			{
+				return this._dept_no;
+			}
+			set
+			{
+				if ((this._dept_no != value))
+				{
+					this.Ondept_noChanging(value);
+					this.SendPropertyChanging();
+					this._dept_no = value;
+					this.SendPropertyChanged("dept_no");
+					this.Ondept_noChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Sale_process_authority", Storage="_User", ThisKey="user_id", OtherKey="id", IsForeignKey=true)]
+		public User User
+		{
+			get
+			{
+				return this._User.Entity;
+			}
+			set
+			{
+				User previousValue = this._User.Entity;
+				if (((previousValue != value) 
+							|| (this._User.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._User.Entity = null;
+						previousValue.ProcessAuthority.Remove(this);
+					}
+					this._User.Entity = value;
+					if ((value != null))
+					{
+						value.ProcessAuthority.Add(this);
+						this._user_id = value.id;
+					}
+					else
+					{
+						this._user_id = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("User");
 				}
 			}
 		}

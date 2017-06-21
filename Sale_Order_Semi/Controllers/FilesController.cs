@@ -401,8 +401,8 @@ namespace Sale_Order_Semi.Controllers
                     using (BLDT blDt = new BLDT()) {
                         using (Sale_BLTableAdapter cmTa = new Sale_BLTableAdapter()) {
                             cmTa.Fill(blDt.Sale_BL, sysNo);
-                        }                        
-                        string agencyAuditor = "", marketAuditor = "", runCenter = "", billReceiver = "", costController = "", planManager = "";
+                        }
+                        string agencyAuditor = "", marketAuditor = "", runCenter = "", billReceiver = "", costController = "", planManager = "", planner = "", order = "";
                         var ad = db.Apply.Where(a => a.sys_no == sysNo).First().ApplyDetails.ToList();
                         if (ad.Where(a => a.step_name.Contains("办事处") && a.pass == true).Count() > 0) {
                             agencyAuditor = ad.Where(a => a.step_name.Contains("办事处") && a.pass == true).First().User.real_name;
@@ -413,16 +413,22 @@ namespace Sale_Order_Semi.Controllers
                         if (ad.Where(a => a.step_name.Contains("运作中心") && a.pass == true).Count() > 1) { //必须2个运作中心都审批OK后才有签名
                             runCenter = ad.Where(a => a.step_name.Contains("运作中心") && a.pass == true).First().User.real_name;
                         }
-                        if (ad.Where(a => a.step_name.Contains("接单") && a.pass == true).Count() > 0) {
-                            billReceiver = ad.Where(a => a.step_name.Contains("接单") && a.pass == true).First().User.real_name;
-                        }
+                        //if (ad.Where(a => a.step_name.Contains("接单") && a.pass == true).Count() > 0) {
+                        //    billReceiver = ad.Where(a => a.step_name.Contains("接单") && a.pass == true).First().User.real_name;
+                        //}
                         if (ad.Where(a => a.step_name.Contains("成控") && a.pass == true).Count() > 0) {
                             costController = ad.Where(a => a.step_name.Contains("成控") && a.pass == true).First().User.real_name;
                         }
                         if (ad.Where(a => a.step_name.Contains("计划经理") && a.pass == true).Count() > 0) {
                             planManager = ad.Where(a => a.step_name.Contains("计划经理") && a.pass == true).First().User.real_name;
                         }
-                        blDt.BL_Auditors.AddBL_AuditorsRow("key",agencyAuditor,marketAuditor,runCenter,billReceiver,costController,planManager);
+                        if (ad.Where(a => a.step_name.Contains("计划审核") && a.pass == true).Count() > 0) {
+                            planner = ad.Where(a => a.step_name.Contains("计划审核") && a.pass == true).First().User.real_name;
+                        }
+                        if (ad.Where(a => a.step_name.Contains("订料") && a.pass == true).Count() > 0) {
+                            order = String.Join(" ", ad.Where(a => a.step_name.Contains("订料") && a.pass == true).Select(a => a.User.real_name).ToArray());
+                        }
+                        blDt.BL_Auditors.AddBL_AuditorsRow("key",agencyAuditor,marketAuditor,runCenter,billReceiver,costController,planManager,planner,order);
 
                         rptH.FileName = Server.MapPath("~/Reports/" + crystalFile);
                         rptH.Load();

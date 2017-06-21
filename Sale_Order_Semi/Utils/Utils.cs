@@ -286,7 +286,12 @@ namespace Sale_Order_Semi.Utils
                     orderNo = order.bill_no;
                     model = order.product_model;
                     if (app.success == true) {
-                        prAuditors = app.ApplyDetails.Where(ad => ad.step_name.Contains("接单") || ad.step_name.Contains("运作中心")).Select(ad => ad.User).Distinct().ToList();
+                        prAuditors = app.ApplyDetails.Where(ad => ad.step_name.Contains("计划审批") || ad.step_name.Contains("订料") || ad.step_name.Contains("运作中心")).Select(ad => ad.User).Distinct().ToList();
+                        prAuditors.AddRange((from v in db.vw_auditor_relations
+                                             join u in db.User on v.auditor_id equals u.id
+                                             where v.step_name == "BL_事业部接单员"
+                                             && v.department_name == order.bus_dep
+                                             select u).ToList());
                         prAuditors.Add(db.User.Single(u => u.real_name == "林莲杏"));
                     }
                 }
@@ -1291,7 +1296,7 @@ namespace Sale_Order_Semi.Utils
         }
 
         //在流程最后添加步骤
-        public bool AppendStepAtLast(int applyId, string stepName, int?[] stepAuditor, bool canModify = false, bool canSelectNext = false, bool countersign = false)
+        public bool AppendStepAtLast(int applyId, string stepName, int?[] stepAuditor,int parentStep=0, bool canModify = false, bool canSelectNext = false, bool countersign = false)
         {
             int maxStep = (int)db.ApplyDetails.Where(a => a.apply_id == applyId).Max(a => a.step);
             //没有人即退出
@@ -1308,11 +1313,10 @@ namespace Sale_Order_Semi.Utils
                     newAd.user_id = auditId;
                     newAd.can_modify = canModify;
                     newAd.can_select_next = canSelectNext;
-                    newAd.parent_step = maxStep;//增加母步骤，表明是这个母步骤生成的。2015-3-6
+                    newAd.parent_step = parentStep;
                     newAd.countersign = countersign;
 
-                    db.ApplyDetails.InsertOnSubmit(newAd);
-                    maxStep++;
+                    db.ApplyDetails.InsertOnSubmit(newAd);                    
                 }
             }
 

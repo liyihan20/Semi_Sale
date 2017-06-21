@@ -398,6 +398,30 @@ namespace Sale_Order_Semi.Models {
             
             private global::System.Data.DataColumn columncomment1;
             
+            private global::System.Data.DataColumn columnagency_name;
+            
+            private global::System.Data.DataColumn columnclerk_name;
+            
+            private global::System.Data.DataColumn columnclerk_no;
+            
+            private global::System.Data.DataColumn columnbl_project_other;
+            
+            private global::System.Data.DataColumn columnplanner_id;
+            
+            private global::System.Data.DataColumn columnplanner_name;
+            
+            private global::System.Data.DataColumn columnorder_names;
+            
+            private global::System.Data.DataColumn columnorder_ids;
+            
+            private global::System.Data.DataColumn columnorder_qty;
+            
+            private global::System.Data.DataColumn columnk3_qty;
+            
+            private global::System.Data.DataColumn columnorder_id;
+            
+            private global::System.Data.DataColumn columnorder_name;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public Sale_BLDataTable() {
@@ -769,6 +793,102 @@ namespace Sale_Order_Semi.Models {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn agency_nameColumn {
+                get {
+                    return this.columnagency_name;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn clerk_nameColumn {
+                get {
+                    return this.columnclerk_name;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn clerk_noColumn {
+                get {
+                    return this.columnclerk_no;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn bl_project_otherColumn {
+                get {
+                    return this.columnbl_project_other;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn planner_idColumn {
+                get {
+                    return this.columnplanner_id;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn planner_nameColumn {
+                get {
+                    return this.columnplanner_name;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn order_namesColumn {
+                get {
+                    return this.columnorder_names;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn order_idsColumn {
+                get {
+                    return this.columnorder_ids;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn order_qtyColumn {
+                get {
+                    return this.columnorder_qty;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn k3_qtyColumn {
+                get {
+                    return this.columnk3_qty;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn order_idColumn {
+                get {
+                    return this.columnorder_id;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn order_nameColumn {
+                get {
+                    return this.columnorder_name;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -844,7 +964,19 @@ namespace Sale_Order_Semi.Models {
                         decimal total_qty, 
                         decimal highest_price, 
                         string source, 
-                        string comment1) {
+                        string comment1, 
+                        string agency_name, 
+                        string clerk_name, 
+                        string clerk_no, 
+                        string bl_project_other, 
+                        int planner_id, 
+                        string planner_name, 
+                        string order_names, 
+                        string order_ids, 
+                        decimal order_qty, 
+                        decimal k3_qty, 
+                        int order_id, 
+                        string order_name) {
                 Sale_BLRow rowSale_BLRow = ((Sale_BLRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         null,
@@ -888,7 +1020,19 @@ namespace Sale_Order_Semi.Models {
                         highest_price,
                         source,
                         null,
-                        comment1};
+                        comment1,
+                        agency_name,
+                        clerk_name,
+                        clerk_no,
+                        bl_project_other,
+                        planner_id,
+                        planner_name,
+                        order_names,
+                        order_ids,
+                        order_qty,
+                        k3_qty,
+                        order_id,
+                        order_name};
                 rowSale_BLRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowSale_BLRow);
                 return rowSale_BLRow;
@@ -960,6 +1104,18 @@ namespace Sale_Order_Semi.Models {
                 this.columnsource = base.Columns["source"];
                 this.columnid1 = base.Columns["id1"];
                 this.columncomment1 = base.Columns["comment1"];
+                this.columnagency_name = base.Columns["agency_name"];
+                this.columnclerk_name = base.Columns["clerk_name"];
+                this.columnclerk_no = base.Columns["clerk_no"];
+                this.columnbl_project_other = base.Columns["bl_project_other"];
+                this.columnplanner_id = base.Columns["planner_id"];
+                this.columnplanner_name = base.Columns["planner_name"];
+                this.columnorder_names = base.Columns["order_names"];
+                this.columnorder_ids = base.Columns["order_ids"];
+                this.columnorder_qty = base.Columns["order_qty"];
+                this.columnk3_qty = base.Columns["k3_qty"];
+                this.columnorder_id = base.Columns["order_id"];
+                this.columnorder_name = base.Columns["order_name"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1049,6 +1205,30 @@ namespace Sale_Order_Semi.Models {
                 base.Columns.Add(this.columnid1);
                 this.columncomment1 = new global::System.Data.DataColumn("comment1", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncomment1);
+                this.columnagency_name = new global::System.Data.DataColumn("agency_name", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnagency_name);
+                this.columnclerk_name = new global::System.Data.DataColumn("clerk_name", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnclerk_name);
+                this.columnclerk_no = new global::System.Data.DataColumn("clerk_no", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnclerk_no);
+                this.columnbl_project_other = new global::System.Data.DataColumn("bl_project_other", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnbl_project_other);
+                this.columnplanner_id = new global::System.Data.DataColumn("planner_id", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnplanner_id);
+                this.columnplanner_name = new global::System.Data.DataColumn("planner_name", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnplanner_name);
+                this.columnorder_names = new global::System.Data.DataColumn("order_names", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnorder_names);
+                this.columnorder_ids = new global::System.Data.DataColumn("order_ids", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnorder_ids);
+                this.columnorder_qty = new global::System.Data.DataColumn("order_qty", typeof(decimal), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnorder_qty);
+                this.columnk3_qty = new global::System.Data.DataColumn("k3_qty", typeof(decimal), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnk3_qty);
+                this.columnorder_id = new global::System.Data.DataColumn("order_id", typeof(int), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnorder_id);
+                this.columnorder_name = new global::System.Data.DataColumn("order_name", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnorder_name);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnid1}, true));
                 this.columnid.AutoIncrement = true;
@@ -1090,6 +1270,14 @@ namespace Sale_Order_Semi.Models {
                 this.columnid1.ReadOnly = true;
                 this.columnid1.Unique = true;
                 this.columncomment1.MaxLength = 500;
+                this.columnagency_name.MaxLength = 100;
+                this.columnclerk_name.MaxLength = 50;
+                this.columnclerk_no.MaxLength = 50;
+                this.columnbl_project_other.MaxLength = 100;
+                this.columnplanner_name.MaxLength = 20;
+                this.columnorder_names.MaxLength = 50;
+                this.columnorder_ids.MaxLength = 50;
+                this.columnorder_name.MaxLength = 30;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1237,6 +1425,10 @@ namespace Sale_Order_Semi.Models {
             
             private global::System.Data.DataColumn columnplanManager;
             
+            private global::System.Data.DataColumn columnplanner;
+            
+            private global::System.Data.DataColumn columnorder;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public BL_AuditorsDataTable() {
@@ -1328,6 +1520,22 @@ namespace Sale_Order_Semi.Models {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn plannerColumn {
+                get {
+                    return this.columnplanner;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn orderColumn {
+                get {
+                    return this.columnorder;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -1363,7 +1571,7 @@ namespace Sale_Order_Semi.Models {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public BL_AuditorsRow AddBL_AuditorsRow(string auditorKey, string agencyAuditor, string marketAuditor, string runCenterAuditor, string billReceiver, string costContrller, string planManager) {
+            public BL_AuditorsRow AddBL_AuditorsRow(string auditorKey, string agencyAuditor, string marketAuditor, string runCenterAuditor, string billReceiver, string costContrller, string planManager, string planner, string order) {
                 BL_AuditorsRow rowBL_AuditorsRow = ((BL_AuditorsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         auditorKey,
@@ -1372,7 +1580,9 @@ namespace Sale_Order_Semi.Models {
                         runCenterAuditor,
                         billReceiver,
                         costContrller,
-                        planManager};
+                        planManager,
+                        planner,
+                        order};
                 rowBL_AuditorsRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowBL_AuditorsRow);
                 return rowBL_AuditorsRow;
@@ -1409,6 +1619,8 @@ namespace Sale_Order_Semi.Models {
                 this.columnbillReceiver = base.Columns["billReceiver"];
                 this.columncostContrller = base.Columns["costContrller"];
                 this.columnplanManager = base.Columns["planManager"];
+                this.columnplanner = base.Columns["planner"];
+                this.columnorder = base.Columns["order"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1428,6 +1640,10 @@ namespace Sale_Order_Semi.Models {
                 base.Columns.Add(this.columncostContrller);
                 this.columnplanManager = new global::System.Data.DataColumn("planManager", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnplanManager);
+                this.columnplanner = new global::System.Data.DataColumn("planner", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnplanner);
+                this.columnorder = new global::System.Data.DataColumn("order", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnorder);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnauditorKey}, true));
                 this.columnauditorKey.AllowDBNull = false;
@@ -2236,6 +2452,198 @@ namespace Sale_Order_Semi.Models {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string agency_name {
+                get {
+                    try {
+                        return ((string)(this[this.tableSale_BL.agency_nameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“Sale_BL”中列“agency_name”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableSale_BL.agency_nameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string clerk_name {
+                get {
+                    try {
+                        return ((string)(this[this.tableSale_BL.clerk_nameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“Sale_BL”中列“clerk_name”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableSale_BL.clerk_nameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string clerk_no {
+                get {
+                    try {
+                        return ((string)(this[this.tableSale_BL.clerk_noColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“Sale_BL”中列“clerk_no”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableSale_BL.clerk_noColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string bl_project_other {
+                get {
+                    try {
+                        return ((string)(this[this.tableSale_BL.bl_project_otherColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“Sale_BL”中列“bl_project_other”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableSale_BL.bl_project_otherColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public int planner_id {
+                get {
+                    try {
+                        return ((int)(this[this.tableSale_BL.planner_idColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“Sale_BL”中列“planner_id”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableSale_BL.planner_idColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string planner_name {
+                get {
+                    try {
+                        return ((string)(this[this.tableSale_BL.planner_nameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“Sale_BL”中列“planner_name”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableSale_BL.planner_nameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string order_names {
+                get {
+                    try {
+                        return ((string)(this[this.tableSale_BL.order_namesColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“Sale_BL”中列“order_names”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableSale_BL.order_namesColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string order_ids {
+                get {
+                    try {
+                        return ((string)(this[this.tableSale_BL.order_idsColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“Sale_BL”中列“order_ids”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableSale_BL.order_idsColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public decimal order_qty {
+                get {
+                    try {
+                        return ((decimal)(this[this.tableSale_BL.order_qtyColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“Sale_BL”中列“order_qty”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableSale_BL.order_qtyColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public decimal k3_qty {
+                get {
+                    try {
+                        return ((decimal)(this[this.tableSale_BL.k3_qtyColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“Sale_BL”中列“k3_qty”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableSale_BL.k3_qtyColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public int order_id {
+                get {
+                    try {
+                        return ((int)(this[this.tableSale_BL.order_idColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“Sale_BL”中列“order_id”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableSale_BL.order_idColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string order_name {
+                get {
+                    try {
+                        return ((string)(this[this.tableSale_BL.order_nameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“Sale_BL”中列“order_name”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableSale_BL.order_nameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool Issys_noNull() {
                 return this.IsNull(this.tableSale_BL.sys_noColumn);
             }
@@ -2713,6 +3121,150 @@ namespace Sale_Order_Semi.Models {
             public void Setcomment1Null() {
                 this[this.tableSale_BL.comment1Column] = global::System.Convert.DBNull;
             }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool Isagency_nameNull() {
+                return this.IsNull(this.tableSale_BL.agency_nameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void Setagency_nameNull() {
+                this[this.tableSale_BL.agency_nameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool Isclerk_nameNull() {
+                return this.IsNull(this.tableSale_BL.clerk_nameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void Setclerk_nameNull() {
+                this[this.tableSale_BL.clerk_nameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool Isclerk_noNull() {
+                return this.IsNull(this.tableSale_BL.clerk_noColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void Setclerk_noNull() {
+                this[this.tableSale_BL.clerk_noColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool Isbl_project_otherNull() {
+                return this.IsNull(this.tableSale_BL.bl_project_otherColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void Setbl_project_otherNull() {
+                this[this.tableSale_BL.bl_project_otherColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool Isplanner_idNull() {
+                return this.IsNull(this.tableSale_BL.planner_idColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void Setplanner_idNull() {
+                this[this.tableSale_BL.planner_idColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool Isplanner_nameNull() {
+                return this.IsNull(this.tableSale_BL.planner_nameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void Setplanner_nameNull() {
+                this[this.tableSale_BL.planner_nameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool Isorder_namesNull() {
+                return this.IsNull(this.tableSale_BL.order_namesColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void Setorder_namesNull() {
+                this[this.tableSale_BL.order_namesColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool Isorder_idsNull() {
+                return this.IsNull(this.tableSale_BL.order_idsColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void Setorder_idsNull() {
+                this[this.tableSale_BL.order_idsColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool Isorder_qtyNull() {
+                return this.IsNull(this.tableSale_BL.order_qtyColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void Setorder_qtyNull() {
+                this[this.tableSale_BL.order_qtyColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool Isk3_qtyNull() {
+                return this.IsNull(this.tableSale_BL.k3_qtyColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void Setk3_qtyNull() {
+                this[this.tableSale_BL.k3_qtyColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool Isorder_idNull() {
+                return this.IsNull(this.tableSale_BL.order_idColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void Setorder_idNull() {
+                this[this.tableSale_BL.order_idColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool Isorder_nameNull() {
+                return this.IsNull(this.tableSale_BL.order_nameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void Setorder_nameNull() {
+                this[this.tableSale_BL.order_nameColumn] = global::System.Convert.DBNull;
+            }
         }
         
         /// <summary>
@@ -2838,6 +3390,38 @@ namespace Sale_Order_Semi.Models {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string planner {
+                get {
+                    try {
+                        return ((string)(this[this.tableBL_Auditors.plannerColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“BL_Auditors”中列“planner”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableBL_Auditors.plannerColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string order {
+                get {
+                    try {
+                        return ((string)(this[this.tableBL_Auditors.orderColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“BL_Auditors”中列“order”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableBL_Auditors.orderColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsagencyAuditorNull() {
                 return this.IsNull(this.tableBL_Auditors.agencyAuditorColumn);
             }
@@ -2906,6 +3490,30 @@ namespace Sale_Order_Semi.Models {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetplanManagerNull() {
                 this[this.tableBL_Auditors.planManagerColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsplannerNull() {
+                return this.IsNull(this.tableBL_Auditors.plannerColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetplannerNull() {
+                this[this.tableBL_Auditors.plannerColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsorderNull() {
+                return this.IsNull(this.tableBL_Auditors.orderColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetorderNull() {
+                this[this.tableBL_Auditors.orderColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -3144,6 +3752,18 @@ namespace Sale_Order_Semi.Models.BLDTTableAdapters {
             tableMapping.ColumnMappings.Add("source", "source");
             tableMapping.ColumnMappings.Add("id1", "id1");
             tableMapping.ColumnMappings.Add("comment1", "comment1");
+            tableMapping.ColumnMappings.Add("agency_name", "agency_name");
+            tableMapping.ColumnMappings.Add("clerk_name", "clerk_name");
+            tableMapping.ColumnMappings.Add("clerk_no", "clerk_no");
+            tableMapping.ColumnMappings.Add("bl_project_other", "bl_project_other");
+            tableMapping.ColumnMappings.Add("planner_id", "planner_id");
+            tableMapping.ColumnMappings.Add("planner_name", "planner_name");
+            tableMapping.ColumnMappings.Add("order_names", "order_names");
+            tableMapping.ColumnMappings.Add("order_ids", "order_ids");
+            tableMapping.ColumnMappings.Add("order_qty", "order_qty");
+            tableMapping.ColumnMappings.Add("k3_qty", "k3_qty");
+            tableMapping.ColumnMappings.Add("order_id", "order_id");
+            tableMapping.ColumnMappings.Add("order_name", "order_name");
             this._adapter.TableMappings.Add(tableMapping);
         }
         
@@ -3160,15 +3780,8 @@ namespace Sale_Order_Semi.Models.BLDTTableAdapters {
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[1];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = @"SELECT   t1.id, t1.sys_no, t1.original_user_id, t1.update_user_id, t1.step_version, t1.bill_no, t1.customer_no, t1.customer_name, 
-                t1.bl_date, t1.plan_order_date, t1.qty, t1.product_no, t1.product_model, t1.fetch_date, t1.product_use, t1.trade_type_no, 
-                t1.market_dep, t1.bus_dep, t1.deal_price, t1.product_type, t1.project_group, t1.TFT_model, t1.TP_model, t1.bl_project, 
-                t1.comment, t1.product_name, t1.trade_type_name, t1.bl_property, t1.bl_type, t1.bl_contract_no, t2.id AS id1,t2.bl_id, 
-                t2.levels, t2.fnumber, t2.fmodel, t2.fname, t2.unitname, t2.fqty, t2.total_qty, t2.highest_price, t2.comment AS comment1, 
-                t2.source
-FROM      Sale_BL AS t1 LEFT OUTER JOIN
-                Sale_BL_details AS t2 ON t1.id = t2.bl_id
-WHERE   (t1.sys_no = @sys_no)";
+            this._commandCollection[0].CommandText = "SELECT   *\r\nFROM      Sale_BL AS t1 LEFT OUTER JOIN\r\n                Sale_BL_deta" +
+                "ils AS t2 ON t1.id = t2.bl_id\r\nWHERE   (t1.sys_no = @sys_no)";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[0].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@sys_no", global::System.Data.SqlDbType.VarChar, 50, global::System.Data.ParameterDirection.Input, 0, 0, "sys_no", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
         }

@@ -840,27 +840,6 @@ namespace Sale_Order_Semi.Controllers
             {
                 //通过存储过程获取订单类型，目前只有销售订单，以后有其它单据直接修改存储过程即可
                 string orderType = "";
-                //string model = "";
-
-                //switch (a.order_type)
-                //{
-                //    case "SO":
-                //        //model = db.Order.Where(o => o.sys_no == sys_no).OrderByDescending(o => o.id).First().group1;
-                //        model = db.vwProductInfo.Where(v => v.item_id == db.Order.Where(o => o.sys_no == a.sys_no).OrderByDescending(o => o.id).First().OrderDetail.First().product_id).First().item_model;
-                //        break;
-                //    case "TH":
-                //        model = db.VwReturnBill.Where(v => v.sys_no == a.sys_no).First().product_model;
-                //        break;
-                //    case "CM":
-                //        model = db.ModelContract.Where(m => m.sys_no == a.sys_no).First().product_model;
-                //        break;
-                //    case "SB":
-                //        model = db.SampleBill.Where(s => s.sys_no == a.sys_no).First().product_model;
-                //        break;
-                //    default:
-                //        model = "";
-                //        break;
-                //}
 
                 db.getOrderTypeBySysNo(a.sys_no, ref orderType);
                 list.Add(new backBills()
@@ -1012,7 +991,7 @@ namespace Sale_Order_Semi.Controllers
             fromDate = string.IsNullOrWhiteSpace(fromDate) ? "1901-1-1" : fromDate;
             toDate = string.IsNullOrWhiteSpace(toDate) ? "2099-9-9" : toDate;
 
-            //测试有没有SO和TH的查看权限
+            //测试有没有查看权限
             var billTypeArr = db.ProcessAuthority.Where(p => p.user_id == userId).Select(p => p.bill_type).Distinct().ToArray();
             
             var res = from ap in db.Apply
@@ -1026,12 +1005,12 @@ namespace Sale_Order_Semi.Controllers
             //如果是TH，则要进一步判断退货部门的权限。为null表示可以查看所有退货部门。
             if (billTypeArr.Contains("TH"))
             {
-                var returnDepIds = db.ProcessAuthority.Where(p => p.user_id == userId && p.bill_type == "TH").Select(p => p.return_dept_id);
-                if (!returnDepIds.Contains(null))
+                var returnDepNos = db.ProcessAuthority.Where(p => p.user_id == userId && p.bill_type == "TH").Select(p => p.dept_no);
+                if (!returnDepNos.Contains(null))
                 {
                     res = from re in res
                           join rb in db.ReturnBill on re.sys_no equals rb.sys_no
-                          where re.order_type != "TH" || (re.order_type == "TH" && returnDepIds.Contains(rb.return_dept))
+                          where re.order_type != "TH" || (re.order_type == "TH" && returnDepNos.Contains(rb.return_dept))
                           select re;
                 }
             }

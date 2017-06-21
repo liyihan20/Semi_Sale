@@ -7,7 +7,7 @@
 <DiagramLayout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ex:showrelationlabel="False" ViewPortX="0" ViewPortY="0" xmlns:ex="urn:schemas-microsoft-com:xml-msdatasource-layout-extended" xmlns="urn:schemas-microsoft-com:xml-msdatasource-layout">
   <Shapes>
     <Shape ID="DesignTable:Sale_BL" ZOrder="1" X="659" Y="152" Height="305" Width="196" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="254" />
-    <Shape ID="DesignTable:BL_Auditors" ZOrder="2" X="366" Y="152" Height="162" Width="150" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="158" />
+    <Shape ID="DesignTable:BL_Auditors" ZOrder="2" X="366" Y="152" Height="200" Width="150" AdapterExpanded="true" DataTableExpanded="true" OldAdapterHeight="0" OldDataTableHeight="0" SplitterPosition="196" />
   </Shapes>
   <Connectors />
 </DiagramLayout>

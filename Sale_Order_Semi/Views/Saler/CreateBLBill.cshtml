@@ -101,7 +101,7 @@
         });
 
         $("#dg_detail").datagrid({
-            width: 1000,
+            width: 1200,
             loadMsg: "加载中...",
             rownumbers: true,
             singleSelect: true,
@@ -113,10 +113,13 @@
                 { field: 'fname', title: '物料名称', width: 100, align: 'center' },
                 { field: 'unitname', title: '单位', width: 60, align: 'center' },
                 { field: 'fqty', title: '单位用量', width: 100, align: 'center' },
-                { field: 'total_qty', title: '数量', width: 60, align: 'center', editor: { type: 'numberbox', options: { precision: 4 } } },
+                { field: 'total_qty', title: '标准数量', width: 60, align: 'center' },
+                { field: 'order_qty', title: '订料数量', width: 60, align: 'center', editor: { type: 'numberbox', options: { precision: 4 } } },
                 { field: 'highest_price', title: '最高采购价', width: 80, align: 'center', editor: { type: 'numberbox', options: { precision: 4 } } },
                 { field: 'comment', title: '备注', width: 200, editor: { type: 'validatebox', options: { validType: ['length[0,200]'] } } },
-                { field: 'source', title: '来源', width: 80, align: 'center' }
+                { field: 'source', title: '来源', width: 80, align: 'center' },
+                { field: 'order_name', title: '订料员', width: 80, align: 'center' },
+                { field: 'order_id', title: '订料员ID', hidden: 'true' }
             ]],
             toolbar: [{
                 text: "从BOM获取",
@@ -135,15 +138,22 @@
                 handler: function () {
                     var row = $('#dg_detail').datagrid('getSelected');
                     if (row) {
+                        if(row.order_id!="@ViewData["order_id"]"){
+                            $.messager.show({
+                                title: '@Html.Lang("tip")',
+                                msg: "订料员只能删除自己新增的物料"
+                            });
+                            return;
+                        }
                         $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("are_you_sure")?', function (r) {
-                            if (r) {
-                                var index = $('#dg_detail').datagrid('getRowIndex', row);
-                                $('#dg_detail').datagrid('deleteRow', index);
-                            }
-                        });
+                                if (r) {
+                                    var index = $('#dg_detail').datagrid('getRowIndex', row);
+                                    $('#dg_detail').datagrid('deleteRow', index);
+                                }
+                            });
+                        }
                     }
-                }
-            }],
+                }],
             onClickRow: onClickRow
         });
 
@@ -238,6 +248,7 @@
         $("#product_no").combogrid("setValue", "@bl.product_no");
         $("#clerk_no").combobox("setValue", "@bl.clerk_no");
         $("#clerk_no").combobox("setText", "@bl.clerk_name");
+        $("#planner_id").combobox("setText", "@bl.planner_name");
         $.map("@bl.bl_project".split(","), function (item) { $("input[name='bl_project'][value='" + item + "']").attr("checked", true); });
         $("#agency_div").css("visibility", "visible").click(function () { endEditing(); });
         $(".ck_label").css("cursor", "pointer").click(function () { $("input[name='bl_project'][value='" + $.trim($(this).html()) + "']").trigger("click"); });
@@ -319,9 +330,12 @@
             unitname: $("#mat_unit_name").val(),
             fqty: $("#mat_qty").numberbox("getValue"),
             total_qty: $("#mat_qty").numberbox("getValue") * $("#qty").numberbox("getValue"),
+            order_qty: $("#mat_qty").numberbox("getValue") * $("#qty").numberbox("getValue"),
             highest_price: $("#mat_highest_price").numberbox("getValue") == "" ? 0 : $("#mat_highest_price").numberbox("getValue"),
             comment: $("#mat_comment").val(),
-            source: "手工"
+            source: "手工",
+            order_id: "@ViewData["order_id"]",
+            order_name: "@ViewData["order_name"]"
         });
         $("#dlg_details").dialog("close");
     }
@@ -337,17 +351,34 @@
             return false;
         }
     }
+    //点击行，如果是订料员自己的行，即可以编辑，否则不能编辑
     function onClickRow(index) {
         if (editIndex != index) {
             if (endEditing()) {
-                $('#dg_detail').datagrid('selectRow', index)
-                        .datagrid('beginEdit', index);
-                editIndex = index;
+                $('#dg_detail').datagrid('selectRow', index);
+                var row = $('#dg_detail').datagrid('getSelected');
+                if (row) {
+                    if (row.order_id == "@ViewData["order_id"]") {
+                        $('#dg_detail').datagrid('beginEdit', index);
+                        editIndex = index;
+                    }
+                }
             } else {
                 $('#dg_detail').datagrid('selectRow', editIndex);
             }
         }
     }
+    //function onClickRow(index) {
+    //    if (editIndex != index) {
+    //        if (endEditing()) {
+    //            $('#dg_detail').datagrid('selectRow', index)
+    //                    .datagrid('beginEdit', index);
+    //            editIndex = index;
+    //        } else {
+    //            $('#dg_detail').datagrid('selectRow', editIndex);
+    //        }
+    //    }
+    //}
 </script>
 
 @if (bl.step_version == 0) {
@@ -412,93 +443,136 @@
 }
 else {
     <script type="text/javascript">
+    $(function () {
+        $.post("@Url.Content("~/Items/GetAuditorsWithStep")", { stepName: 'BL_事业部订料员', depName: "@bl.bus_dep" },
+                function (data) {
+                    $('#order_ids').combobox("loadData", data);
+                    if ("@bl.order_ids" != "") {
+                        $("#order_ids").combobox("setValues", "@bl.order_ids".split(","));
+                        $("#order_ids").combobox("setText", "@bl.order_names");
+                    }
+                }, "json"
+            );
+        if ("@stepName" == "计划审批" || "@stepName" == "订料会签") {
+            $("#order_form input").each(function () {
+                var thisClass = $(this).attr("class");
+                if (thisClass) {
+                    if (thisClass.indexOf("combobox") >= 0) {
+                        $(this).combobox("readonly");
+                    }
+                    if (thisClass.indexOf("combogrid") >= 0) {
+                        $(this).combogrid("readonly");
+                    }
+                    if (thisClass.indexOf("easyui-datebox") >= 0) {
+                        $(this).datebox("readonly");
+                    }
+                    if (thisClass.indexOf("easyui-numberbox") >= 0) {
+                        $(this).attr("readonly", "readonly");
+                    }
+                    if (thisClass.indexOf("easyui-validatebox") >= 0) {
+                        $(this).attr("readonly", "readonly");
+                    }
+                }
+            });
+            $("#order_form input[type='checkbox']").not(":checked").attr("disabled", "disabled");
+            $("#order_form input[type='checkbox']:checked").click(function () { event.preventDefault(); });
+            $("#order_form textarea").attr("readonly", "readonly");
+            $("#order_form input[type='radio']").attr("disabled", "disabled");
+            if ("@stepName" == "计划审批") {
+                $("#order_ids").combobox("readonly", false);
+            }
+        }
+        });
         function okClick() {
             $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("confirm_pass")?', function (r) {
+            if (r) {
+                $.messager.progress();
+                $('#order_form').form('submit', {
+                    url: '@Url.Content("~/Audit/AuditorSaveBLBill")',
+                    onSubmit: function (param) {
+                        param.step = "@bl.step_version";
+                        param.order_names = $("#order_ids").combobox("getText");
+                        if ("@stepName".indexOf("订料") >= 0) {
+                            param.Sale_BL_details = JSON.stringify($("#dg_detail").datagrid("getRows"));
+                        }
+                    },
+                    success: function (data) {
+                        var result = eval('(' + data + ')');
+                        if (result.suc) {
+                            $('#okFlag').val('true');
+                            beginAudit();
+                        } else {
+                            $.messager.progress("close");
+                            $.messager.show({
+                                title: '@Html.Lang("tip")',
+                                msg: "@Html.Lang("failure_save"):" + result.msg
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+    function noClick() {
+        $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("confirm_reject")?', function (r) {
+            if (r) {
+                $('#okFlag').val('false');
+                beginAudit();
+            }
+        });
+    }
+
+    function beginAudit() {
+        $("#audit_fm").form("submit", {
+            url: "@Url.Content("~/Audit/HandleAgencyAudit")",
+            success: function (data) {
+                $.messager.progress('close');
+                var result = eval("(" + data + ")");
+                $.messager.show({
+                    title: '@Html.Lang("tip")',
+                    msg: result.msg + ",正在跳转..."
+                });
+                setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';", 1500);
+                //getAuditResult();
+            }
+        });
+    }
+
+    function block() {
+        var reason = $("#agency_comment").val();
+        if ($.trim(reason) == "") {
+            $.messager.show({
+                title: '@Html.Lang("tip")',
+                msg: "挂起操作必须写明原因，提交失败"
+            });
+        } else {
+            $.messager.confirm('@Html.Lang("confirm")', '确定要将订单挂起吗?', function (r) {
                 if (r) {
                     $.messager.progress();
-                    $('#order_form').form('submit', {
-                        url: '@Url.Content("~/Audit/AuditorSaveBLBill")',
-                        onSubmit: function (param) {
-                            param.step = "@bl.step_version";
-                            param.Sale_BL_details = JSON.stringify($("#dg_detail").datagrid("getRows"));
-                        },
+                    $("#audit_fm").form("submit", {
+                        url: "@Url.Content("~/Audit/BlockOrder")",
                         success: function (data) {
-                            var result = eval('(' + data + ')');
-                            if (result.suc) {
-                                $('#okFlag').val('true');
-                                beginAudit();
-                            } else {
-                                $.messager.progress("close");
+                            $.messager.progress('close');
+                            var result = eval("(" + data + ")");
+                            if (result.success) {
                                 $.messager.show({
                                     title: '@Html.Lang("tip")',
-                                    msg: "@Html.Lang("failure_save"):" + result.msg
+                                    msg: result.msg + ",正在跳转..."
                                 });
+                                setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';", 1500);
+                            } else {
+                                $.messager.show({
+                                    title: '@Html.Lang("tip")',
+                                    msg: result.msg
+                                });
+                                setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';", 3000);
                             }
                         }
                     });
                 }
             });
         }
-        function noClick() {
-            $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("confirm_reject")?', function (r) {
-                if (r) {
-                    $('#okFlag').val('false');
-                    beginAudit();
-                }
-            });
-        }
-
-        function beginAudit() {
-            $("#audit_fm").form("submit", {
-                url: "@Url.Content("~/Audit/HandleAgencyAudit")",
-                success: function (data) {
-                    $.messager.progress('close');
-                    var result = eval("(" + data + ")");
-                    $.messager.show({
-                        title: '@Html.Lang("tip")',
-                        msg: result.msg + ",正在跳转..."
-                    });
-                    setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';", 1500);
-                    //getAuditResult();
-                }
-            });
-        }
-
-        function block() {
-            var reason = $("#agency_comment").val();
-            if ($.trim(reason) == "") {
-                $.messager.show({
-                    title: '@Html.Lang("tip")',
-                    msg: "挂起操作必须写明原因，提交失败"
-                });
-            } else {
-                $.messager.confirm('@Html.Lang("confirm")', '确定要将订单挂起吗?', function (r) {
-                    if (r) {
-                        $.messager.progress();
-                        $("#audit_fm").form("submit", {
-                            url: "@Url.Content("~/Audit/BlockOrder")",
-                            success: function (data) {
-                                $.messager.progress('close');
-                                var result = eval("(" + data + ")");
-                                if (result.success) {
-                                    $.messager.show({
-                                        title: '@Html.Lang("tip")',
-                                        msg: result.msg + ",正在跳转..."
-                                    });
-                                    setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';", 1500);
-                                } else {
-                                    $.messager.show({
-                                        title: '@Html.Lang("tip")',
-                                        msg: result.msg
-                                    });
-                                    setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';", 3000);
-                                }
-                            }
-                        });
-                    }
-                });
-            }
-        }
+    }
     </script>
 }
 
@@ -530,7 +604,7 @@ else {
                                 备料日期:
                             </td>
                             <td>
-                                <input class="easyui-datebox" name="bl_date" style="width: 140px" required="true" editable="false" value="@(((DateTime)bl.bl_date).ToString("yyyy-MM-dd"))" />
+                                <input class="easyui-datebox" name="bl_date" id="bl_date" style="width: 140px" required="true" editable="false" value="@(((DateTime)bl.bl_date).ToString("yyyy-MM-dd"))" />
                             </td>
                             <td>
                                 系统流水号:
@@ -579,7 +653,7 @@ else {
                                 协议号:
                             </td>
                             <td>
-                                <input type="text" name="bl_contract_no" id="bl_contract_no" style="width:135px" value="@bl.bl_contract_no" />
+                                <input class="easyui-validatebox" name="bl_contract_no" id="bl_contract_no" style="width:135px" value="@bl.bl_contract_no" />
                             </td>
                         </tr>
                         <tr>
@@ -708,6 +782,14 @@ else {
                                 <input class="easyui-validatebox" name="create_user" id="create_user" readonly="readonly" style="width:135px" value="@bl.User.real_name" />
                             </td>
                         </tr>
+                        @if (bl.step_version > 0) { 
+                        <tr>
+                            <td>订料员:</td>
+                            <td colspan="5">
+                                <input class="easyui-combobox" id="order_ids" name="order_ids" style="width:140px" data-options="textField:'auditorName',valueField:'auditorId',panelHeight:'auto', required:true,editable:false,multiple:true" />
+                            </td>
+                        </tr>
+                        }
                         <tr>
                             @*<td>
                                 备料项目:
@@ -732,7 +814,7 @@ else {
                                     </div>
                                     <div>
                                         <input type="checkbox" name="bl_project" value="其它" /><span class="ck_label"> 其它</span> &nbsp;
-                                        <input type="text" style="width:200px" name="bl_project_other" value="@bl.bl_project_other" />
+                                        <input class="easyui-validatebox" style="width:200px" name="bl_project_other" value="@bl.bl_project_other" />
                                     </div>
                                 </fieldset>
                             </td>
@@ -744,7 +826,7 @@ else {
                             </td>
                         </tr>
                     </table>
-                    @if (stepName.Contains("订料员")) {
+                    @if (stepName.Contains("订料")) {
                         <br />
                         <div id="detail_div" class="easyui-panel" title="备料清单明细" style="+position: relative; width: 815px; height: 300px">
                             <table id="dg_detail">
@@ -757,9 +839,12 @@ else {
                                         <td>@det.unitname</td>
                                         <td>@(det.fqty == null ? 0 : Math.Round((decimal)det.fqty, 4))</td>
                                         <td>@(det.total_qty == null ? 0 : Math.Round((decimal)det.total_qty, 4))</td>
+                                        <td>@(det.order_qty == null ? 0 : Math.Round((decimal)det.order_qty, 4))</td>
                                         <td>@(det.highest_price == null ? 0 : Math.Round((decimal)det.highest_price, 4))</td>
                                         <td>@det.comment</td>
                                         <td>@det.source</td>
+                                        <td>@det.order_name</td>
+                                        <td>@det.order_id</td>
                                     </tr>
                                 }
                             </table>
@@ -790,11 +875,11 @@ else {
                     <div style="color:red">操作说明：</div>
                     <div>
                         <1>
-                            . 运作中心审核人只可修改保存【事业部】这个字段，此事业部决定后续接单、成控和计划经理由谁审批。<br />
+                            . 计划员能且仅能选择【订料员】，订料员可以选择多个，选择的订料员作为下一审批步骤进行会签。<br />
                             <2>
-                                . 计划经理只可修改保存【订单数量】和【备料清单明细】，如果有修改，审批OK后会流转给下单营业员确认。<br />
+                                . 订料员必须录入【备料清单明细】，如果有多个订料员会签，每个订料员只能录入自己的备料明细，不能修改或删除其它订料员录入的备料明细。<br />
                                 <3>
-                                    .【备料清单】可取自BOM，也可以自己手动录入。<br />
+                                    .营业员没有权限查看备料明细的【物料型号】，会以*号代替。<br />
                                     <4>
                                         .【备料编号】是根据市场部提供的规则，并根据营业所选择的【市场部】字段在流程正常结束后系统生成的。<br />
                     </div>
