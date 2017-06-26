@@ -1273,7 +1273,7 @@ namespace Sale_Order_Semi.Controllers
             int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             User user = db.User.Single(u => u.id == userId);
             string sys_no = utl.getSystemNo("SB");
-            SampleBill sb = new SampleBill();            
+            SampleBill sb = new SampleBill();
             sb.sys_no = sys_no;
             var dep = db.vwItems.Where(v => v.what == "agency" && v.fname == user.Department1.name);
             if (dep.Count() > 0)
