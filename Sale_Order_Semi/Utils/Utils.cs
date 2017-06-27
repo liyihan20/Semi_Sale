@@ -1978,7 +1978,12 @@ namespace Sale_Order_Semi.Utils
 
             string details = col.Get("Sale_BL_details");
             if (!string.IsNullOrEmpty(details)) {
-                bl.Sale_BL_details.AddRange(JsonConvert.DeserializeObject<List<Sale_BL_details>>(details)); //将表体反序列化
+                List<Sale_BL_details> detailList = JsonConvert.DeserializeObject<List<Sale_BL_details>>(details); //将表体反序列化
+                int entryNo = 1;
+                foreach (var detail in detailList) {
+                    detail.entry_no = entryNo++;
+                }
+                bl.Sale_BL_details.AddRange(detailList); 
             }
 
             int? salerId; //营业ID，即下单者ID
@@ -2012,9 +2017,6 @@ namespace Sale_Order_Semi.Utils
                 var existedBills = db.Sale_BL.Where(s => s.sys_no == bl.sys_no);
                 if (existedBills.Count() > 0) {
                     var existed = existedBills.First();
-                    //if (ModelToString(bl) == ModelToString(existed)) {
-                    //    return "";//表明保存的内容和之前的是一样的，不需要再保存一次
-                    //}
 
                     //备份
                     BackupData bd = new BackupData();

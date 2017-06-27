@@ -1397,7 +1397,7 @@ namespace Sale_Order_Semi.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Sale_process_authority", Storage="_ProcessAuthority", ThisKey="id", OtherKey="user_id")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_ProcessAuthority", Storage="_ProcessAuthority", ThisKey="id", OtherKey="user_id")]
 		public EntitySet<ProcessAuthority> ProcessAuthority
 		{
 			get
@@ -26755,6 +26755,8 @@ namespace Sale_Order_Semi.Models
 		
 		private string _order_name;
 		
+		private System.Nullable<int> _entry_no;
+		
 		private EntityRef<Sale_BL> _Sale_BL;
 		
     #region 可扩展性方法定义
@@ -26793,6 +26795,8 @@ namespace Sale_Order_Semi.Models
     partial void Onorder_idChanged();
     partial void Onorder_nameChanging(string value);
     partial void Onorder_nameChanged();
+    partial void Onentry_noChanging(System.Nullable<int> value);
+    partial void Onentry_noChanged();
     #endregion
 		
 		public Sale_BL_details()
@@ -27125,6 +27129,26 @@ namespace Sale_Order_Semi.Models
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_entry_no", DbType="int")]
+		public System.Nullable<int> entry_no
+		{
+			get
+			{
+				return this._entry_no;
+			}
+			set
+			{
+				if ((this._entry_no != value))
+				{
+					this.Onentry_noChanging(value);
+					this.SendPropertyChanging();
+					this._entry_no = value;
+					this.SendPropertyChanged("entry_no");
+					this.Onentry_noChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Sale_BL_Sale_BL_details", Storage="_Sale_BL", ThisKey="bl_id", OtherKey="id", IsForeignKey=true)]
 		public Sale_BL Sale_BL
 		{
@@ -27300,7 +27324,7 @@ namespace Sale_Order_Semi.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Sale_process_authority", Storage="_User", ThisKey="user_id", OtherKey="id", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_ProcessAuthority", Storage="_User", ThisKey="user_id", OtherKey="id", IsForeignKey=true)]
 		public User User
 		{
 			get

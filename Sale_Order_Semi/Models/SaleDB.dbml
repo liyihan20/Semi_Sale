@@ -29,7 +29,7 @@
       <Association Name="User_SampleBill" Member="SampleBill" ThisKey="id" OtherKey="original_user_id" Type="SampleBill" />
       <Association Name="User_Sale_BL_stock" Member="Sale_BL_stock" ThisKey="id" OtherKey="clerk_id" Type="Sale_BL_stock" />
       <Association Name="User_Sale_BL" Member="Sale_BL" ThisKey="id" OtherKey="original_user_id" Type="Sale_BL" />
-      <Association Name="User_Sale_process_authority" Member="ProcessAuthority" ThisKey="id" OtherKey="user_id" Type="ProcessAuthority" />
+      <Association Name="User_ProcessAuthority" Member="ProcessAuthority" ThisKey="id" OtherKey="user_id" Type="ProcessAuthority" />
       <Association Name="Department_User" Member="Department1" ThisKey="department" OtherKey="id" Type="Department" IsForeignKey="true" />
     </Type>
   </Table>
@@ -1374,6 +1374,7 @@
       <Column Name="k3_qty" Type="System.Decimal" DbType="Decimal(28,10)" CanBeNull="true" />
       <Column Name="order_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="order_name" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="entry_no" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Sale_BL_Sale_BL_details" Member="Sale_BL" ThisKey="bl_id" OtherKey="id" Type="Sale_BL" IsForeignKey="true" />
     </Type>
   </Table>
@@ -1383,7 +1384,7 @@
       <Column Name="user_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="bill_type" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
       <Column Name="dept_no" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Association Name="User_Sale_process_authority" Member="User" ThisKey="user_id" OtherKey="id" Type="User" IsForeignKey="true" />
+      <Association Name="User_ProcessAuthority" Member="User" ThisKey="user_id" OtherKey="id" Type="User" IsForeignKey="true" />
     </Type>
   </Table>
   <Function Name="dbo.getGroupBelongToUnit" Method="getGroupBelongToUnit">
