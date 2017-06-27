@@ -807,8 +807,14 @@ else {
                                         }
                                     </div>
                                     <div>
-                                        @{string[] p2 = new string[] { "连接器", "菲林", "大片玻璃基材", "基板", "POL", "芯片", "防反射膜", "前盖", "光学膜已切" };}
+                                        @{string[] p2 = new string[] { "连接器", "菲林", "大片玻璃基材", "基板", "芯片", "防反射膜", "前盖", "光学膜已切","ACF" };}
                                         @foreach (var p in p2) {
+                                            <input type="checkbox" name="bl_project" value="@p" /><span class="ck_label">@p</span><span>&nbsp;</span>
+                                        }
+                                    </div>
+                                    <div>
+                                        @{string[] p3 = new string[] { "PCB", "LC", "TJ", "JJ", "元件", "电感", "磁珠", "晶振三极管" };}
+                                        @foreach (var p in p3) {
                                             <input type="checkbox" name="bl_project" value="@p" /><span class="ck_label">@p</span><span>&nbsp;</span>
                                         }
                                     </div>
