@@ -261,7 +261,7 @@ namespace Sale_Order_Semi.Controllers
             }
             var ap = aps.First();
             var ads = ap.ApplyDetails.Where(a => a.step == step && a.user_id == userId);
-                        
+             
             //验证是否有审核权限
             if (ads.Count()<1)
             {
@@ -841,33 +841,35 @@ namespace Sale_Order_Semi.Controllers
             bool hasAudited = false;
             bool? pass = false;
             string comment = "";
-            //此步骤已审核的：1.步骤内必须至少有一人审核结果不为空；2. 此人是自己或者此人不是会签里的人
-            if (details.Where(d => d.user_id == userId && d.pass != null).Count() > 0)
-            {
+
+            if (details.Where(d => d.pass == false).Count() > 0) {
+                //被NG的
                 hasAudited = true;
-                pass = details.Where(d => d.user_id == userId && d.pass != null).First().pass;
-                comment = details.Where(d => d.user_id == userId && d.pass != null).First().comment;
+                pass = false;
+                comment = details.Where(d => d.user_id == userId).First().comment;
             }
-            else if (details.First().countersign == false || details.First().countersign == null)
-            {
-                //不是会签
-                var detailsTmp = details.Where(d => d.pass != null);
-                if (detailsTmp.Count() > 0)
-                {
+            else if (details.Where(d => d.pass != null).Count() == 0) {
+                //全部未被审核的
+                hasAudited = false;
+            }
+            else {
+                //部分被审核，且没有NG的，分会签和不会签两种情况
+                if (details.First().countersign == false || details.First().countersign == null) {
+                    //不是会签
                     hasAudited = true;
-                    pass = detailsTmp.First().pass;
-                    comment = detailsTmp.First().comment;
+                    pass = true;
+                    comment = details.Where(d => d.user_id == userId).First().comment;
                 }
-            }
-            else
-            {
-                //会签
-                var detailsNG = details.Where(d => d.pass == false);
-                if (detailsNG.Count() > 0)
-                {
-                    hasAudited = true;
-                    pass = false;
-                    comment = "";
+                else {
+                    //是会签
+                    if (details.Where(d => d.user_id == userId && d.pass == null).Count() > 0) {
+                        hasAudited = false;
+                    }
+                    else {
+                        hasAudited = true;
+                        pass = true;
+                        comment = details.Where(d => d.user_id == userId).First().comment;
+                    }
                 }
             }
 
@@ -1587,9 +1589,18 @@ namespace Sale_Order_Semi.Controllers
                 string blDetails = fc.Get("Sale_BL_details");
                 var details = JsonConvert.DeserializeObject<List<Sale_BL_details>>(blDetails);
                 if (details.Count() == 0) {
-                    return Json(new { suc = false, msg = "必须录入备料清单明细" }, "text/html");
+                    return Json(new { suc = true }, "text/html");
+                    //return Json(new { suc = false, msg = "必须录入备料清单明细" }, "text/html");
                 }
                 if (!utl.ModelsToString<Sale_BL_details>(bl.Sale_BL_details.ToList()).Equals(utl.ModelsToString<Sale_BL_details>(details))) {
+                    int entryNo = 1;
+                    foreach (var detail in details) {
+                        if (detail.order_qty == null || detail.order_qty == 0) {
+                            return Json(new { suc = false, msg = "第" + entryNo + "行的订料数量必须填写且不能为0" }, "text/html");
+                        }
+                        detail.entry_no = entryNo++;
+                    }
+
                     //先备份数据
                     BackupData bd = new BackupData();
                     bd.sys_no = sysNo;
@@ -1606,6 +1617,7 @@ namespace Sale_Order_Semi.Controllers
             }
 
             try {
+                db.Sale_BL_details.DeleteAllOnSubmit(db.Sale_BL_details.Where(d => d.bl_id == null));
                 db.SubmitChanges();
             }
             catch (Exception ex) {

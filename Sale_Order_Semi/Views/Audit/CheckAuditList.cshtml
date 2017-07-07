@@ -452,7 +452,7 @@
         <div class="menu-sep"></div>
         <div onclick="ExportAuditorExcel('开改模', 'exportAuditorCMExcel')" data-options="iconCls:'icon-xls'">@Html.Lang("cm_excel")</div>
         <div class="menu-sep"></div>
-        <div onclick="$('#dlg_BLExcel').dialog('open');" data-options="iconCls:'icon-xls'">备料单Excel</div>
+        <div onclick="ExportAuditorExcel('备料单', 'exportAuditorBLExcel')" data-options="iconCls:'icon-xls'">备料单Excel</div>
     </div>
 </div>
 
@@ -460,4 +460,4 @@
 
     @Html.Partial("_DownloadAuditorExcelPartial")
 
-    @Html.Partial("_DownloadAuditorBLExcelPartial")
+    @*@Html.Partial("_DownloadAuditorBLExcelPartial")*@

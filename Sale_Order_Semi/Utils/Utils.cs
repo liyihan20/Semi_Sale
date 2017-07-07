@@ -1981,6 +1981,9 @@ namespace Sale_Order_Semi.Utils
                 List<Sale_BL_details> detailList = JsonConvert.DeserializeObject<List<Sale_BL_details>>(details); //将表体反序列化
                 int entryNo = 1;
                 foreach (var detail in detailList) {
+                    if (detail.order_qty == null || detail.order_qty == 0) {
+                        return "第"+entryNo+"行的订料数量必须填写且不能为0";
+                    }
                     detail.entry_no = entryNo++;
                 }
                 bl.Sale_BL_details.AddRange(detailList); 
@@ -2006,6 +2009,10 @@ namespace Sale_Order_Semi.Utils
             }
             if (bl.bl_project.Contains("其它") && string.IsNullOrEmpty(bl.bl_project_other)) {
                 return "备料项目选择了其它，请在相邻文本框中说明其它的内容";
+            }
+
+            if (string.IsNullOrEmpty(bl.clerk_no)) {
+                return "营业员必须在列表中输入姓名或厂牌之后按回车键选择";
             }
 
             try {

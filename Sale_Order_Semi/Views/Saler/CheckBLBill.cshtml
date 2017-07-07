@@ -19,9 +19,18 @@
             fitColumns: true,
             columns: [[
                 { field: 'levels', title: '层级', width: 60, align: 'center', hidden: true },
-                { field: 'fnumber', title: '物料编码', width: 150, align: 'center' },
                 {
-                    field: 'fmodel', title: '物料型号', width: 300, formatter: function (value, row, index) {
+                    field: 'fnumber', title: '物料编码', width: 150, align: 'center', formatter: function (value, row, index) {
+                        //营业员不能查看物料编码
+                        if ("@ViewData["hiddenModel"]" == "true") {
+                            return "****************";
+                        } else {
+                            return value;
+                        }
+                    }
+                },
+                {
+                    field: 'fmodel', title: '物料型号', width: 260, formatter: function (value, row, index) {
                         //营业员不能查看物料型号
                         if ("@ViewData["hiddenModel"]" == "true") {
                             return "****************";
@@ -32,10 +41,10 @@
                 },
                 { field: 'fname', title: '物料名称', width: 100, align: 'center' },
                 { field: 'unitname', title: '单位', width: 60, align: 'center' },
-                { field: 'fqty', title: '单位用量', width: 100, align: 'center' },
-                { field: 'total_qty', title: '标准数量', width: 60, align: 'center' },
-                { field: 'order_qty', title: '订料数量', width: 60, align: 'center' },
-                { field: 'k3_qty', title: '关联K3数量', width: 60, align: 'center' },
+                { field: 'fqty', title: '单位用量', width: 80, align: 'center' },
+                { field: 'total_qty', title: '标准数量', width: 80, align: 'center' },
+                { field: 'order_qty', title: '订料数量', width: 80, align: 'center' },
+                { field: 'k3_qty', title: '关联K3数量', width: 80, align: 'center' },
                 { field: 'highest_price', title: '最高采购价', width: 80, align: 'center' },
                 { field: 'comment', title: '备注', width: 200 },
                 { field: 'source', title: '来源', width: 80, align: 'center' },
@@ -232,7 +241,7 @@
                     <tr>
                         <td>订料员:</td>
                         <td colspan="5">
-                            <input type="text" style="width:140px" value="@bl.order_names" />
+                            <input type="text" style="width:381px" value="@bl.order_names" />
                         </td>
                     </tr>
                     <tr>
@@ -290,11 +299,11 @@
                                 <td>@det.fmodel</td>
                                 <td>@det.fname</td>
                                 <td>@det.unitname</td>
-                                <td>@(det.fqty == null ? 0 : Math.Round((decimal)det.fqty, 4))</td>
-                                <td>@(det.total_qty == null ? 0 : Math.Round((decimal)det.total_qty, 4))</td>
-                                <td>@(det.order_qty == null ? 0 : Math.Round((decimal)det.order_qty, 4))</td>
-                                <td>@(det.k3_qty == null ? 0 : Math.Round((decimal)det.k3_qty, 4))</td>
-                                <td>@(det.highest_price == null ? 0 : Math.Round((decimal)det.highest_price, 4))</td>
+                                <td>@(det.fqty == null ? "0" : String.Format("{0:0.####}",Math.Round((decimal)det.fqty, 4)))</td>
+                                <td>@(det.total_qty == null ? "0" : String.Format("{0:0.####}",Math.Round((decimal)det.total_qty, 4)))</td>
+                                <td>@(det.order_qty == null ? "0" : String.Format("{0:0.####}",Math.Round((decimal)det.order_qty, 4)))</td>
+                                <td>@(det.k3_qty == null ? "0" : String.Format("{0:0.####}",Math.Round((decimal)det.k3_qty, 4)))</td>
+                                <td>@(det.highest_price == null ? "0" : String.Format("{0:0.####}",Math.Round((decimal)det.highest_price, 4)))</td>
                                 <td>@det.comment</td>
                                 <td>@det.source</td>
                                 <td>@det.order_name</td>

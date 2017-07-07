@@ -840,6 +840,13 @@ namespace Sale_Order_Semi.Models
 		{
 			return ((object)(this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), bus_dep, mat_number, is_main, is_buy, model).ReturnValue));
 		}
+		
+		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.getAuditorBLExcels")]
+		public ISingleResult<getAuditorBLExcelsResult> getAuditorBLExcels([global::System.Data.Linq.Mapping.ParameterAttribute(DbType="VarChar(2000)")] string ids)
+		{
+			IExecuteResult result = this.ExecuteMethodCall(this, ((MethodInfo)(MethodInfo.GetCurrentMethod())), ids);
+			return ((ISingleResult<getAuditorBLExcelsResult>)(result.ReturnValue));
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Sale_user")]
@@ -26597,7 +26604,7 @@ namespace Sale_Order_Semi.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_order_names", DbType="VarChar(50)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_order_names", DbType="VarChar(200)")]
 		public string order_names
 		{
 			get
@@ -29972,6 +29979,428 @@ namespace Sale_Order_Semi.Models
 				if ((this._clerk_name != value))
 				{
 					this._clerk_name = value;
+				}
+			}
+		}
+	}
+	
+	public partial class getAuditorBLExcelsResult
+	{
+		
+		private string _sys_no;
+		
+		private string _bl_date;
+		
+		private string _bill_no;
+		
+		private string _product_model;
+		
+		private System.Nullable<int> _qty;
+		
+		private string _customer_name;
+		
+		private string _plan_order_date;
+		
+		private string _real_name;
+		
+		private System.Nullable<decimal> _deal_price;
+		
+		private string _bus_dep;
+		
+		private string _product_use;
+		
+		private string _agency_name;
+		
+		private string _comment;
+		
+		private string _fmodel;
+		
+		private string _fname;
+		
+		private string _unitname;
+		
+		private System.Nullable<decimal> _fqty;
+		
+		private System.Nullable<decimal> _total_qty;
+		
+		private System.Nullable<decimal> _order_qty;
+		
+		private System.Nullable<decimal> _k3_qty;
+		
+		private string _source;
+		
+		private string _order_name;
+		
+		private System.Nullable<int> _audit_result;
+		
+		public getAuditorBLExcelsResult()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_sys_no", DbType="VarChar(50)")]
+		public string sys_no
+		{
+			get
+			{
+				return this._sys_no;
+			}
+			set
+			{
+				if ((this._sys_no != value))
+				{
+					this._sys_no = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_bl_date", DbType="VarChar(50)")]
+		public string bl_date
+		{
+			get
+			{
+				return this._bl_date;
+			}
+			set
+			{
+				if ((this._bl_date != value))
+				{
+					this._bl_date = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_bill_no", DbType="VarChar(50)")]
+		public string bill_no
+		{
+			get
+			{
+				return this._bill_no;
+			}
+			set
+			{
+				if ((this._bill_no != value))
+				{
+					this._bill_no = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_product_model", DbType="VarChar(200)")]
+		public string product_model
+		{
+			get
+			{
+				return this._product_model;
+			}
+			set
+			{
+				if ((this._product_model != value))
+				{
+					this._product_model = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_qty", DbType="Int")]
+		public System.Nullable<int> qty
+		{
+			get
+			{
+				return this._qty;
+			}
+			set
+			{
+				if ((this._qty != value))
+				{
+					this._qty = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_customer_name", DbType="VarChar(200)")]
+		public string customer_name
+		{
+			get
+			{
+				return this._customer_name;
+			}
+			set
+			{
+				if ((this._customer_name != value))
+				{
+					this._customer_name = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_plan_order_date", DbType="VarChar(50)")]
+		public string plan_order_date
+		{
+			get
+			{
+				return this._plan_order_date;
+			}
+			set
+			{
+				if ((this._plan_order_date != value))
+				{
+					this._plan_order_date = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_real_name", DbType="VarChar(40)")]
+		public string real_name
+		{
+			get
+			{
+				return this._real_name;
+			}
+			set
+			{
+				if ((this._real_name != value))
+				{
+					this._real_name = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_deal_price", DbType="Decimal(12,2)")]
+		public System.Nullable<decimal> deal_price
+		{
+			get
+			{
+				return this._deal_price;
+			}
+			set
+			{
+				if ((this._deal_price != value))
+				{
+					this._deal_price = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_bus_dep", DbType="VarChar(50)")]
+		public string bus_dep
+		{
+			get
+			{
+				return this._bus_dep;
+			}
+			set
+			{
+				if ((this._bus_dep != value))
+				{
+					this._bus_dep = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_product_use", DbType="VarChar(500)")]
+		public string product_use
+		{
+			get
+			{
+				return this._product_use;
+			}
+			set
+			{
+				if ((this._product_use != value))
+				{
+					this._product_use = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_agency_name", DbType="VarChar(100)")]
+		public string agency_name
+		{
+			get
+			{
+				return this._agency_name;
+			}
+			set
+			{
+				if ((this._agency_name != value))
+				{
+					this._agency_name = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_comment", DbType="VarChar(1000)")]
+		public string comment
+		{
+			get
+			{
+				return this._comment;
+			}
+			set
+			{
+				if ((this._comment != value))
+				{
+					this._comment = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_fmodel", DbType="VarChar(200)")]
+		public string fmodel
+		{
+			get
+			{
+				return this._fmodel;
+			}
+			set
+			{
+				if ((this._fmodel != value))
+				{
+					this._fmodel = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_fname", DbType="VarChar(200)")]
+		public string fname
+		{
+			get
+			{
+				return this._fname;
+			}
+			set
+			{
+				if ((this._fname != value))
+				{
+					this._fname = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_unitname", DbType="VarChar(50)")]
+		public string unitname
+		{
+			get
+			{
+				return this._unitname;
+			}
+			set
+			{
+				if ((this._unitname != value))
+				{
+					this._unitname = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_fqty", DbType="Decimal(28,10)")]
+		public System.Nullable<decimal> fqty
+		{
+			get
+			{
+				return this._fqty;
+			}
+			set
+			{
+				if ((this._fqty != value))
+				{
+					this._fqty = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_total_qty", DbType="Decimal(28,10)")]
+		public System.Nullable<decimal> total_qty
+		{
+			get
+			{
+				return this._total_qty;
+			}
+			set
+			{
+				if ((this._total_qty != value))
+				{
+					this._total_qty = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_order_qty", DbType="Decimal(28,10)")]
+		public System.Nullable<decimal> order_qty
+		{
+			get
+			{
+				return this._order_qty;
+			}
+			set
+			{
+				if ((this._order_qty != value))
+				{
+					this._order_qty = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_k3_qty", DbType="Decimal(28,10)")]
+		public System.Nullable<decimal> k3_qty
+		{
+			get
+			{
+				return this._k3_qty;
+			}
+			set
+			{
+				if ((this._k3_qty != value))
+				{
+					this._k3_qty = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_source", DbType="VarChar(50)")]
+		public string source
+		{
+			get
+			{
+				return this._source;
+			}
+			set
+			{
+				if ((this._source != value))
+				{
+					this._source = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_order_name", DbType="VarChar(30)")]
+		public string order_name
+		{
+			get
+			{
+				return this._order_name;
+			}
+			set
+			{
+				if ((this._order_name != value))
+				{
+					this._order_name = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_audit_result", DbType="Int")]
+		public System.Nullable<int> audit_result
+		{
+			get
+			{
+				return this._audit_result;
+			}
+			set
+			{
+				if ((this._audit_result != value))
+				{
+					this._audit_result = value;
 				}
 			}
 		}

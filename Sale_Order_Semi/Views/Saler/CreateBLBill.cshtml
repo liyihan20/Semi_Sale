@@ -102,6 +102,7 @@
 
         $("#dg_detail").datagrid({
             width: 1200,
+            height:250,
             loadMsg: "加载中...",
             rownumbers: true,
             singleSelect: true,
@@ -114,8 +115,8 @@
                 { field: 'unitname', title: '单位', width: 60, align: 'center' },
                 { field: 'fqty', title: '单位用量', width: 100, align: 'center' },
                 { field: 'total_qty', title: '标准数量', width: 60, align: 'center' },
-                { field: 'order_qty', title: '订料数量', width: 60, align: 'center', editor: { type: 'numberbox', options: { precision: 4 } } },
-                { field: 'highest_price', title: '最高采购价', width: 80, align: 'center', editor: { type: 'numberbox', options: { precision: 4 } } },
+                { field: 'order_qty', title: '订料数量', width: 80, align: 'center', editor: { type: 'numberbox', options: { precision: 4 } } },
+                { field: 'highest_price', title: '最高采购价', width: 60, align: 'center', editor: { type: 'numberbox', options: { precision: 4 } } },
                 { field: 'comment', title: '备注', width: 200, editor: { type: 'validatebox', options: { validType: ['length[0,200]'] } } },
                 { field: 'source', title: '来源', width: 80, align: 'center' },
                 { field: 'order_name', title: '订料员', width: 80, align: 'center' },
@@ -146,14 +147,14 @@
                             return;
                         }
                         $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("are_you_sure")?', function (r) {
-                                if (r) {
-                                    var index = $('#dg_detail').datagrid('getRowIndex', row);
-                                    $('#dg_detail').datagrid('deleteRow', index);
-                                }
-                            });
-                        }
+                            if (r) {
+                                var index = $('#dg_detail').datagrid('getRowIndex', row);
+                                $('#dg_detail').datagrid('deleteRow', index);
+                            }
+                        });
                     }
-                }],
+                }
+            }],
             onClickRow: onClickRow
         });
 
@@ -195,6 +196,7 @@
         $("#dg_bom").datagrid({
             title: "BOM清单",
             width: 1000,
+            height:395,
             loadMsg: "加载中...",
             rownumbers: true,
             singleSelect: false,
@@ -202,9 +204,9 @@
             columns: [[
                 { checkbox: true },
                 { field: 'levels', title: '层级', width: 60, align: 'center' },
-                { field: 'fnumber', title: '物料编码', width: 150, align: 'center' },
                 { field: 'fmodel', title: '物料型号', width: 350, align: 'center' },
                 { field: 'fname', title: '物料名称', width: 150, align: 'center' },
+                { field: 'fnumber', title: '物料编码', width: 150, align: 'center' },
                 { field: 'unitname', title: '单位', width: 60, align: 'center' },
                 { field: 'fqty', title: '单位用量', width: 100, align: 'center' },
                 { field: 'code_s', title: '主替料', width: 60, align: 'center' },
@@ -309,13 +311,17 @@
 
         for (var i in dataS) {
             dataS[i].total_qty = qty * dataS[i].fqty;
+            dataS[i].order_qty = qty * dataS[i].fqty;
+            dataS[i].order_id = "@ViewData["order_id"]";
+            dataS[i].order_name = "@ViewData["order_name"]";
+            dataS[i].highest_price = $("#mat_highest_price").numberbox("getValue") == "" ? 0 : $("#mat_highest_price").numberbox("getValue"),
+            $("#dg_detail").datagrid("appendRow", dataS[i]);
         }
-        $("#dg_detail").datagrid("loadData", dataS);
         $("#win_bom").window('close');
     }
 
     function saveBomDetails() {
-        if (!$('#fm_detail').form('validate')) {
+        if ($("#mat_model").val() == "") {
             $.messager.show({
                 title: '@Html.Lang("tip")',
                 msg: "请先输入物料编码"
@@ -361,6 +367,27 @@
                     if (row.order_id == "@ViewData["order_id"]") {
                         $('#dg_detail').datagrid('beginEdit', index);
                         editIndex = index;
+
+                        var ed = $('#dg_detail').datagrid('getEditors', index);
+                        var rowCount = $('#dg_detail').datagrid('getRows').length;
+                        for (var i = 0; i < ed.length; i++) {
+                            var e = ed[i];
+                            if (e.field == "order_qty") {
+                                $(e.target).focus();
+                            }
+                            $(e.target).bind("keyup", function () {
+                                //下箭头，往下一行
+                                if (window.event.keyCode == 40) {
+                                    if (index + 1 < rowCount);
+                                    onClickRow(index + 1);
+                                }
+                                //上箭头，往上一行
+                                if (window.event.keyCode == 38) {
+                                    if (index > 0);
+                                    onClickRow(index - 1);
+                                }
+                            });
+                        }
                     }
                 }
             } else {
@@ -786,7 +813,7 @@ else {
                         <tr>
                             <td>订料员:</td>
                             <td colspan="5">
-                                <input class="easyui-combobox" id="order_ids" name="order_ids" style="width:140px" data-options="textField:'auditorName',valueField:'auditorId',panelHeight:'auto', required:true,editable:false,multiple:true" />
+                                <input class="easyui-combobox" id="order_ids" name="order_ids" style="width:380px" data-options="textField:'auditorName',valueField:'auditorId',panelHeight:'auto', required:true,editable:false,multiple:true" />
                             </td>
                         </tr>
                         }
@@ -924,6 +951,9 @@ else {
                 <td>
                     <input type="text" name="mat_model" id="mat_model" class="my_readonly" style="width:135px;" readonly="readonly" />
                 </td>
+            </tr>
+            <tr>
+                <td colspan="4"><span style="font-size:10px;color:red">请在物料编码框输入物料编码、物料型号或物料名称的一部分或全部，然后按回车键搜索，最后在列表中选择一项。</span></td>
             </tr>
             <tr>
                 <td>
