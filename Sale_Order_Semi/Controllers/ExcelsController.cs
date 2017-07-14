@@ -319,11 +319,11 @@ namespace Sale_Order_Semi.Controllers
 
             //列宽：
             ushort[] colWidth = new ushort[] { 12, 16, 32, 12, 24, 18, 16, 32, 32,
-                18,16,24,24,16,64,32,24,12,16,16,16,24,12 };
+                18,16,24,24,16,64,24,12,16,16,16,24,12 };
 
             //列名：
             string[] colName = new string[] { "备料日期", "备料编号", "产品型号", "数量", "客户名称", "计划下订单日期", "营业员","TFT型号","TP型号",
-            "成交价（不含税）","事业部","产品用途","对应项目组","办事处","摘要","物料型号","物料名称","单位","单位用量","数量","最高采购价","备注","来源"};
+            "成交价（不含税）","事业部","产品用途","对应项目组","办事处","摘要","物料名称","单位","单位用量","数量","最高采购价","备注","来源"};
 
             //設置excel文件名和sheet名
             XlsDocument xls = new XlsDocument();
@@ -379,7 +379,6 @@ namespace Sale_Order_Semi.Controllers
                 //cells.Add(rowIndex, ++colIndex, d.bl.bl_project);
                 cells.Add(rowIndex, ++colIndex, d.bl.comment);
 
-                cells.Add(rowIndex, ++colIndex, d.bd.fmodel);
                 cells.Add(rowIndex, ++colIndex, d.bd.fname);
                 cells.Add(rowIndex, ++colIndex, d.bd.unitname);
                 cells.Add(rowIndex, ++colIndex, d.bd.fqty);

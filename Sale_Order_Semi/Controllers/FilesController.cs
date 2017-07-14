@@ -383,15 +383,15 @@ namespace Sale_Order_Semi.Controllers
             int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             string crystalFile = "BL_A4_Report.rpt";
 
-            if ((from a in db.Apply
-                 from ad in a.ApplyDetails
-                 where a.sys_no == sysNo
-                 && ad.user_id == userId
-                 select ad).Count() < 1) {
-                utl.writeEventLog(model, "流水号不存在或没有权限查看", sysNo, Request, -100);
-                ViewBag.tip = "流水号不存在或没有权限查看";
-                return View("Tip");
-            }
+            //if ((from a in db.Apply
+            //     from ad in a.ApplyDetails
+            //     where a.sys_no == sysNo
+            //     && ad.user_id == userId
+            //     select ad).Count() < 1) {
+            //    utl.writeEventLog(model, "流水号不存在或没有权限查看", sysNo, Request, -100);
+            //    ViewBag.tip = "流水号不存在或没有权限查看";
+            //    return View("Tip");
+            //}
 
             utl.writeEventLog(model, "导出备料单报表", sysNo, Request, 0);
 
@@ -422,8 +422,8 @@ namespace Sale_Order_Semi.Controllers
                         if (ad.Where(a => a.step_name.Contains("计划经理") && a.pass == true).Count() > 0) {
                             planManager = ad.Where(a => a.step_name.Contains("计划经理") && a.pass == true).First().User.real_name;
                         }
-                        if (ad.Where(a => a.step_name.Contains("计划审核") && a.pass == true).Count() > 0) {
-                            planner = ad.Where(a => a.step_name.Contains("计划审核") && a.pass == true).First().User.real_name;
+                        if (ad.Where(a => a.step_name.Contains("计划审批") && a.pass == true).Count() > 0) {
+                            planner = ad.Where(a => a.step_name.Contains("计划审批") && a.pass == true).First().User.real_name;
                         }
                         if (ad.Where(a => a.step_name.Contains("订料") && a.pass == true).Count() > 0) {
                             order = String.Join(" ", ad.Where(a => a.step_name.Contains("订料") && a.pass == true).Select(a => a.User.real_name).ToArray());
