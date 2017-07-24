@@ -301,14 +301,17 @@ namespace Sale_Order_Semi.Controllers
         //获取退货事业部
         public JsonResult getReturnDeps()
         {
-            var deps = from d in db.Department
-                       where d.dep_type == "退货事业部"                          
+            var deps = (from d in db.Department
+                       join a in db.AuditorsRelation on d.dep_no equals a.relate_value
+                       where d.dep_type == "退货事业部"
+                       && a.step_name == "TH_事业部客服审核"
+                       && a.relate_type == "退货事业部"
                        orderby d.name
                        select new
                        {
                            id = d.dep_no,
                            name = d.name
-                       };
+                       }).Distinct().ToList();
             return Json(deps);
         }
         
@@ -348,12 +351,15 @@ namespace Sale_Order_Semi.Controllers
             }
             List<ResultModel> list = new List<ResultModel>();
             list.Add(new ResultModel() { value = "all", text = "所有" });
-            if (!string.IsNullOrEmpty(user.can_check_deps))
-            {
-                foreach (var proc in user.can_check_deps.Split(new char[] { ',', '，' }))
-                {
-                    if (orderTypeDepts.Contains(proc))
-                    {
+            string userCanCheckDeps = user.can_check_deps;
+            if (userCanCheckDeps.Equals("*")) {
+                foreach (string proc in orderTypeDepts) {
+                    list.Add(new ResultModel() { value = proc, text = proc });
+                }
+            }
+            else {
+                foreach (var proc in userCanCheckDeps.Split(new char[] { ',', '，' })) {
+                    if (orderTypeDepts.Contains(proc)) {
                         list.Add(new ResultModel() { value = proc, text = proc });
                     }
                 }
