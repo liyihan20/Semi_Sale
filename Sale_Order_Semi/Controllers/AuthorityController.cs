@@ -835,6 +835,16 @@ namespace Sale_Order_Semi.Controllers
                     res = res.Where(r => r.success == false);
                     break;
             }
+            if (billTypeArr.Contains("BL")) {
+                var BLDepNos = db.ProcessAuthority.Where(p => p.user_id == userId && p.bill_type == "BL").Select(p => p.dept_no);
+                if (!BLDepNos.Contains(null)) {
+                    res = from re in res
+                          join sb in db.Sale_BL on re.sys_no equals sb.sys_no
+                          join de in db.Department.Where(d => d.dep_type == "备料事业部") on sb.bus_dep equals de.name
+                          where re.order_type != "BL" || (re.order_type == "BL" && BLDepNos.Contains(de.dep_no))
+                          select re;
+                }
+            }
             List<backBills> list = new List<backBills>();
             foreach (var a in res.OrderByDescending(r => r.id).Take(200).ToList())
             {
