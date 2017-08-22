@@ -676,6 +676,17 @@ namespace Sale_Order_Semi.Controllers
             }
         }
 
+        //检查某订单某型号是否存在有未钩稽的出库记录
+        public JsonResult CheckStockBillsHasNoHook(string FOrderBillNo, string FProductNumber)
+        {
+            var bills = db.VWBlueStockBill.Where(v => v.FOrderBillNo == FOrderBillNo && v.FProductNumber == FProductNumber && v.FcanApplyQty > 0 && v.FHookStatus == 0).ToList();
+            if (bills.Count() > 0) {
+                return Json(new { suc = true, msg = "此订单此型号存在未钩稽的出货单，请优先选择未钩稽的出库单做红字退货。出库单号：【" + bills.First().FBillNo + "】" });
+            }
+            return Json(new { suc = false });
+
+        }
+
         /*
         //搜索需要导入红字的退货申请单
         public ActionResult RedBillsToK3()
