@@ -1387,6 +1387,12 @@
       <Association Name="User_ProcessAuthority" Member="User" ThisKey="user_id" OtherKey="id" Type="User" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="dbo.vw_modelUsage" Member="vw_modelUsage">
+    <Type Name="vw_modelUsage">
+      <Column Name="model" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="usage" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+    </Type>
+  </Table>
   <Function Name="dbo.getGroupBelongToUnit" Method="getGroupBelongToUnit">
     <Parameter Name="unit_id" Type="System.Int32" DbType="Int" />
     <ElementType Name="getGroupBelongToUnitResult">

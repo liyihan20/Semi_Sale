@@ -35,6 +35,9 @@ namespace Sale_Order_Semi.Controllers
                 {
                     filename = Path.GetFileName(FileData.FileName);//获得文件名    
                     string ext = Path.GetExtension(filename);//获取拓展名
+                    if (!".rar".Equals(ext)) {
+                        return Content("FILETYPE");
+                    }
                     finalname = num + ext;
                     saveFile(FileData, finalname);
                 }

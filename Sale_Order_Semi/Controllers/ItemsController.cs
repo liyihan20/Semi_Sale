@@ -614,5 +614,17 @@ namespace Sale_Order_Semi.Controllers
             return Json(result);
         }
 
+        //获取PIS系统的产品用途
+        public JsonResult GetPisProductUsage(string model)
+        {
+            var result = db.vw_modelUsage.Where(m => m.model == model).ToList();
+            if (result.Count() > 0) {
+                return Json(new { suc = true, usage = result.First().usage });
+            }
+            else {
+                return Json(new { suc = false });
+            }
+        }
+
     }
 }

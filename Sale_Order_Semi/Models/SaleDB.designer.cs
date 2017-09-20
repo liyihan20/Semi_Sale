@@ -654,6 +654,14 @@ namespace Sale_Order_Semi.Models
 			}
 		}
 		
+		public System.Data.Linq.Table<vw_modelUsage> vw_modelUsage
+		{
+			get
+			{
+				return this.GetTable<vw_modelUsage>();
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.FunctionAttribute(Name="dbo.getGroupBelongToUnit")]
 		public ISingleResult<getGroupBelongToUnitResult> getGroupBelongToUnit([global::System.Data.Linq.Mapping.ParameterAttribute(DbType="Int")] System.Nullable<int> unit_id)
 		{
@@ -27382,6 +27390,51 @@ namespace Sale_Order_Semi.Models
 			if ((this.PropertyChanged != null))
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.vw_modelUsage")]
+	public partial class vw_modelUsage
+	{
+		
+		private string _model;
+		
+		private string _usage;
+		
+		public vw_modelUsage()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_model", DbType="NVarChar(100)")]
+		public string model
+		{
+			get
+			{
+				return this._model;
+			}
+			set
+			{
+				if ((this._model != value))
+				{
+					this._model = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_usage", DbType="NVarChar(100)")]
+		public string usage
+		{
+			get
+			{
+				return this._usage;
+			}
+			set
+			{
+				if ((this._usage != value))
+				{
+					this._usage = value;
+				}
 			}
 		}
 	}
