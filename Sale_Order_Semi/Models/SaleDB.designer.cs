@@ -22694,7 +22694,7 @@ namespace Sale_Order_Semi.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_main_data", DbType="VarChar(MAX)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_main_data", DbType="nvarchar(max)")]
 		public string main_data
 		{
 			get
@@ -22714,7 +22714,7 @@ namespace Sale_Order_Semi.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_secondary_data", DbType="VarChar(MAX)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_secondary_data", DbType="nvarchar(max)")]
 		public string secondary_data
 		{
 			get

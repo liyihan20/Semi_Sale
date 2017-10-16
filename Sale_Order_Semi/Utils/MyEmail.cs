@@ -6,7 +6,7 @@ namespace Sale_Order_Semi.Utils
     public class MyEmail
     {
         static string server = "smtp.truly.com.cn";
-        static string semiServer = "smtp.truly.cn";
+        //static string semiServer = "smtp.truly.cn";
         static string webAddress = "http://192.168.90.100/SaleOrder";
         static string outAddress = "http://59.37.42.23/SaleOrder";
         static string urlPrefix = "/Account/Login?url=";
@@ -17,34 +17,35 @@ namespace Sale_Order_Semi.Utils
         //static string fsrMail = "fangsr.sale@truly.com.cn";
         static string username;
         static string bcc = "crm@truly.com.cn";
-        static string semiBcc = "crm@truly.cn";
+        //static string semiBcc = "crm@truly.cn";
         
         //static string adminEmail = "liyihan.ic@truly.com.cn";
 
         //发送邮件的包装方法，因为集团邮箱经常发送不出邮件，所以以后默认使用半导体邮箱。2013-6-7
         public static bool SendEmail(string content, string emailAddress, string ccEmail = null, string subject = "订单申请审批")
         {
-            try
-            {
-                WebMail.SmtpServer = semiServer;
-                WebMail.SmtpPort = 25;
-                WebMail.UserName = "crm";
-                WebMail.From = "\"订单平台\"<crm@truly.cn>";
-                WebMail.Password = "tic3006";
-                WebMail.Send(
-                to: emailAddress,
-                cc: ccEmail,
-                subject: subject + "（半导体）",
-                body: content + "<br /><div style='clear:both'><hr />来自:移动销售平台订单系统<br />注意:此邮件是系统自动发送，请不要直接回复此邮件</div>",
-                isBodyHtml: true
-                );
-            }            
-            catch
-            {
-                //如果发送失败，使用集团的邮箱发送。
-                return UseSemiEmail(content,emailAddress);
-            }
-            return true;
+            return TrulyEmail.EmailUtil.SemiSend("CRM客户关系管理系统", subject + "（半导体）", content, emailAddress, ccEmail);
+            //try
+            //{
+            //    WebMail.SmtpServer = semiServer;
+            //    WebMail.SmtpPort = 25;
+            //    WebMail.UserName = "crm";
+            //    WebMail.From = "\"订单平台\"<crm@truly.cn>";
+            //    WebMail.Password = "tic3006";
+            //    WebMail.Send(
+            //    to: emailAddress,
+            //    cc: ccEmail,
+            //    subject: subject + "（半导体）",
+            //    body: content + "<br /><div style='clear:both'><hr />来自:移动销售平台订单系统<br />注意:此邮件是系统自动发送，请不要直接回复此邮件</div>",
+            //    isBodyHtml: true
+            //    );
+            //}            
+            //catch
+            //{
+            //    //如果发送失败，使用集团的邮箱发送。
+            //    return UseSemiEmail(content,emailAddress);
+            //}
+            //return true;
         }
 
         //发送回订单申请者
@@ -170,30 +171,30 @@ namespace Sale_Order_Semi.Utils
         }
 
         //使用半导体(.cn)的邮箱发送邮件
-        public static bool UseSemiEmail(string content, string emailAddress)
-        {
-            try
-            {
-                WebMail.SmtpServer = server;
-                WebMail.SmtpPort = 25;
-                WebMail.UserName = "crm";
-                WebMail.From = "\"订单平台\"<crm@truly.com.cn>";
-                WebMail.Password = "ic3508**";
-                WebMail.Send(
-                to: emailAddress,
-                bcc: bcc,
-                subject: "订单申请审批（半导体）",
-                body: content + "<br /><div style='clear:both'><hr />来自:移动销售平台订单系统</div>",
-                isBodyHtml: true
-                );
-            }
-            catch (Exception ex)
-            {
-                SomeUtils utl = new SomeUtils();
-                utl.writeDownErrors(username, ex.Message.ToString());
-                return false;
-            }
-            return true;
-        }
+        //public static bool UseSemiEmail(string content, string emailAddress)
+        //{
+        //    try
+        //    {
+        //        WebMail.SmtpServer = server;
+        //        WebMail.SmtpPort = 25;
+        //        WebMail.UserName = "crm";
+        //        WebMail.From = "\"订单平台\"<crm@truly.com.cn>";
+        //        WebMail.Password = "ic3508**";
+        //        WebMail.Send(
+        //        to: emailAddress,
+        //        bcc: bcc,
+        //        subject: "订单申请审批（半导体）",
+        //        body: content + "<br /><div style='clear:both'><hr />来自:移动销售平台订单系统</div>",
+        //        isBodyHtml: true
+        //        );
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        SomeUtils utl = new SomeUtils();
+        //        utl.writeDownErrors(username, ex.Message.ToString());
+        //        return false;
+        //    }
+        //    return true;
+        //}
     }
 }

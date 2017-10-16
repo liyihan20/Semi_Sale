@@ -85,7 +85,8 @@ namespace Sale_Order_Semi.Utils
         }
 
         //获得备料单单号
-        public string getBLbillNo(string marketName){
+        public string getBLbillNo(string marketName, string busDepName = "")
+        {
             string prefix = "B";
             switch (marketName) {
                 case "MDS市场部":
@@ -124,7 +125,7 @@ namespace Sale_Order_Semi.Utils
             db.SubmitChanges();
 
 
-            return prefix;
+            return busDepName.Contains("客服") ? prefix + "KF" : prefix;
         }
 
         //取得步骤名称

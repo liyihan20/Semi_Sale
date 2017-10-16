@@ -202,25 +202,7 @@ namespace Sale_Order_Semi.Controllers
                         }
                     }
                 }
-
-                //switch (ap.order_type) { 
-                //    case "SO":
-                //        model = db.vwProductInfo.Where(v => v.item_id == db.Order.Where(o => o.sys_no == ap.sys_no).OrderByDescending(o => o.id).First().OrderDetail.First().product_id).First().item_model;
-                //        break;
-                //    case "TH":
-                //        model = db.VwReturnBill.Where(v => v.sys_no == ap.sys_no).First().product_model;
-                //        break;
-                //    case "CM":
-                //        model = db.ModelContract.Where(m => m.sys_no == ap.sys_no).First().product_model;
-                //        break;
-                //    case "SB":
-                //        model = db.SampleBill.Where(s => s.sys_no == ap.sys_no).First().product_model;
-                //        break;
-                //    default:
-                //        model = "";
-                //        break;
-                //}
-
+                                
                 db.getOrderTypeBySysNo(ap.sys_no, ref orderType);
                 list.Add(new AuditListModel()
                             {
@@ -505,7 +487,7 @@ namespace Sale_Order_Semi.Controllers
                         if (ap.order_type.Equals("BL")) {
                             //写入备料单号
                             var bl = db.Sale_BL.Single(b => b.sys_no == ap.sys_no);
-                            bl.bill_no = utl.getBLbillNo(bl.market_dep);
+                            bl.bill_no = utl.getBLbillNo(bl.market_dep,bl.bus_dep);
 
                             //写入备料库存
                             db.Sale_BL_stock.InsertOnSubmit(new Sale_BL_stock(){
@@ -575,9 +557,7 @@ namespace Sale_Order_Semi.Controllers
                 }
             }
             #endregion
-
-
-
+                        
             #region 不是会签或者会签已结束，发送通知邮件给下一环节审批人
             if (thisDetail.countersign == null || thisDetail.countersign == false || ap.ApplyDetails.Where(a => a.step == step && a.pass == null).Count() < 1)
             {
