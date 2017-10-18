@@ -1555,6 +1555,7 @@ namespace Sale_Order_Semi.Controllers
                 //计划员指定订料员
                 string orderIds = fc.Get("order_ids");
                 string orderNames = fc.Get("order_names");
+                string plannerComment = fc.Get("planner_comment");
                 if (string.IsNullOrEmpty(orderIds)) {
                     return Json(new { suc = false, msg = "必须至少选择一个订料员" }, "text/html");
                 }
@@ -1563,6 +1564,7 @@ namespace Sale_Order_Semi.Controllers
                 bl.order_names = orderNames;
                 bl.update_user_id = userId;
                 bl.step_version = step;
+                bl.planner_comment = plannerComment;
             }
             else if (stepName.Contains("订料")) {
                 //订料员只能修改备料明细

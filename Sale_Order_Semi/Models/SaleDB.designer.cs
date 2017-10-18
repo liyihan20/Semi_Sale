@@ -25795,6 +25795,8 @@ namespace Sale_Order_Semi.Models
 		
 		private string _order_ids;
 		
+		private string _planner_comment;
+		
 		private EntitySet<Sale_BL_details> _Sale_BL_details;
 		
 		private EntityRef<User> _User;
@@ -25879,6 +25881,8 @@ namespace Sale_Order_Semi.Models
     partial void Onorder_namesChanged();
     partial void Onorder_idsChanging(string value);
     partial void Onorder_idsChanged();
+    partial void Onplanner_commentChanging(string value);
+    partial void Onplanner_commentChanged();
     #endregion
 		
 		public Sale_BL()
@@ -26648,6 +26652,26 @@ namespace Sale_Order_Semi.Models
 					this._order_ids = value;
 					this.SendPropertyChanged("order_ids");
 					this.Onorder_idsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_planner_comment", DbType="Varchar(1000)")]
+		public string planner_comment
+		{
+			get
+			{
+				return this._planner_comment;
+			}
+			set
+			{
+				if ((this._planner_comment != value))
+				{
+					this.Onplanner_commentChanging(value);
+					this.SendPropertyChanging();
+					this._planner_comment = value;
+					this.SendPropertyChanged("planner_comment");
+					this.Onplanner_commentChanged();
 				}
 			}
 		}

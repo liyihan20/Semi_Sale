@@ -1669,8 +1669,7 @@ namespace Sale_Order_Semi.Controllers
             utl.writeEventLog("总裁办批量审批", "数量：" + dealNum + ";pass:" + pass + ";opinion:" + opinion, "", Request);
             return Json(new { suc = true, msg = "成功批量审批单据数量： " + dealNum });
         }
-
-        
+                
 
     }
 
