@@ -503,6 +503,12 @@ namespace Sale_Order_Semi.Controllers
                                 remain_qty = bl.qty
                             });
 
+                            //备料明细entry_no重新排序
+                            int entry_index = 1;
+                            foreach (var det in bl.Sale_BL_details.OrderBy(d=>d.id)) {
+                                det.entry_no = entry_index++;
+                            }
+
                         }
 
                     }
@@ -1550,8 +1556,16 @@ namespace Sale_Order_Semi.Controllers
             string sysNo = fc.Get("sys_no");
             string stepName = db.Apply.Single(a => a.sys_no == sysNo).ApplyDetails.Where(ad => ad.step == step).First().step_name;
             Sale_BL bl = db.Sale_BL.Single(s => s.sys_no == sysNo);
-            
-            if (stepName.Contains("计划")) {
+
+            if (stepName.Contains("成控")) {
+                decimal dealPrice = decimal.Parse(fc.Get("deal_price"));
+                if (dealPrice != bl.deal_price) {
+                    utl.writeEventLog("备料单", "成控修改成交价：" + bl.deal_price + "->" + dealPrice, bl.sys_no, Request);
+                    bl.deal_price = dealPrice;
+                }
+
+            }
+            else if (stepName.Contains("计划")) {
                 //计划员指定订料员
                 string orderIds = fc.Get("order_ids");
                 string orderNames = fc.Get("order_names");
@@ -1595,8 +1609,8 @@ namespace Sale_Order_Semi.Controllers
                     //因为是会签，同时审批时如果将旧数据删除，会造成数据丢失的情况，A、B同时编辑时，A保存后，B再保存，那么A编辑的内容将会消失。
                     //改为只删除和插入自己的那些分录，其它不动。
 
-                    db.Sale_BL_details.DeleteAllOnSubmit(bl.Sale_BL_details.Where(b=>b.order_id==userId));
-                    bl.Sale_BL_details.AddRange(details.Where(d=>d.order_id==userId));
+                    db.Sale_BL_details.DeleteAllOnSubmit(bl.Sale_BL_details.Where(b => b.order_id == userId));
+                    bl.Sale_BL_details.AddRange(details.Where(d => d.order_id == userId));
                     bl.update_user_id = userId;
                     bl.step_version = step;
                 }

@@ -483,7 +483,7 @@ else {
                     }
                 }, "json"
             );
-        if ("@stepName" == "计划审批" || "@stepName" == "订料会签") {
+        if ("@stepName" == "计划审批" || "@stepName" == "订料会签" || "@stepName" == "成控审核") {
             $("#order_form input").each(function () {
                 var thisClass = $(this).attr("class");
                 if (thisClass) {
@@ -511,6 +511,8 @@ else {
             if ("@stepName" == "计划审批") {
                 $("#order_ids").combobox("readonly", false);
                 $("#planner_comment").attr("readonly", false);
+            } else if ("@stepName" == "成控审核") {
+                $("#deal_price").attr("readonly", false);
             }
         }
         });
