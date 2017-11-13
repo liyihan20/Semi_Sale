@@ -259,8 +259,7 @@ namespace Sale_Order_Semi.Utils
             string sysNo = app.sys_no;
             string operateType = "新增";
             string orderType = getBillType(app.order_type);
-            string orderNo = null;
-            string model = null;
+            string orderNo = null;            
 
             if (app.success != null)
             {
@@ -270,22 +269,19 @@ namespace Sale_Order_Semi.Utils
                 if (app.order_type.Equals("CM"))
                 {                    
                     var order = db.ModelContract.Where(m => m.sys_no == app.sys_no).First();
-                    orderNo = order.old_bill_no;
-                    model = order.product_model;
+                    orderNo = order.old_bill_no;                    
                     prAuditors = app.ApplyDetails.Where(ad => ad.step == 1 && (ad.step_name.Contains("项目管理员") || ad.step_name.Contains("项目经理"))).Select(ad => ad.User).ToList();
                 }
                 if (app.order_type.Equals("SB"))
                 {
                     var order = db.SampleBill.Where(m => m.sys_no == app.sys_no).First();
-                    orderNo = order.bill_no;
-                    model = order.product_model;
+                    orderNo = order.bill_no;                    
                     prAuditors = app.ApplyDetails.Where(ad => ad.step == 1 && (ad.step_name.Contains("项目管理员") || ad.step_name.Contains("项目经理") || ad.step_name.Contains("项目组上级"))).Select(ad => ad.User).ToList();
                 }
                 if (app.order_type.Equals("BL")) {
                     //备料单成功结束后，发邮件给接单和下单组
                     var order = db.Sale_BL.Where(s => s.sys_no == app.sys_no).First();
-                    orderNo = order.bill_no;
-                    model = order.product_model;
+                    orderNo = order.bill_no;                    
                     if (app.success == true) {
                         prAuditors = app.ApplyDetails.Where(ad => ad.step_name.Contains("计划审批") || ad.step_name.Contains("订料") || ad.step_name.Contains("运作中心")).Select(ad => ad.User).Distinct().ToList();
                         prAuditors.AddRange((from v in db.vw_auditor_relations
@@ -306,7 +302,7 @@ namespace Sale_Order_Semi.Utils
                             ccEmail += "," + prEmail;
                     }
                 }
-                return MyEmail.SendBackToSaler((bool)app.success, sysNo, saler.email, orderType, operateType, ccEmail, orderNo, model);
+                return MyEmail.SendBackToSaler((bool)app.success, sysNo, saler.email, orderType, operateType, ccEmail, orderNo, app.p_model);
             }
             else
             {
