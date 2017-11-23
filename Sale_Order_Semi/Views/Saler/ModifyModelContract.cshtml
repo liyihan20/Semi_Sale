@@ -334,7 +334,21 @@
                                 return 'white-space:normal';
                             }
 					    }
-            ]]
+            ]],
+            onLoadSuccess: function () {
+                var rawValue = "@Html.Raw(mc.project_team)";
+                if ("" != rawValue && 0 == "@step") {
+                    var pjDatas = $("#project_team").combogrid("grid").datagrid("getData");
+                    for (var i = 0; i < pjDatas.rows.length; i++) {
+                        if (pjDatas.rows[i].pjGroup == rawValue) {
+                            $("#project_team").combogrid("setValue", rawValue);
+                            return;
+                        }
+                    }
+                } else {
+                    $("#project_team").combogrid("setValue", rawValue);
+                }
+            }
         });
 
         $("#classification").combogrid({
@@ -359,7 +373,7 @@
                             }
 					    }
             ]]
-        });        
+        });
 
         //保存订单表头
         $('#saveAllBut').bind('click', function () {
@@ -633,7 +647,7 @@
                     @Html.Lang("project_team"):
                 </td>
                 <td>
-                    <input id="project_team" name="project_team" style="width: 120px" value="@mc.project_team" />
+                    <input id="project_team" name="project_team" style="width: 120px" />
                 </td>
                 <td>
                     @Html.Lang("quotation_clerk"):
