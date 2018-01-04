@@ -487,7 +487,7 @@ namespace Sale_Order_Semi.Controllers
                         if (ap.order_type.Equals("BL")) {
                             //写入备料单号
                             var bl = db.Sale_BL.Single(b => b.sys_no == ap.sys_no);
-                            bl.bill_no = utl.getBLbillNo(bl.market_dep,bl.bus_dep);
+                            bl.bill_no = utl.getBLbillNo(bl.market_dep,bl.bus_dep,(int)bl.original_user_id);
 
                             //写入备料库存
                             db.Sale_BL_stock.InsertOnSubmit(new Sale_BL_stock(){

@@ -7,11 +7,11 @@
                 href:url,
                 onLoad:function(){
                     //加载完之后将生产部门赋值给运作中心的生产部门
-                    if($("#new_dep")){                        
+                    if($("#new_dep")){
                         $("#new_dep").combobox("setValue",$("#proc_dep_id").val());
                     }
                 }
-        });       
+        });
         getAuditResult();
 
         //SO流程运作中心郭玲敏可以修改生产部门
@@ -26,7 +26,6 @@
                 editable:false
             });
         }
-
     });    
     
     function okClick(){        

@@ -85,8 +85,13 @@ namespace Sale_Order_Semi.Utils
         }
 
         //获得备料单单号
-        public string getBLbillNo(string marketName, string busDepName = "")
+        public string getBLbillNo(string marketName, string busDepName,int userId)
         {
+            //2018年后编码新规则
+            if (DateTime.Now >= DateTime.Parse("2018-1-1")) {
+                return getBLbillNo2008(marketName, busDepName, userId);
+            }
+
             string prefix = "B";
             switch (marketName) {
                 case "MDS市场部":
@@ -104,7 +109,81 @@ namespace Sale_Order_Semi.Utils
                 case "新加坡市场部":
                     prefix += "XJP";
                     break;
+                case "CCM车载市场部":
+                    prefix += "VCCM";
+                    break;
             }
+            prefix += "BL" + DateTime.Now.ToString("yy") + "-";
+            var maxRecord = db.SystemNo.Where(sn => sn.bill_type == "BL" && sn.date_string == prefix);
+            if (maxRecord.Count() == 0) {
+                SystemNo sysNo = new SystemNo()
+                {
+                    bill_type = "BL",
+                    date_string = prefix,
+                    max_num = 1
+                };
+                db.SystemNo.InsertOnSubmit(sysNo);
+                prefix += "0001";
+            }
+            else {
+                var firstRecord = maxRecord.First();
+                firstRecord.max_num = firstRecord.max_num + 1;
+                prefix += string.Format("{0:0000}", firstRecord.max_num);
+            }
+            db.SubmitChanges();
+
+
+            return busDepName.Contains("客服") ? prefix + "KF" : prefix;
+        }
+
+        public string getBLbillNo2008(string marketName, string busDepName, int userId)
+        {
+            string prefix = "B";
+            string agencyValue = "", marketValue = "/";
+            string agencyName = db.User.Single(u => u.id == userId).Department1.name;
+            string[] agencyNameArr = new string[] { "汕尾本部", "深圳", "上海", "北京", "光能", "杭州", "新加坡" };
+            string[] agencyValueArr = new string[] { "SZ", "SZ", "SH", "BJ", "GN", "HZ", "XJP" };
+            string[] marketNameArr = new string[] { "汕尾本部", "MDS", "IDS", "CDS", "AUT", "新加坡", "CCM" };
+            string[] marketValueArr = new string[] { "MDS", "MDS", "IDS", "CDS", "AUT", "", "VCCM" };
+
+            for (var i = 0; i < agencyNameArr.Length; i++) {
+                if (agencyName.Contains(agencyNameArr[i])) {
+                    agencyValue = agencyValueArr[i];
+                    break;
+                }
+            }
+            prefix += agencyValue;
+
+            for (var i = 0; i < marketNameArr.Length; i++) {
+                if (agencyName.Contains(marketNameArr[i])) {
+                    marketValue = marketValueArr[i];
+                    break;
+                }
+            }
+            if (marketValue.Equals("/")) {
+                switch (marketName) {
+                    case "MDS市场部":
+                        marketValue = "MDS";
+                        break;
+                    case "IDS市场部":
+                        marketValue = "IDS";
+                        break;
+                    case "CDS市场部":
+                        marketValue = "CDS";
+                        break;
+                    case "AUT市场部":
+                        marketValue = "AUT";
+                        break;
+                    case "新加坡市场部":
+                        marketValue = "XJP";
+                        break;
+                    case "CCM车载市场部":
+                        marketValue = "VCCM";
+                        break;
+                }
+            }
+            prefix += marketValue;
+
             prefix += "BL" + DateTime.Now.ToString("yy") + "-";
             var maxRecord = db.SystemNo.Where(sn => sn.bill_type == "BL" && sn.date_string == prefix);
             if (maxRecord.Count() == 0) {
@@ -455,7 +534,7 @@ namespace Sale_Order_Semi.Utils
             string operateType = "新增";
             string orderType = getBillType(app.order_type);
             User auditor = db.User.Single(a => a.id == auditor_id);
-            return MyEmail.SendBackToSalerForBlock(sysNo, saler.email, orderType, operateType, auditor.real_name, reason);
+            return MyEmail.SendBackToSalerForBlock(sysNo, saler.email, orderType, operateType, auditor.real_name, reason,app.p_model);
         }
 
         //发送审核失败邮件给前一位审核者，重新审核

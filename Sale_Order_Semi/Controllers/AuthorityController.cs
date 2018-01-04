@@ -1550,7 +1550,7 @@ namespace Sale_Order_Semi.Controllers
         public ActionResult ModifyBillNo()
         {
             return View();
-        }        
+        }
 
         public JsonResult BeginModifyBillNo(string billType, string oldBillNo, string newBillNo)
         {

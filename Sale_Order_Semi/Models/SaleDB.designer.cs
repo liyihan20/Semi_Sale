@@ -3335,7 +3335,7 @@ namespace Sale_Order_Semi.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_date_string", DbType="Varchar(10)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_date_string", DbType="Varchar(50)")]
 		public string date_string
 		{
 			get

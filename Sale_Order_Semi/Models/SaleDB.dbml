@@ -113,7 +113,7 @@
     <Type Name="SystemNo">
       <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="bill_type" Type="System.String" DbType="Varchar(10)" CanBeNull="true" />
-      <Column Name="date_string" Type="System.String" DbType="Varchar(10)" CanBeNull="true" />
+      <Column Name="date_string" Type="System.String" DbType="Varchar(50)" CanBeNull="true" />
       <Column Name="max_num" Type="System.Int32" DbType="Int" CanBeNull="true" />
     </Type>
   </Table>
