@@ -1669,7 +1669,22 @@ namespace Sale_Order_Semi.Controllers
             utl.writeEventLog("总裁办批量审批", "数量：" + dealNum + ";pass:" + pass + ";opinion:" + opinion, "", Request);
             return Json(new { suc = true, msg = "成功批量审批单据数量： " + dealNum });
         }
-                
+
+        //订单编号管理
+        [SessionTimeOutFilter()]
+        public ActionResult OrderNumberManage()
+        {
+            return View();
+        }
+        public JsonResult GetNextSBBillNumber(string currencyNo, bool isFree)
+        {
+            try {
+                return Json(new { suc = true, data = utl.getYPBillNo(currencyNo, isFree), msg = "样品单编号获取成功" });
+            }
+            catch (Exception ex) {
+                return Json(new { suc = false, msg = ex.Message });
+            }
+        }
 
     }
 

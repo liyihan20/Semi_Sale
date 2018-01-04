@@ -207,6 +207,48 @@ namespace Sale_Order_Semi.Utils
             return busDepName.Contains("客服") ? prefix + "KF" : prefix;
         }
 
+        //样品单编号
+        public string getYPBillNo(string currencyNo, bool isFree)
+        {
+            string prefix = "";
+            int shortYear=int.Parse(DateTime.Now.ToString("yy"));
+            if (!"RMB".Equals(currencyNo)) {
+                prefix = "H";
+            }
+            if (isFree) {
+                prefix += "YPMF";
+            }
+            else {
+                prefix += "SWYP";
+            }
+            if ("RMB".Equals(currencyNo)) {
+                prefix += "-"+shortYear;
+            }
+            else {
+                //2018年为j，2019年为k，以此类推
+                prefix += (char)(((int)'J' + (shortYear - 18)) > 'Z' ? 'A' : ((int)'J' + (shortYear - 18)));
+            }
+            var maxRecord = db.SystemNo.Where(sn => sn.bill_type == "YP" && sn.date_string == prefix);
+            if (maxRecord.Count() == 0) {
+                SystemNo sysNo = new SystemNo()
+                {
+                    bill_type = "YP",
+                    date_string = prefix,
+                    max_num = 1
+                };
+                db.SystemNo.InsertOnSubmit(sysNo);
+                prefix += "0001";
+            }
+            else {
+                var firstRecord = maxRecord.First();
+                firstRecord.max_num = firstRecord.max_num + 1;
+                prefix += string.Format("{0:0000}", firstRecord.max_num);
+            }
+            db.SubmitChanges();
+
+            return prefix;
+        }
+
         //取得步骤名称
         public string getStepName(int step)
         {
@@ -1806,27 +1848,27 @@ namespace Sale_Order_Semi.Utils
                 salerId = db.Apply.Where(a => a.sys_no == sb.sys_no).First().user_id;
             }
 
-            //下单组审批，检查订单号的合法性
-            if (stepVersion == 4)
-            {
-                if (string.IsNullOrWhiteSpace(sb.bill_no))
-                {
-                    return "下单组审核必须填写订单号，保存失败。";
-                }
-                else if (db.SampleBill.Where(m => m.sys_no != sb.sys_no && m.bill_no == sb.bill_no).Count() > 0)
-                {
-                    return "订单号在下单系统已存在，保存失败。";
-                }
-                else
-                {
-                    bool? isExistedInK3 = null;
-                    db.isDublicatedBillNo(sb.bill_no, "SB", ref isExistedInK3);
-                    if (isExistedInK3 == true)
-                    {
-                        return "订单编号在K3已经存在，保存失败。";
-                    }
-                }
-            }
+            //下单组审批，检查订单号的合法性，2018年开始自动生成编号
+            //if (stepVersion == 4)
+            //{
+            //    if (string.IsNullOrWhiteSpace(sb.bill_no))
+            //    {
+            //        return "下单组审核必须填写订单号，保存失败。";
+            //    }
+            //    else if (db.SampleBill.Where(m => m.sys_no != sb.sys_no && m.bill_no == sb.bill_no).Count() > 0)
+            //    {
+            //        return "订单号在下单系统已存在，保存失败。";
+            //    }
+            //    else
+            //    {
+            //        bool? isExistedInK3 = null;
+            //        db.isDublicatedBillNo(sb.bill_no, "SB", ref isExistedInK3);
+            //        if (isExistedInK3 == true)
+            //        {
+            //            return "订单编号在K3已经存在，保存失败。";
+            //        }
+            //    }
+            //}
 
             //检查字段合法性
             if (sb.is_free.Equals("收费"))

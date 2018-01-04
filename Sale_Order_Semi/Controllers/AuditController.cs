@@ -510,6 +510,11 @@ namespace Sale_Order_Semi.Controllers
                             }
 
                         }
+                        else if (ap.order_type.Equals("SB")) {
+                            //写入样品单号
+                            var sb = db.SampleBill.Single(s => s.sys_no == ap.sys_no);
+                            sb.bill_no = utl.getYPBillNo(sb.currency_no, sb.is_free == "免费");
+                        }
 
                     }
                     else

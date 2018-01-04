@@ -599,6 +599,7 @@
     <Content Include="Views\Shared\_DownloadAuditorBLExcelPartial.cshtml" />
     <Content Include="Views\Authority\ModifyBillNo.cshtml" />
     <Content Include="Views\Authority\CeoBatchAudit.cshtml" />
+    <Content Include="Views\Authority\OrderNumberManage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Models\SaleDB.dbml.layout">
