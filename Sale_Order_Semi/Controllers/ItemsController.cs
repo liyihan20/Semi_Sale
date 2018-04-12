@@ -527,7 +527,7 @@ namespace Sale_Order_Semi.Controllers
 
             foreach (var ch in db.AuditorsRelation.Where(a => a.step_name == "RED_事业部出货组").Select(r => r.relate_value).Distinct())
             {
-                res.Add(new ResultModel() { value = ch.ToString(), text = db.Department.Single(p => p.dep_no == ch && p.dep_type=="退货事业部").name });
+                res.Add(new ResultModel() { value = ch.ToString(), text = db.Department.Single(p => p.dep_no == ch && p.dep_type == "退货出货组").name });
             }
 
             //foreach (var ch in db.ReturnDeptStepAuditor.Where(r => r.step_name == "出货组").Select(r => r.return_dept).Distinct())
@@ -624,6 +624,44 @@ namespace Sale_Order_Semi.Controllers
             else {
                 return Json(new { suc = false });
             }
+        }
+
+        //获取客户信用是否超过额度
+        public JsonResult GetCustomerCreditInfo(int? customerId, int? currencyId)
+        {
+            var result = db.getCustomerCreditInfo(customerId, currencyId).First();
+            return Json(new { suc = (result.suc == 1 ? true : false), msg = result.msg });
+        }
+        public JsonResult GetCustomerCreditInfo2(int orderId)
+        {
+            var param = db.Order.Where(o => o.id == orderId).Select(o => new { customerId = o.buy_unit, currencyId = o.currency }).First();
+            return GetCustomerCreditInfo(param.customerId, param.currencyId);
+        }
+
+        //获取k3的客户型号和客户料号 -2018-4-12
+        public JsonResult GetK3CustomerModel(int customerId, int productId)
+        {
+            string customerItemNumber = "", customerItemModel = "";
+            var list = db.getK3CustomerModel(customerId, productId).ToList();
+            if (list.Count() > 0) {
+                customerItemNumber = list.First().FMapNumber;
+                customerItemModel = list.First().FMapName;
+            }
+            return Json(new { customerItemNumber = customerItemNumber, customerItemModel = customerItemModel });
+        }
+
+        //更新客户料号和型号到k3系统 -2018-4-12
+        public JsonResult SynchroToK3CustomerModel(int? customerId, int? productId, string customerItemNumber, string customerItemModel)
+        {
+            if (customerId != null && productId != null) {
+                try {
+                    db.synchroK3CustomerModel(customerId, productId, customerItemNumber, customerItemModel);
+                }
+                catch (Exception ex) {
+                    return Json(new { suc = false, msg = ex.Message });
+                }
+            }
+            return Json(new { suc = true });
         }
 
     }

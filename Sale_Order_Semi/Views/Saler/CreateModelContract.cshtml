@@ -1,12 +1,12 @@
 ﻿<script type="text/javascript">
-    function convertDate(inDate){
-        var order_date_1= eval('new ' + eval(inDate).source);
-        var order_date_2=order_date_1.getFullYear() + '-' + (order_date_1.getMonth() + 1) + '-' + order_date_1.getDate();
+    function convertDate(inDate) {
+        var order_date_1 = eval('new ' + eval(inDate).source);
+        var order_date_2 = order_date_1.getFullYear() + '-' + (order_date_1.getMonth() + 1) + '-' + order_date_1.getDate();
         return order_date_2;
     }
 
     $(function () {
-              
+
         $("#has_sample_span").hide();
         $("#same_with_customer_sample_tr").hide();
         $("#same_with_customer_sample_span").hide();
@@ -63,7 +63,7 @@
                 if (record.value == "带摄像功能，摄像头由TRULY提供") {
                     $("#has_video_function_model_span").show();
                     $("#has_video_function_reason_span").hide();
-                } else if (record.value == "带摄像功能，摄像头不是TRULY提供"){
+                } else if (record.value == "带摄像功能，摄像头不是TRULY提供") {
                     $("#has_video_function_reason_span").show();
                     $("#has_video_function_model_span").hide();
                 } else {
@@ -79,7 +79,7 @@
                 if (record.value == "带触摸屏，触摸屏由TRULY提供") {
                     $("#has_touch_panel_model_span").show();
                     $("#has_touch_panel_reason_span").hide();
-                } else if (record.value == "带触摸屏，触摸屏不是TRULY提供"){
+                } else if (record.value == "带触摸屏，触摸屏不是TRULY提供") {
                     $("#has_touch_panel_reason_span").show();
                     $("#has_touch_panel_model_span").hide();
                 } else {
@@ -196,23 +196,23 @@
         });
 
         //客户下拉框
-        $(".customerbox").each(function(){
+        $(".customerbox").each(function () {
             $(this).combogrid({
-                loadMsg:"Please wait...",
+                loadMsg: "Please wait...",
                 idField: "number",
                 textField: "name",
                 panelWidth: 400,
                 columns: [[
                         { field: 'number', title: '@Html.Lang("customer_num")', width: 150 },
 					    { field: 'name', title: '@Html.Lang("customer_name")', width: 220 }
-				    ]],
+                ]],
                 keyHandler: {
                     query: function () { },
                     enter: function () {
                         var box_id = $(this).attr("id");
                         var _this = "#" + box_id;
                         var q = $(_this).combogrid('getText');
-                        if (q != "") {                            
+                        if (q != "") {
                             $.post("@Url.Content("~/Items/getCostomers")", { q: q },
                                 function (data) {
                                     $(_this).combogrid('grid').datagrid('loadData', data);
@@ -259,46 +259,46 @@
             });
         });
 
-//        $("#product_model").combogrid({
-//            valueField: "model",
-//            textField: "model",
-//            panelWidth: 420,
-//            required: true,
-//            columns: [[
-//                    { field: 'number', title: '@Html.Lang("pro_num")', width: 120 },
-//					{ field: 'name', title: '@Html.Lang("pro_name")', width: 120 },
-//					{ field: 'model', title: '@Html.Lang("pro_model")', width: 160 }
-//				]],
-//            keyHandler: {
-//                query: function () { },
-//                enter: function () {
-//                    var q = $("#product_model").combogrid('getText');
-//                    if (q != "") {
-//                        $.post("@Url.Content("~/Items/getProductInfo")", { q: q },
-//                            function (data) {
-//                                $("#product_model").combogrid('grid').datagrid('loadData', data);
-//                                $("#product_model").combogrid('setText', q);
-//                            },
-//                            "json"
-//                            );
-//                    }
-//                }
-//            }
-//        });
+        //        $("#product_model").combogrid({
+        //            valueField: "model",
+        //            textField: "model",
+        //            panelWidth: 420,
+        //            required: true,
+        //            columns: [[
+        //                    { field: 'number', title: '@Html.Lang("pro_num")', width: 120 },
+        //					{ field: 'name', title: '@Html.Lang("pro_name")', width: 120 },
+        //					{ field: 'model', title: '@Html.Lang("pro_model")', width: 160 }
+        //				]],
+        //            keyHandler: {
+        //                query: function () { },
+        //                enter: function () {
+        //                    var q = $("#product_model").combogrid('getText');
+        //                    if (q != "") {
+        //                        $.post("@Url.Content("~/Items/getProductInfo")", { q: q },
+        //                            function (data) {
+        //                                $("#product_model").combogrid('grid').datagrid('loadData', data);
+        //                                $("#product_model").combogrid('setText', q);
+        //                            },
+        //                            "json"
+        //                            );
+        //                    }
+        //                }
+        //            }
+        //        });
 
         //产品代码从下拉列表中选中一项的处理事件
-//        $("#product_model").combogrid('grid').datagrid({
-//            onClickRow: function (rowIndex, rowData) {
-//                $("#product_model").combogrid('setValue', rowData.model);
-//                $("#product_model").combogrid('setText', rowData.model);
-//                $("#product_name").val(rowData.name);
-//                $("#product_number").val(rowData.number);               
-//                $('#product_unit').val(rowData.unit_number);     
-//                $("#product_model").combogrid('hidePanel');
-//            }
-//        });        
-        
-        
+        //        $("#product_model").combogrid('grid').datagrid({
+        //            onClickRow: function (rowIndex, rowData) {
+        //                $("#product_model").combogrid('setValue', rowData.model);
+        //                $("#product_model").combogrid('setText', rowData.model);
+        //                $("#product_name").val(rowData.name);
+        //                $("#product_number").val(rowData.number);
+        //                $('#product_unit').val(rowData.unit_number);
+        //                $("#product_model").combogrid('hidePanel');
+        //            }
+        //        });
+
+
         $("#project_team").combogrid({
             textField: "pjGroup",
             idField: "pjGroup",
@@ -323,35 +323,95 @@
             ]]
         });
 
-        $("#classification").combogrid({            
+        $("#classification").combogrid({
             textField: "value",
             idField: "value",
             panelWidth: 500,
-            noWap:"false",
+            noWap: "false",
             required: 'true',
             editable: false,
-            url:'@Url.Content("~/Items/GetProjectItems?what=分类")',
+            url: '@Url.Content("~/Items/GetProjectItems?what=分类")',
             columns: [[
-                        { field: 'value', title: '@Html.Lang("classification")', width: 140 ,
-                            styler: function(value,row,index){
-                                return 'white-space:normal';
-                            }},
-					    { field: 'note', title: '@Html.Lang("description")', width: 330 
-                            ,styler: function(value,row,index){
+                        {
+                            field: 'value', title: '@Html.Lang("classification")', width: 140,
+                            styler: function (value, row, index) {
                                 return 'white-space:normal';
                             }
-                        }
-				    ]] 
+                        },
+					    {
+					        field: 'note', title: '@Html.Lang("description")', width: 330
+                            , styler: function (value, row, index) {
+                                return 'white-space:normal';
+                            }
+					    }
+            ]]
         });
-        
+
         //保存订单
-        $('#saveAllBut').bind('click', function () {   
-            $.messager.progress(); 
-            $('#order_form').form('submit',{
+        $('#saveAllBut').bind('click', function () {
+            ///2018-3-20加入的一些规则
+            var currency = $("#currency_no").combobox("getText");
+            var tradeType = $("#trade_type_no").combobox("getText");
+            var fetchAdd = $("#fetch_add_no").combobox("getText");
+            var customer = $("#customer_no").combogrid("getValue");
+            //var oversea = $("#oversea_customer_no").combogrid("getValue");
+            if (currency == "人民币") {
+                if (tradeType != "国内贸易") {
+                    alert("保存失败：币别为人民币的贸易类型必须是【国内贸易】");
+                    return;
+                }
+                if (fetchAdd.indexOf("国内（GN）■") < 0) {
+                    alert("保存失败：币别为人民币的交货地点必须选择【国内（GN）■香港（HK）□】");
+                    return;
+                }
+                if (customer.indexOf("01.") != 0) {
+                    alert("保存失败：币别为人民币的购货单位必须是【01.】开头的");
+                    return;
+                }
+                //if (customer != oversea) {
+                //    alert("保存失败：币别为人民币的购货单位必须跟同海外客户");
+                //    return;
+                //}
+            } else {
+                if (tradeType != "一般贸易") {
+                    alert("保存失败：币别为非人民币的贸易类型必须是【一般贸易】");
+                    return;
+                }
+                if (fetchAdd.indexOf("香港（HK）■") < 0) {
+                    alert("保存失败：币别为非人民币的交货地点必须选择【国内（GN）□香港（HK）■】");
+                    return;
+                }
+                //if (oversea.indexOf("05.") != 0) {
+                //    alert("保存失败：币别为非人民币的海外客户必须是【05.】开头的");
+                //    return;
+                //}
+                if (customer != "04.201") {
+                    alert("保存失败：币别为非人民币的购货单位必须是【香港信利半导体有限公司】");
+                    return;
+                }
+            }
+            if ($("#clear_way").combobox("getValue") == "*") {
+                alert("保存失败：支付方式不能选择【*】");
+                return;
+            }
+
+            $.messager.progress();
+            $('#order_form').form('submit', {
                 url: '@Url.Content("~/Saler/SalerSaveModelContract")',
                 onSubmit:function(param){
                     if(!$('#order_form').form('validate')){
                         return false;
+                    }
+                    //国内贸易的必须填写合同编号，且格式是年月流水号，比如201801001
+                    if ($("#trade_type_no").combobox("getValue") == "03") {
+                        var pat = /\d{9}/;
+                        if (!pat.test($("#contract_po_no").val())) {
+                            $.messager.show({
+                                title: '@Html.Lang("tip")',
+                                msg: "保存失败：国内贸易的【合同编号P/O】字段必须符合以下格式：年+月+流水号，例如201802001"
+                            });
+                            return false;
+                        }
                     }
                     $(".remotebox2").each(function () {
                         var text=$(this).combobox("getText");
@@ -361,46 +421,46 @@
                     });
                     return true;
                 },
-                success: function (data) { 
+                success: function (data) {
                     var result = eval('('+ data +')');
-                    if(result.suc){ 
+                    if(result.suc){
                         $.messager.show({
                             title: '@Html.Lang("tip")',
                             msg: "@Html.Lang("suc_save")"
                         });
-                    }else{
+                    } else {
                         $.messager.show({
                             title: '@Html.Lang("tip")',
-                            msg: "@Html.Lang("failure_save"):"+result.msg
+                            msg: "@Html.Lang("failure_save"):" + result.msg
                         });
-                    }                        
+                    }
                 }
             });
-            $.messager.progress("close");             
+            $.messager.progress("close");
         });
-        
-       //提交申请按钮
-        $("#submitApply").click(function(){
+
+        //提交申请按钮
+        $("#submitApply").click(function () {
             //首先检测订单是否已保存
             $("#submitApply").linkbutton('disable');
             $('#saveAllBut').linkbutton('disable');
-            $.post("@Url.Content("~/Saler/CheckIsBillExist")",{sysNum:$("#sys_no").val()},
-            function(data){
-                if(data.success){  
+            $.post("@Url.Content("~/Saler/CheckIsBillExist")", { sysNum: $("#sys_no").val() },
+            function (data) {
+                if (data.success) {
                     $.messager.show({
                         title: '@Html.Lang("tip")',
                         msg: "正在提交，请等待跳转。。。"
                     });
-                    setTimeout('window.location.href="@Url.Content("~/Saler/BeginApplyCM?sys_no=")"+$("#sys_no").val();',2000);
-                }else{
+                    setTimeout('window.location.href="@Url.Content("~/Saler/BeginApplyCM?sys_no=")"+$("#sys_no").val();', 2000);
+                } else {
                     $("#submitApply").linkbutton('enable');
                     $('#saveAllBut').linkbutton('enable');
                     $.messager.show({
                         title: '@Html.Lang("tip")',
                         msg: data.msg
-                     });
+                    });
                 }
-            },"json");
+            }, "json");
         });
 
         $("#order_div").css("visibility", "visible");
@@ -408,7 +468,7 @@
     });
 
 
-   
+
 </script>
 <form id="order_form" method="post">
     <div id="order_div" class="easyui-panel" title="@Html.Lang("new_create_model_contract")" style="width: 840px; padding: 10px;
@@ -553,8 +613,7 @@
                     @Html.Lang("end_customer"):
                 </td>
                 <td>
-                    <input id="zz_customer_name" class="remotebox2" name="zz_customer_name" style="width: 120px"
-                           panelwidth="240px" />
+                    <input id="zz_customer_name" class="remotebox2" name="zz_customer_name" style="width: 120px" panelwidth="240px" />
                 </td>
                 <td>
                     @Html.Lang("currency"):
@@ -607,13 +666,17 @@
                     <input id="pic_version" class="easyui-validatebox" name="pic_version" style="width: 115px" required="true" />
                 </td>
                 <td>
+                    @Html.Lang("contract_num"):
+                </td>
+                <td>
+                    <input id="contract_po_no" class="easyui-validatebox" name="contract_po_no" style="width: 115px" />
+                </td>
+                <td>
                     @Html.Lang("biller"):
                 </td>
                 <td>
                     <input class="easyui-textbox" id="create_user" name="create_user" value="@ViewData["create_user"]" readonly="readonly" style="width: 115px" />
                 </td>
-                <td></td>
-                <td></td>
             </tr>
             <tr>
                 <td>

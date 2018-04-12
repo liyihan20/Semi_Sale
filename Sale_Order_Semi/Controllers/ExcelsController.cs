@@ -427,10 +427,10 @@ namespace Sale_Order_Semi.Controllers
                           orderby v.order_date
                           select v).ToList();
 
-            ushort[] colWidth = new ushort[] { 12, 12, 20, 18, 18, 28, 18, 14, 100 };
+            ushort[] colWidth = new ushort[] { 12, 12, 20, 18, 18, 18, 28, 18, 14, 100 };
 
             //下单日期，交货日期，办事处，产品类别，订单号，规格型号，成交金额，币别，说明
-            string[] colName = new string[] { "下单日期", "交货日期", "办事处", "产品类别", "订单号", "规格型号", "成交金额", "币别", "说明" };
+            string[] colName = new string[] { "下单日期", "交货日期", "办事处", "产品类别", "产品用途", "订单号", "规格型号", "成交金额", "币别", "说明" };
 
             //設置excel文件名和sheet名
             XlsDocument xls = new XlsDocument();
@@ -473,6 +473,7 @@ namespace Sale_Order_Semi.Controllers
                 cells.Add(rowIndex, ++colIndex, ((DateTime)d.delivery_date).ToShortDateString());
                 cells.Add(rowIndex, ++colIndex, d.department_name);
                 cells.Add(rowIndex, ++colIndex, d.product_type_name);
+                cells.Add(rowIndex, ++colIndex, d.product_use);
                 cells.Add(rowIndex, ++colIndex, d.order_no);
                 cells.Add(rowIndex, ++colIndex, d.product_model);
                 cells.Add(rowIndex, ++colIndex, d.deal_sum);
@@ -1063,12 +1064,12 @@ namespace Sale_Order_Semi.Controllers
             var myData = db.getAuditorBLExcels(ids);
 
             //列宽：
-            ushort[] colWidth = new ushort[] { 16, 12, 16, 32, 12, 24, 18, 16,
+            ushort[] colWidth = new ushort[] { 16, 12, 16, 32, 12, 24, 18, 16, 32,
                     16, 18,18,18,32,32,28,16,18,18,
                     18,18,16,18};
 
             //列名：
-            string[] colName = new string[] { "流水号","备料日期", "备料编号", "产品型号", "数量", "客户名称", "计划下订单日期", "营业员",
+            string[] colName = new string[] { "流水号","备料日期", "备料编号", "产品型号", "数量", "客户名称", "计划下订单日期", "营业员","备料项目",
                 "成交价（不含税）","事业部","产品用途","办事处","摘要","物料型号","物料名称","单位","单位用量","标准数量",
                 "订料数量","K3数量","来源","订料员"};
 
@@ -1118,6 +1119,7 @@ namespace Sale_Order_Semi.Controllers
                 cells.Add(rowIndex, ++colIndex, d.customer_name);
                 cells.Add(rowIndex, ++colIndex, d.plan_order_date);
                 cells.Add(rowIndex, ++colIndex, d.real_name);
+                cells.Add(rowIndex, ++colIndex, d.bl_project);
 
                 cells.Add(rowIndex, ++colIndex, d.deal_price);
                 cells.Add(rowIndex, ++colIndex, d.bus_dep);

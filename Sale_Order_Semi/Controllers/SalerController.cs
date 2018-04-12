@@ -1066,11 +1066,11 @@ namespace Sale_Order_Semi.Controllers
             int stepVersion = 0;
             string saveResult = utl.saveModelContract(col, stepVersion,userId);
             if (string.IsNullOrWhiteSpace(saveResult))
-            {                
-                return Json(new { suc = true });
+            {
+                return Json(new { suc = true }, "text/html");
             }
             else {
-                return Json(new { suc = false, msg = saveResult });
+                return Json(new { suc = false, msg = saveResult }, "text/html");
             }
         }
 
@@ -1402,7 +1402,7 @@ namespace Sale_Order_Semi.Controllers
 
         //审核人修改
         [SessionTimeOutFilter()]
-        public ActionResult AuditorModifySampleBill(int apply_id, string sys_no, int step) {
+        public ActionResult AuditorModifySampleBill(int apply_id, string sys_no, int step) {            
             ViewData["sb"] = db.SampleBill.Single(s => s.sys_no==sys_no);
             ViewData["step"] = step;
             ViewData["applyId"] = apply_id;
@@ -1697,7 +1697,7 @@ namespace Sale_Order_Semi.Controllers
 
         //查看所有类型单据详细信息
         [SessionTimeOutFilter()]
-        public ActionResult CheckOrderDetail(int id, string billType)
+        public ActionResult CheckOrderDetail(int id, string billType, bool canCheckBLFile = false)
         {
             string sysNum;
             int newestId;
@@ -1755,6 +1755,7 @@ namespace Sale_Order_Semi.Controllers
                     ViewData["hiddenModel"] = new string[] { "上海", "北京", "深圳", "汕尾", "新加坡", "中国市场部", "香港", "光能", "杭州" }.Where(s => userDep.Contains(s)).Count() > 0 ? "true" : "false";
                     ViewData["bl"] = bl;
                     ViewData["blockInfo"] = blockInfo;
+                    ViewData["canCheckBLFile"] = canCheckBLFile;//2018年开始限制只有市场部的才能查看附件
                     return View("CheckBLBill");
                 case "6":
                 case "TH":

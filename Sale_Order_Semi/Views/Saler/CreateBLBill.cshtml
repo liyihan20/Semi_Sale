@@ -263,8 +263,8 @@
             $("#product_no").combogrid("setValue", "@bl.product_no");
             $("#clerk_no").combobox("setValue", "@bl.clerk_no");
             $("#clerk_no").combobox("setText", "@bl.clerk_name");
-            $("#planner_id").combobox("setValue", "@bl.planner_id");
-            $("#planner_id").combobox("setText", "@bl.planner_name");
+            @*$("#planner_id").combobox("setValue", "@bl.planner_id");
+            $("#planner_id").combobox("setText", "@bl.planner_name");*@
             $("#bus_dep").combobox("setValue", "@bl.bus_dep");
             $.map("@bl.bl_project".split(","), function (item) { $("input[name='bl_project'][value='" + item + "']").attr("checked", true); });
             $("#agency_div").css("visibility", "visible").click(function () { endEditing(); });
@@ -436,7 +436,7 @@
                             return false;
                         }
                         //param.Sale_BL_details = JSON.stringify($("#dg_detail").datagrid("getRows"));
-                        param.planner_name = $("#planner_id").combobox("getText");
+                        //param.planner_name = $("#planner_id").combobox("getText");
                         return true;
                     },
                     success: function (data) {
@@ -808,7 +808,7 @@ else {
                                 <input class="easyui-combobox" style="width: 140px" name="market_dep" id="market_dep"
                                        data-options="textField:'value',valueField:'value',panelHeight:'auto', required:true,editable:false,
                                            data:[
-                                           {value:'MDS市场部'},{value:'IDS市场部'},{value:'CDS市场部'},{value:'AUT市场部'},{value:'新加坡市场部'},{value:'CCM车载市场部'}
+                                           {value:'MDS市场部'},{value:'IDS市场部'},{value:'CDS市场部'},{value:'AUT市场部'},{value:'新加坡市场部'},{value:'CCM车载市场部'},{value:'SDB市场部'}
                                            ]" value="@bl.market_dep" />
                             </td>
                         </tr>
@@ -819,12 +819,12 @@ else {
                             <td>
                                 <input id="clerk_no" class="remotebox" name="clerk_no" style="width: 140px" required="true" />
                             </td>
-                            <td>
+                            @*<td>
                                 计划员:
                             </td>
                             <td>
                                 <input class="easyui-combobox" id="planner_id" name="planner_id" style="width: 140px" panelwidth="140" valuefield="auditorId" textfield="auditorName" editable="false" required="true" />
-                            </td>
+                            </td>*@
                             <td>
                                 制单人:
                             </td>
@@ -922,11 +922,12 @@ else {
                         @Html.Partial("_UploadFilePartial")
                     }
                     else {
-                        <div id="downloadPanel">
+                        @*有修改权限的审核人只有计划和订料，但是2018年开始限制他们不能查看备料单的附件*@
+                        @*<div id="downloadPanel">
                             <div class="easyui-panel" style="background: #fafafa; padding: 10px; width: 800px;"
                                  title="@Html.Lang("download_file")" href="@Url.Content("~/Items/downLoadFile?sys_no=" + bl.sys_no)">
                             </div>
-                        </div>
+                        </div>*@
                     }
                 </div>
                 @if (0 == bl.step_version) {

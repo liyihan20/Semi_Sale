@@ -383,6 +383,20 @@
             $.messager.progress();
             $('#order_form').form('submit', {
                 url: '@Url.Content("~/Saler/SalerSaveModelContract")',
+                onSubmit: function (param) {
+                    //国内贸易的必须填写合同编号，且格式是年月流水号，比如201801001
+                    if ($("#trade_type_no").combobox("getValue") == "03") {
+                        var pat = /\d{9}/;
+                        if (!pat.test($("#contract_po_no").val())) {
+                            $.messager.show({
+                                title: '@Html.Lang("tip")',
+                                msg: "保存失败：国内贸易的【合同编号P/O】字段必须符合以下格式：年+月+流水号，例如201802001"
+                            });
+                            return false;
+                        }
+                    }
+                    return true;
+                },
                 success: function (data) {
                     var result = eval('(' + data + ')');
                     if (result.suc) {
@@ -767,14 +781,19 @@
                 </td>
                 <td>
                     <input id="pic_version" class="easyui-validatebox" name="pic_version" style="width: 115px" required="true" value="@mc.pic_version" />
-                </td>        
+                </td>    
+                <td>
+                    @Html.Lang("contract_num"):
+                </td>
+                <td>
+                    <input id="contract_po_no" class="easyui-validatebox" name="contract_po_no" style="width: 115px" value="@mc.contract_po_no" />
+                </td>    
                 <td>
                     @Html.Lang("biller"):
                 </td>
                 <td>
                     <input class="easyui-textbox" id="create_user" name="create_user"  readonly="readonly" style="width: 115px" value="@mc.User.real_name" />
                 </td>
-                <td></td><td></td>
             </tr>
             <tr>
                 <td>

@@ -306,6 +306,7 @@ namespace Sale_Order_Semi.Controllers
                     break;
                 case "BL":
                     ViewData["order_id"] = db.Sale_BL.Single(s => s.sys_no == ap.sys_no).id;
+                    ViewData["step_name"] = ad.step_name;
                     break;
                 case "TH":
                     ViewData["order_id"] = db.ReturnBill.Where(r => r.sys_no == ap.sys_no).First().id;
@@ -416,17 +417,19 @@ namespace Sale_Order_Semi.Controllers
 
                 //计划经理审批后
                 if (thisDetail.step_name.Contains("计划经理") && isOK) {
-                    string busDep = bl.bus_dep;  
-                    utl.AppendStepAtLast(ap.id, "计划审批", new int?[] { bl.planner_id },step, true);
-                }
-                //计划经理审批后，如果有修改，则在最后插入营业审批
-                if (thisDetail.step_name.Contains("计划审批") && isOK) {
-                    int?[] orderIds = bl.order_ids.Split(new char[] { ',' }).Select(i => { int? id = Int32.Parse(i); return id; }).ToArray();
-                    utl.AppendStepAtLast(ap.id, "订料会签", orderIds, step, true, false, true);
-                    utl.AppendStepAtLast(ap.id, "营业员确认", new int?[] { bl.original_user_id }, step);
-                    utl.AppendStepAtLast(ap.id, "运作中心二审", new int?[] { 243 }, step); //李卓明
+                    //string busDep = bl.bus_dep;  
+                    //utl.AppendStepAtLast(ap.id, "计划审批", new int?[] { bl.planner_id },step, true);
+                    //utl.AppendStepAtLast(ap.id, "运作中心二审", new int?[] { 243 }, step); //李卓明
                     utl.AppendStepAtLast(ap.id, "市场总部审批", new int?[] { 92 }, step); //王创浩
                 }
+                //计划经理审批后，如果有修改，则在最后插入营业审批
+                //if (thisDetail.step_name.Contains("计划审批") && isOK) {
+                //    int?[] orderIds = bl.order_ids.Split(new char[] { ',' }).Select(i => { int? id = Int32.Parse(i); return id; }).ToArray();
+                //    utl.AppendStepAtLast(ap.id, "订料会签", orderIds, step, true, false, true);
+                //    utl.AppendStepAtLast(ap.id, "营业员确认", new int?[] { bl.original_user_id }, step);
+                //    utl.AppendStepAtLast(ap.id, "运作中心二审", new int?[] { 243 }, step); //李卓明
+                //    utl.AppendStepAtLast(ap.id, "市场总部审批", new int?[] { 92 }, step); //王创浩
+                //}
             }
 
             #endregion
@@ -735,7 +738,7 @@ namespace Sale_Order_Semi.Controllers
                 {
                     if (!string.IsNullOrEmpty(FChDep) && !FChDep.Equals("无"))
                     {
-                        int chDepId = (int)db.Department.Single(p => p.name == FChDep && p.dep_type=="退货事业部").dep_no;
+                        int chDepId = (int)db.Department.Single(p => p.name == FChDep && p.dep_type == "退货出货组").dep_no;
                         //int?[] chAuditors = db.ReturnDeptStepAuditor.Where(r => r.step_name == "出货组" && r.return_dept == chDepId).Select(r => r.user_id).ToArray();
                         int?[] chAuditors = db.AuditorsRelation.Where(a => a.step_name == "RED_事业部出货组" && a.relate_value == chDepId).Select(a => a.auditor_id).ToArray();
                         //先插入出货组审核，如果有需要，再插入营业审核，这样营业就会排在出货组之前

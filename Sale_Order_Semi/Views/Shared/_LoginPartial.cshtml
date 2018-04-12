@@ -194,6 +194,9 @@
                 @if (Array.IndexOf(powers, Powers.chk_process.ToString()) != -1) {
                     <li id="~/Authority/ProcExcuteTime"><span>@Html.Lang("proc_time")</span> </li>
                 }
+                @if (Array.IndexOf(powers, Powers.order_number_manage.ToString()) != -1) {
+                    <li id="~/Authority/OrderNumberManage"><span>单据编号管理</span> </li>
+                }
                 @if (Array.IndexOf(powers, Powers.modify_bill_no.ToString()) != -1) {
                     <li id="~/Authority/ModifyBillNo"><span>单号修改</span> </li>
                 }

@@ -1,6 +1,7 @@
 ﻿@using Sale_Order_Semi.Models;
 @{
     Sale_BL bl = (Sale_BL)ViewData["BL"];
+    bool canCheckBLFile = (bool)ViewData["canCheckBLFile"];
 }
 
 <script type="text/javascript">
@@ -225,12 +226,14 @@
                         <td>
                             <input type="text" style="width: 140px" value="@bl.clerk_name" />
                         </td>
+                        @if (!string.IsNullOrEmpty(bl.planner_comment)) {
                         <td>
                             计划员:
                         </td>
                         <td>
                             <input type="text" style="width: 140px" value="@bl.planner_name" />
                         </td>
+                        }
                         <td>
                             制单人:
                         </td>
@@ -288,12 +291,14 @@
                             <textarea cols="92" rows="4" spellcheck="false" style="margin: 0;">@bl.comment</textarea>
                         </td>
                     </tr>
+                    @if (!string.IsNullOrEmpty(bl.planner_comment)) { 
                     <tr>
                         <td>计划备注:</td>
                         <td colspan="5">
                             <textarea cols="92" rows="4" spellcheck="false" style="margin: 0;">@bl.planner_comment</textarea>
                         </td>
                     </tr>
+                    }
                 </table>
                 @if(bl.Sale_BL_details.Count()>0){
                 <br />
@@ -321,10 +326,12 @@
                 }
             </div>
             <br />
+            @if (canCheckBLFile) { 
             <div id="downloadPanel">
                 <div class="easyui-panel" style="background: #fafafa; padding: 10px; width: 800px;" title="@Html.Lang("download_file")" href="@Url.Content("~/Items/downLoadFile?sys_no=" + bl.sys_no)">
                 </div>
             </div>
+            }
             <div style="line-height:18px;margin-top:8px;">
                 <div style="color:red">操作说明：</div>
                 <div>

@@ -117,9 +117,9 @@
         var row = $("#orderList").datagrid("getSelected");
         if (row) {
             if(row.sysNum.substring(0,2)=="SO"){
-                window.open("@Url.Content("~/Files/printReport")"+"?sysNo="+row.encryptNo);
+                window.open("@Url.Content("~/Files/printReport")" + "?sysNo=" + row.encryptNo);
             }else if(row.orderType=="退换货"){
-                window.open("@Url.Content("~/Files/printTHReport")"+"?sysNo="+row.sysNum);
+                window.open("@Url.Content("~/Files/printTHReport")" + "?sysNo=" + row.sysNum);
             }else if(row.sysNum.substring(0,2)=="CM"){
                 window.open("@Url.Content("~/Files/printCMYFReport")" + "?sysNo=" + row.sysNum); 
             }else if(row.sysNum.substring(0,2)=="BL"){

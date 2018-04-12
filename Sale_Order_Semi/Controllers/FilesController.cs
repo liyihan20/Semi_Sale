@@ -410,7 +410,7 @@ namespace Sale_Order_Semi.Controllers
                         if (ad.Where(a => a.step_name.Contains("总部") && a.pass == true).Count() > 0) {
                             marketAuditor = ad.Where(a => a.step_name.Contains("总部") && a.pass == true).First().User.real_name;
                         }
-                        if (ad.Where(a => a.step_name.Contains("运作中心") && a.pass == true).Count() > 1) { //必须2个运作中心都审批OK后才有签名
+                        if (ad.Where(a => a.step_name.Contains("运作中心") && a.pass == true).Count() > 0) { //必须2个运作中心都审批OK后才有签名
                             runCenter = ad.Where(a => a.step_name.Contains("运作中心") && a.pass == true).First().User.real_name;
                         }
                         //if (ad.Where(a => a.step_name.Contains("接单") && a.pass == true).Count() > 0) {

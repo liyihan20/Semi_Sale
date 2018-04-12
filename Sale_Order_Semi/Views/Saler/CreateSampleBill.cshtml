@@ -250,24 +250,51 @@
 @if (step == 0)
 { 
     <script type="text/javascript">
-    $(function () { 
-        
+    $(function () {
+
         //保存订单
         $('#saveAllBut').bind('click', function () {
-            $.messager.progress(); 
-            $('#order_form').form('submit',{
+
+            ///2018-3-20加入的一些规则
+            var deliveryPlace = $("#fetch_add_no").combobox("getText");
+            if ($("#currency_no").combobox("getText") == "人民币") {
+                if (deliveryPlace.indexOf("国内（GN）■") < 0) {
+                    alert("保存失败：币别为人民币时，交货地点必须选择国内（GN）■香港（HK）□！");
+                    return;
+                }
+            } else {
+                if (deliveryPlace.indexOf("香港（HK）■") < 0) {
+                    alert("保存失败：币别为非人民币时，交货地点必须选择国内（GN）□香港（HK）■！");
+                    return;
+                }
+            }
+
+            $.messager.progress();
+            $('#order_form').form('submit', {
                 url: '@Url.Content("~/Saler/SalerSaveSampleBill")',
-                onSubmit:function(param){
-                    if(!$('#order_form').form('validate')){
+                onSubmit: function (param) {
+                    if (!$('#order_form').form('validate')) {
                         return false;
                     }
                     //如果规格型号的text和value不一致，则提示
-                    if($("#product_model").combogrid('getText') != $("#product_model").combogrid('getValue')){
+                    if ($("#product_model").combogrid('getText') != $("#product_model").combogrid('getValue')) {
                         $.messager.show({
                             title: '@Html.Lang("tip")',
                             msg: "规格型号请搜索回车后从列表中选择"
                         });
                         return false;
+                    }
+
+                    //国内贸易的必须填写合同编号，且格式是年月流水号，比如201801001
+                    if ($("#trade_type_no").combobox("getValue") == "03") {
+                        var pat = /\d{9}/;
+                        if (!pat.test($("#contract_po_no").val())) {
+                            $.messager.show({
+                                title: '@Html.Lang("tip")',
+                                msg: "保存失败：国内贸易的【合同编号P/O】字段必须符合以下格式：年+月+流水号，例如201802001"
+                            });
+                            return false;
+                        }
                     }
 
                     //保存客户名称
@@ -276,46 +303,46 @@
                     param.sea_customer_name=$('#sea_customer_no').combobox('getText');
                     return true;
                 },
-                success: function (data) { 
+                success: function (data) {
                     var result = eval('('+ data +')');
-                    if(result.suc){ 
+                    if(result.suc){
                         $.messager.show({
                             title: '@Html.Lang("tip")',
                             msg: "@Html.Lang("suc_save")"
                         });
-                    }else{
+                    } else {
                         $.messager.show({
                             title: '@Html.Lang("tip")',
-                            msg: "@Html.Lang("failure_save"):"+result.msg
+                            msg: "@Html.Lang("failure_save"):" + result.msg
                         });
-                    }                        
+                    }
                 }
             });
-            $.messager.progress("close");             
+            $.messager.progress("close");
         });
-        
-       //提交申请按钮
-        $("#submitApply").click(function(){
+
+        //提交申请按钮
+        $("#submitApply").click(function () {
             //首先检测订单是否已保存
             $("#submitApply").linkbutton('disable');
             $('#saveAllBut').linkbutton('disable');
-            $.post("@Url.Content("~/Saler/CheckIsBillExist")",{sysNum:$("#sys_no").val()},
-            function(data){
-                if(data.success){  
+            $.post("@Url.Content("~/Saler/CheckIsBillExist")", { sysNum: $("#sys_no").val() },
+            function (data) {
+                if (data.success) {
                     $.messager.show({
                         title: '@Html.Lang("tip")',
                         msg: "正在提交，请等待跳转。。。"
                     });
-                    setTimeout('window.location.href="@Url.Content("~/Saler/BeginApplySB?sys_no=")"+$("#sys_no").val();',2000);
-                }else{
+                    setTimeout('window.location.href="@Url.Content("~/Saler/BeginApplySB?sys_no=")"+$("#sys_no").val();', 2000);
+                } else {
                     $("#submitApply").linkbutton('enable');
                     $('#saveAllBut').linkbutton('enable');
                     $.messager.show({
                         title: '@Html.Lang("tip")',
                         msg: data.msg
-                     });
+                    });
                 }
-            },"json");
+            }, "json");
         });
     });
     </script>
@@ -691,13 +718,22 @@
                 </td>
                 <td class="freeHiddenPrice">
                     <input id="contract_price" class="easyui-numberbox" name="contract_price" style="width: 115px" precision="4" value="@sb.contract_price" />
+                </td>  
+                <td>
+                    @Html.Lang("contract_num"):
                 </td>
+                <td>
+                    <input id="contract_po_no" class="easyui-validatebox" name="contract_po_no" style="width: 115px" value="@sb.contract_po_no" />
+                </td>
+            </tr>
+            <tr>
                 <td>
                     制单人:
                 </td>
                 <td>
                     <input class="easyui-textbox" id="create_user" name="create_user"  value="@sb.User.real_name" readonly="readonly" style="width: 115px" />
                 </td>
+                <td></td><td></td><td></td><td></td><td></td><td></td>
             </tr>
             <tr>
                 <td colspan="8">

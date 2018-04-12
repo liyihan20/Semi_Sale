@@ -216,14 +216,16 @@
                             <input type="text" id="pic_version" name="pic_version" style="width: 120px" value="@mc.pic_version" />
                         </td>
                         <td>
+                            @Html.Lang("contract_num"):
+                        </td>
+                        <td>
+                            <input type='text' style="width: 120px" value="@mc.contract_po_no" />
+                        </td>
+                        <td>
                             @Html.Lang("biller"):
                         </td>
                         <td>
                             <input type="text" id="create_user" name="create_user" style="width: 120px" value="@mc.User.real_name" />
-                        </td>
-                        <td>
-                        </td>
-                        <td>
                         </td>
                     </tr>
                     <tr>

@@ -40,6 +40,8 @@
 					                return 'color:red;';
 				                }else if(value == '审核成功'){
 					                return 'color:green;';
+				                } else if (value == '挂起中') {
+				                    return 'color:#CC0000;';
 				                }
 			                } 
                         },
@@ -64,7 +66,7 @@
             ]],
             toolbar: '#audit_tb',
             rowStyler: function(index,row){
-                if (row.status=='挂起中'){
+                if (row.orderType == '退换货') {
                     return 'color:blue;'; 
                 }
             },

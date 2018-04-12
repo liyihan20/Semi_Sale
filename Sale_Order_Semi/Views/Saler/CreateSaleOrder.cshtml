@@ -15,7 +15,7 @@
         //订单明细表
         $("#order_detail").datagrid({
             //height: "140",
-            width: "1800",
+            width: "2000",
             fitColumns: true,
             rownumbers: true,
             singleSelect: true,
@@ -40,7 +40,9 @@
                         { field: 'commission_rate', title: '@Html.Lang("commission_rate")%', width: 60 , align: 'right'},
                         { field: 'delivery_date', title: '@Html.Lang("begin_date")', width: 100, align: 'center' },
     					{ field: 'target_date', title: '@Html.Lang("finish_date")', width: 100, align: 'center' },
-                        { field: 'project_number', title: '@Html.Lang("project_number")', width: 100,hidden: true },
+                        { field: 'project_number', title: '@Html.Lang("project_number")', width: 100, hidden: true },
+                        { field: 'customer_item_number', title: '@Html.Lang("customer_item_number")', width: 120 },
+                        { field: 'customer_item_model', title: '@Html.Lang("customer_item_model")', width: 120 },
                         { field: 'project_name', title: '@Html.Lang("project_name")', width: 120 },
                         { field: 'comment', title: '@Html.Lang("pro_size")', width: 200 }
             ]],
@@ -198,7 +200,9 @@
                             target_date: convertDate(detail.target_date),
                             project_number:detail.project_number,
                             project_name:detail.project_name,
-                            comment: detail.comment
+                            comment: detail.comment,
+                            customer_item_number: detail.customer_item_number,
+                            customer_item_model: detail.customer_item_model
                         };
                         $('#order_detail').datagrid('appendRow', theRow);
                     }
@@ -350,6 +354,15 @@
                 $("#qtyPoint").val(rowData.qtyPrecision);
                 $("#pricePoint").val(rowData.pricePrecision);
                 $("#product_number").combogrid('hidePanel');
+
+                //加载客户料号和型号信息 2018-4-12
+                var customerId = $("#oversea_client").combogrid("getValue");
+                if (!isNaN(customerId)) {
+                    $.post("@Url.Content("~/Items/GetK3CustomerModel")", { customerId: customerId, productId: rowData.id }, function (data) {
+                        $("#customer_item_number").val(data.customerItemNumber);
+                        $("#customer_item_model").val(data.customerItemModel);
+                    });
+                }
             }
         });
 
@@ -463,26 +476,20 @@
 
         //提交申请按钮
         $("#submitApply").click(function(){
-            //首先检测订单是否已保存
-            $("#submitApply").linkbutton('disable');
-            $('#saveAllBut').linkbutton('disable');
-            $.post("@Url.Content("~/Saler/CheckIsBillExist")",{sysNum:$("#sys_no").val()},
-            function(data){
-                if(data.success){
-                    $.messager.show({
-                        title: '@Html.Lang("tip")',
-                        msg: "正在提交，请等待跳转。。。"
-                    });
-                    setTimeout('window.location.href="@Url.Content("~/Saler/BeginApplySO?sys_no=")"+$("#sys_no").val();',2000);
-                }else{
-                    $("#submitApply").linkbutton('enable');
-                    $('#saveAllBut').linkbutton('enable');
-                    $.messager.show({
-                        title: '@Html.Lang("tip")',
-                        msg: data.msg
+            //先判断信用额度 2018-02-27
+            var customerId = $("#buy_unit").combogrid("getValue");
+            var currencyId = $("#currency").combobox("getValue");
+            $.post("@Url.Content("~/Items/GetCustomerCreditInfo")", { customerId: customerId, currencyId: currencyId }, function (data) {
+                if (data.suc) {
+                    BeginApply();
+                } else {
+                    $.messager.confirm('@Html.Lang("confirm")', '检测到当前客户的信用额度已超额，是否继续提交?如继续提交，请尽快处理此问题，否则将可能影响最终审批结果。<br/>详情：'+data.msg, function (r) {
+                        if (r) {
+                            BeginApply();
+                        }
                     });
                 }
-            },"json");
+            });
         });
 
         //不含税单价，含税单价
@@ -515,76 +522,28 @@
         $("#order_div").css("visibility","visible");
     });
 
-    //保存订单表体
-    //    function thenSaveDetails(orderID){
-    //        var details=$("#order_detail").datagrid("getRows");
-    //        var p_id=new Array();
-    //        var p_qty=new Array();
-    //        var p_quote=new Array();
-    //        var p_cost=new Array();
-    //        var p_deal=new Array();
-    //        var p_aux=new Array();
-    //        var p_fee_rate=new Array();
-    //        var p_tax_rate=new Array();
-    //        var p_del_date=new Array();
-    //        var p_tar_date=new Array();
-    //        var p_comment=new Array();
-    //        var p_discount_rate=new Array();
-    //        var p_unit_price=new Array();
-    //        var exchange=$('#exchange').numberbox('getValue');
-    //        var pro_type=$("#product_type").combobox("getText");
-    //        for(var i=0;i<details.length;i++){
-    //            p_id[i]=details[i].product_id;
-    //            p_qty[i]=details[i].qty;
-    //            p_quote[i]=details[i].quote_no;
-    //            p_cost[i]=details[i].cost;
-    //            p_deal[i]=details[i].deal_price;
-    //            p_discount_rate[i]=details[i].discount_rate;
-    //            p_unit_price[i]=details[i].unit_price;
-    //            p_aux[i]=details[i].Aux_tax_price;
-    //            p_fee_rate[i]=details[i].fee_rate;
-    //            p_tax_rate[i]=details[i].tax_rate;
-    //            p_del_date[i]=details[i].delivery_date;
-    //            p_tar_date[i]=details[i].target_date;
-    //            p_comment[i]=details[i].comment;
-    //        }
-    //        $.post("@Url.Content("~/Saler/saveSaleOrderDetails")",
-    //                {
-    //                    p_id:p_id,
-    //                    p_qty:p_qty,
-    //                    p_quote:p_quote,
-    //                    p_cost:p_cost,
-    //                    p_deal:p_deal,
-    //                    p_aux:p_aux,
-    //                    p_del_date:p_del_date,
-    //                    p_discount_rate:p_discount_rate,
-    //                    p_unit_price:p_unit_price,
-    //                    p_fee_rate:p_fee_rate,
-    //                    p_tax_rate:p_tax_rate,
-    //                    p_tar_date:p_tar_date,
-    //                    p_comment:p_comment,
-    //                    orderId:orderID,
-    //                    exchange:exchange,
-    //                    pro_type:pro_type
-    //                },
-    //                function(data){
-    //                    if(data.success){
-    //                        $.messager.show({
-    //                            title: '@Html.Lang("tip")',
-    //                            msg: "@Html.Lang("suc_save")"
-    //                        });
-    //                    }else{
-    //                        $.post("@Url.Content("~/Saler/deleteOrderIfFail")",{order_id:orderID},function(data){});
-    //                        $.messager.show({
-    //                            title: '@Html.Lang("tip")',
-    //                            msg: "@Html.Lang("failure_save")"
-    //                        });
-    //                    }
-    //                    $.messager.progress("close");
-    //                   $('#saveAllBut').linkbutton('enable');
-    //                   $('#submitApply').linkbutton('enable');
-    //                });
-    //    }
+    //提交表单
+    function beginApply() {
+        $("#submitApply").linkbutton('disable');
+        $('#saveAllBut').linkbutton('disable');
+        $.post("@Url.Content("~/Saler/CheckIsBillExist")",{sysNum:$("#sys_no").val()},
+        function(data){
+            if(data.success){
+                $.messager.show({
+                    title: '@Html.Lang("tip")',
+                    msg: "正在提交，请等待跳转。。。"
+                });
+                setTimeout('window.location.href="@Url.Content("~/Saler/BeginApplySO?sys_no=")"+$("#sys_no").val();',2000);
+            }else{
+                $("#submitApply").linkbutton('enable');
+                $('#saveAllBut').linkbutton('enable');
+                $.messager.show({
+                    title: '@Html.Lang("tip")',
+                    msg: data.msg
+                });
+            }
+        });
+    }
 
     //保存订单时各种验证
     function beforeSaveOrder(){
@@ -601,6 +560,43 @@
             alert("比例1和比例2之和必须为100");
             return false;
         }
+        ///2018-3-20加入的一些规则
+        var tradeType = $("#trade_type").combobox("getText");
+        var saleWay = $("#sale_way").combobox("getText");
+        var deliveryPlace = $("#delivery_place").combobox("getText");
+        if ($("#currency").combobox("getText") == "人民币") {
+            if (tradeType != "国内贸易") {
+                alert("保存失败：币别为人民币时，贸易方式必须为国内贸易！");
+                return false;
+            }
+            if (saleWay != "分期收款销售") {
+                alert("保存失败：币别为人民币时，销售方式必须为分期收款销售！");
+                return false;
+            }
+            if (deliveryPlace.indexOf("国内（GN）■") < 0) {
+                alert("保存失败：币别为人民币时，交货地点必须选择国内（GN）■香港（HK）□！");
+                return false;
+            }
+        } else {
+            if (tradeType.indexOf("异地报关") >= 0 && saleWay != "分期收款销售") {
+                alert("保存失败：币别为非人民币且贸易类型包含异地报关时，销售方式必须为分期收款销售！");
+                return false;
+            }
+            if ($("#trade_rule").combobox("getValue") == "") {
+                alert("保存失败：币别为非人民币时，贸易条例不能为空！");
+                return false;
+            }
+            if ((tradeType == "保税贸易" || tradeType == "一般贸易") && saleWay != "赊销") {
+                alert("保存失败：币别为非人民币且贸易类型为保税贸易或一般贸易时，销售方式必须为赊销！");
+                return false;
+            }
+            if (deliveryPlace.indexOf("香港（HK）■") < 0) {
+                alert("保存失败：币别为非人民币时，交货地点必须选择国内（GN）□香港（HK）■！");
+                return false;
+            }
+        }
+
+
         var isok=true;
         $("#order_div .combo-value").each(function (index) {
             var id = $(this).attr("name");
@@ -717,7 +713,10 @@
             $('#product_number').combogrid('setValue',row.product_id);
             $('#product_number').combogrid('setText',row.product_number);
             $("#project_number").combogrid("setValue",row.project_number);
-            $("#project_number").combogrid("setText",row.project_name);
+            $("#project_number").combogrid("setText", row.project_name);
+
+            $("#customer_item_number").val(row.customer_item_number);
+            $("#customer_item_model").val(row.customer_item_model);
         }
     }
 
@@ -763,12 +762,12 @@
                 type: "POST",
                 dataType: "json",
                 url: "@Url.Content("~/Audit/GetCommissionRate")",
-                        data: "proType=" + v_pro_type +"&MU=" + v_mu,
-                        async: false,
-                        success: function (data) {
-                            v_com_rate = data;
-                        }
-                    });
+                data: "proType=" + v_pro_type +"&MU=" + v_mu,
+                async: false,
+                success: function (data) {
+                    v_com_rate = data;
+                }
+            });
         }
         //佣金
         if(v_pro_type == "CCM" && v_mu<-6){
@@ -800,7 +799,9 @@
             target_date: $('#target_date').datebox('getValue'),
             project_number:$("#project_number").combogrid("getValue"),
             project_name:$("#project_number").combogrid("getText"),
-            comment: $('#comment').val()
+            comment: $('#comment').val(),
+            customer_item_number: $("#customer_item_number").val(),
+            customer_item_model: $("#customer_item_model").val()
         };
 
         //2017-9-8 从pis带产品用途过来，提示是否覆盖掉已填产品用途
@@ -819,6 +820,19 @@
                         });
                     }
                 }
+            });
+        }
+
+        //每一次保存都更新客户料号、型号到k3 2018-4-12
+        var customerId = $("#oversea_client").combogrid("getValue");
+        if (!isNaN(customerId)) {
+            $.post("@Url.Content("~/Items/SynchroToK3CustomerModel")", {
+                customerId: customerId,
+                productId: theRow.product_id,
+                customerItemNumber: theRow.customer_item_number,
+                customerItemModel: theRow.customer_item_model
+            }, function (data) {
+
             });
         }
 
@@ -899,7 +913,7 @@
                     @Html.Lang("pro_use"):
                 </td>
                 <td>
-                    <input class="easyui-textbox" id="product_use" name="product_use" style="width: 115px" />
+                    <input class="easyui-textbox" id="product_use" name="product_use" style="width: 115px" required="true" />
                 </td>
                 <td>
                     @Html.Lang("payment"):
@@ -948,15 +962,14 @@
                 <td>
                     <input id="plan_firm" class="customerbox" name="plan_firm" style="width: 120px"  panelWidth="240px"  required="true"/>
                 </td>
-            </tr>           
+            </tr>
             <tr>
                  <td>
                     @Html.Lang("sale_type"):
                 </td>
                 <td>
-                    <input class="easyui-combobox" id="sale_way" name="sale_way" url="@Url.Content("~/Items/getItems?what=sale_type")"
-                valuefield="id" textfield="name" style="width: 120px"  required="true"/>
-                </td>                
+                    <input class="easyui-combobox" id="sale_way" name="sale_way" url="@Url.Content("~/Items/getItems?what=sale_type")" valuefield="id" textfield="name" style="width: 120px"  required="true"/>
+                </td>
                 <td>
                     @Html.Lang("clerk1"):
                 </td>
@@ -1226,6 +1239,20 @@
             </td>
             <td>
                 <input id="target_date" class="easyui-datebox" name="target_date" style="width: 125px" required="true" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @Html.Lang("customer_item_number"):
+            </td>
+            <td>
+                <input id="customer_item_number" class="easyui-validatebox" name="customer_item_number" style="width: 120px" required="true" />
+            </td>
+            <td>
+                @Html.Lang("customer_item_model"):
+            </td>
+            <td>
+                <input id="customer_item_model" class="easyui-validatebox" name="customer_item_model" style="width: 120px" required="true" />
             </td>
         </tr>
         <tr>
