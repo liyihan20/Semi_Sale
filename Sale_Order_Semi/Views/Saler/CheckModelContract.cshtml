@@ -170,13 +170,19 @@
                             <input type="text" id="zz_customer_name" name="zz_customer_name" style="width: 120px" value="@mc.zz_customer_name" />
                         </td>
                         <td>
+                            海外客户:
+                        </td>
+                        <td>
+                            <input type="text" id="oversea_customer_name" name="oversea_customer_name" style="width: 120px" value="@mc.oversea_customer_name" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             @Html.Lang("currency"):
                         </td>
                         <td>
                             <input type="text" id="currency_name" name="currency_name" style="width: 120px" value="@mc.currency_name" />
                         </td>
-                    </tr>
-                    <tr>
                         <td>
                             @Html.Lang("qty"):
                         </td>
@@ -195,14 +201,14 @@
                         <td>
                             <input type="text" name="pro_use" id="pro_use" style="width: 120px"  value="@mc.pro_use" />
                         </td>
+                    </tr>
+                    <tr>
                         <td>
                             @Html.Lang("customer_model"):
                         </td>
                         <td>
                             <input type="text" id="project_number" name="project_number" style="width: 120px" value="@mc.project_number" />
                         </td>
-                    </tr>
-                    <tr>
                         <td>
                             @Html.Lang("pic_number"):
                         </td>
@@ -221,6 +227,8 @@
                         <td>
                             <input type='text' style="width: 120px" value="@mc.contract_po_no" />
                         </td>
+                    </tr>
+                    <tr>                        
                         <td>
                             @Html.Lang("biller"):
                         </td>

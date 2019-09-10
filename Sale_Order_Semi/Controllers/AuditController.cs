@@ -125,13 +125,12 @@ namespace Sale_Order_Semi.Controllers
                           || (((ad.countersign == true && ad.pass == null) || ((ad.countersign == null || ad.countersign == false) && ad.Apply.ApplyDetails.Where(ads => ads.step == ad.step && ads.pass != null).Count() == 0)) && auditResult == 0)
                           )
                           select ad;
+            var billTypes = db.Sale_BillTypeName.ToList();
             foreach (var ad in details)
             {
                 importFlag = null;
                 finalStatus = "----";
                 ap = ad.Apply;
-                string orderType = "";
-                //string model = "";
 
                 step = (int)ad.step;
                 //还没到这一步或者已经在之前结束
@@ -201,9 +200,8 @@ namespace Sale_Order_Semi.Controllers
                             db.SubmitChanges();
                         }
                     }
-                }
-                                
-                db.getOrderTypeBySysNo(ap.sys_no, ref orderType);
+                }                               
+                
                 list.Add(new AuditListModel()
                             {
                                 depName = ap.User.Department1.name,
@@ -218,7 +216,7 @@ namespace Sale_Order_Semi.Controllers
                                 hasImportK3 = (importFlag == true) ? "Y" : ((importFlag == false) ? "N" : ""),
                                 finalStatus = finalStatus,
                                 encryptNo = utl.myEncript(ap.sys_no),
-                                orderType = orderType,
+                                orderType = billTypes.Where(b => b.p_type == ap.order_type).Select(b => b.p_name).FirstOrDefault(),
                                 model = ap.p_model
                             });
                 recordNum++;
@@ -295,7 +293,7 @@ namespace Sale_Order_Semi.Controllers
             switch (ap.order_type)
             {
                 case "SO":
-                    ViewData["order_id"] = db.Order.Where(o => o.sys_no == ap.sys_no).OrderByDescending(o => o.id).First().id;
+                    ViewData["order_id"] = db.Sale_SO.Single(s => s.sys_no == ap.sys_no).id;
                     ViewData["step_name"] = ad.step_name;
                     break;
                 case "CM":
@@ -322,8 +320,8 @@ namespace Sale_Order_Semi.Controllers
                 utl.writeEventLog("审核单据", "进入可编辑界面", ap.sys_no + ":" + currentStep.ToString(), Request);
                 switch (ap.order_type)
                 {
-                    case "SO":                        
-                        return View("SaleOrdrEdit");
+                    case "SO":
+                        return RedirectToAction("AuditorModifySOBill", "Saler", new { apply_id = ap.id, sys_no = ap.sys_no, step = currentStep });
                     case "MB":
                         return View("ContractEdit");
                     case "CM":
@@ -380,48 +378,21 @@ namespace Sale_Order_Semi.Controllers
             {
                 utl.writeEventLog("审核单据", "该订单已被审核:", ap.sys_no + ":" + step.ToString(), Request, 100);
                 return Json(new { success = false, msg = "该订单已被审核" }, "text/html");
-            }
+            }                      
 
-            
-
-            #region SO新增特殊处理
-            int newProcDeptID = 0;
-            if (ap.order_type.Equals("SO"))
-            {
-                //运作中心审核时，可以修改生产部门
-                if (thisDetail.step_name.Equals("运作中心审核") && isOK)
-                {
-                    if (int.TryParse(newProcDept, out newProcDeptID))
-                    {
-                        //先保存生产部门
-                        Order ord = db.Order.Single(o => o.sys_no == ap.sys_no);
-                        ord.proc_dep_id = newProcDeptID;
-                    }
-                    else
-                    {
-                        return Json(new { success = false, msg = "生产部门不合法" }, "text/html");
-                    }
-                }
-                //事业部接单可以退回运作中心修改生产部门
-                if (!isOK && "1".Equals(backToPrevious) && thisDetail.step_name.Equals("事业部接单"))
-                {
-                    return BackToPreviousStep(ap, step, comment);
-                }
-            }
-            #endregion
 
             #region 备料单特殊处理
 
-            if (ap.order_type.Equals("BL")) {
-                Sale_BL bl = db.Sale_BL.Single(s => s.sys_no == ap.sys_no);
+            //if (ap.order_type.Equals("BL")) {
+            //    Sale_BL bl = db.Sale_BL.Single(s => s.sys_no == ap.sys_no);
 
-                //计划经理审批后
-                if (thisDetail.step_name.Contains("计划经理") && isOK) {
+            //    //计划经理审批后
+            //    if (thisDetail.step_name.Contains("计划经理") && isOK) {
                     //string busDep = bl.bus_dep;  
                     //utl.AppendStepAtLast(ap.id, "计划审批", new int?[] { bl.planner_id },step, true);
                     //utl.AppendStepAtLast(ap.id, "运作中心二审", new int?[] { 243 }, step); //李卓明
-                    utl.AppendStepAtLast(ap.id, "市场总部审批", new int?[] { 92 }, step); //王创浩
-                }
+                //    utl.AppendStepAtLast(ap.id, "市场总部审批", new int?[] { 92 }, step); //王创浩
+                //}
                 //计划经理审批后，如果有修改，则在最后插入营业审批
                 //if (thisDetail.step_name.Contains("计划审批") && isOK) {
                 //    int?[] orderIds = bl.order_ids.Split(new char[] { ',' }).Select(i => { int? id = Int32.Parse(i); return id; }).ToArray();
@@ -430,7 +401,7 @@ namespace Sale_Order_Semi.Controllers
                 //    utl.AppendStepAtLast(ap.id, "运作中心二审", new int?[] { 243 }, step); //李卓明
                 //    utl.AppendStepAtLast(ap.id, "市场总部审批", new int?[] { 92 }, step); //王创浩
                 //}
-            }
+            //}
 
             #endregion
 
@@ -548,30 +519,7 @@ namespace Sale_Order_Semi.Controllers
                 return Json(new { success = false, msg = "审核发生错误" }, "text/html");
             }
             #endregion
-
-            #region 审批成功后，SO运作中心根据新生产部门ID插入事业部审核步骤
-            if (newProcDeptID > 0)
-            {
-                //取出接单员id和成控员id
-                int?[] billerIds = db.AuditorsRelation.Where(a => a.step_name.Equals("SO_事业部接单员") && a.relate_value == newProcDeptID).Select(a => a.auditor_id).ToArray();
-                int?[] controllerIds = db.AuditorsRelation.Where(a => a.step_name.Equals("SO_事业部成控员") && a.relate_value == newProcDeptID).Select(a => a.auditor_id).ToArray();
-                //将成控员中已经是接单员的人剔除
-                controllerIds = controllerIds.Where(c => !billerIds.Contains(c)).ToArray();
-
-                //先插入成控
-                if (controllerIds.Count() > 0)
-                {
-                    utl.InsertStepAfterStep(applyId, step, "事业部成控", controllerIds);
-                }
-
-                //再插入接单
-                if (billerIds.Count() > 0)
-                {
-                    utl.InsertStepAfterStep(applyId, step, "事业部接单", billerIds);
-                }
-            }
-            #endregion
-                        
+                                    
             #region 不是会签或者会签已结束，发送通知邮件给下一环节审批人
             if (thisDetail.countersign == null || thisDetail.countersign == false || ap.ApplyDetails.Where(a => a.step == step && a.pass == null).Count() < 1)
             {
@@ -1105,415 +1053,8 @@ namespace Sale_Order_Semi.Controllers
             db.getCommissionRate(proType, MU, ref result);
             return Json(result, "text/html");
         }
-
-        //保存订单表头
-        [HttpPost]
-        public JsonResult saveSaleOrder(FormCollection col)
-        {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-
-            //表头
-            string billType = col.Get("bill_type");
-            int stepVersion = Int32.Parse(col.Get("step_version"));
-            string orderDate = col.Get("order_date");
-            string sysNum = col.Get("sys_no");
-            int proc_dep_id = Int32.Parse(col.Get("proc_dep"));
-            string agency = col.Get("agency");
-            string projectGroup = col.Get("project_group");
-            string product_type = col.Get("product_type");
-            string product_use = col.Get("product_use");
-            string currency = col.Get("currency");
-            string exchange = col.Get("exchange");
-            string clearingWay = col.Get("clearing_way");
-            string contractNo = col.Get("contract_no");
-            string buyUnit = col.Get("buy_unit");
-            string finalClient = col.Get("final_client");
-            string planFirm = col.Get("plan_firm");
-            string order_no = col.Get("Order_no");
-            string trade_type = col.Get("trade_type");
-            string order_type = col.Get("order_type");
-            string sale_way = col.Get("sale_way");
-            string oversea_client = col.Get("oversea_client");
-            string trade_rule = col.Get("trade_rule");
-
-            string salerPercentage = col.Get("saler_percent");
-
-            //表尾
-            string clerk = col.Get("clerk");
-            string clerk2 = col.Get("clerk2");
-            string group1 = col.Get("group1");
-            string group2 = col.Get("group2");
-            string percent1 = col.Get("percent1");
-            string percent2 = col.Get("percent2");
-            string deliveryPlace = col.Get("delivery_place");
-            string overseaPercentage = col.Get("oversea_percentage");
-            string backpaperConfirm = col.Get("backpaper_confirm");
-            string produceWay = col.Get("produce_way");
-            string printTruly = col.Get("print_truly");
-            string clientLogo = col.Get("client_logo");
-            string description = col.Get("description");
-            string further_info = col.Get("further_info");
-            string charger = col.Get("charger");
-            //string create_user = col.Get("create_user");
-
-            #region 已审核不能再次审核
-            var existedBills = db.Order.Where(o => o.sys_no == sysNum && o.step_version == stepVersion);
-            if (existedBills.Count() > 0)
-            {
-                utl.writeEventLog("审核单据_保存订单", "订单已被审核,step" + stepVersion.ToString(), sysNum, Request, 1000);
-                return Json(new { success = false, msg = "该订单已被审核" }, "text/html");
-            }
-            #endregion
-
-            #region 市场部下单组必须保证订单编号已填写，此时step为4
-            //if (stepVersion == 4)
-            //{
-            if (string.IsNullOrWhiteSpace(order_no))
-            {
-                return Json(new { success = false, msg = "订单编号必须由下单组填写，保存失败" }, "text/html");
-            }
-            bool? existflag = false;
-            db.isDublicatedBillNo(order_no, "SO", ref existflag);
-            if (existflag == true)
-            {
-                utl.writeEventLog("审核单据_保存订单", "订单编号在K3已经存在，保存失败,step" + stepVersion.ToString(), sysNum, Request, 100);
-                return Json(new { success = false, msg = "订单编号在K3已经存在，保存失败" }, "text/html");
-            }
-            if (db.Order.Where(o => o.order_no == order_no && o.sys_no != sysNum).Count() > 0)
-            {
-                utl.writeEventLog("审核单据_保存订单", "订单编号在下单系统中已经存在，保存失败,step:" + stepVersion.ToString(), sysNum, Request, 100);
-                return Json(new { success = false, msg = "订单编号在下单系统中已经存在，不能重复保存" }, "text/html");
-            }
-            //}
-            #endregion
-
-            #region 验证表尾说明字段的字符长度，不能超过255个字节。一个汉字包含2个字节。
-            if (Encoding.Default.GetBytes(description).Length > 255)
-            {
-                return Json(new { success = false, msg = "【说明】字段内容太长，不能超过255个字符，请精简后再保存。注意：1个中文和全角符号算2个字符，1个英文、数字和半角符号算1个字符。" }, "text/html");
-            }
-            if (Encoding.Default.GetBytes(further_info).Length > 1000)
-            {
-                return Json(new { success = false, msg = "【补充说明】字段内容太长，不能超过1000个字符，请精简后再保存。注意：1个中文和全角符号算2个字符，1个英文、数字和半角符号算1个字符。" }, "text/html");
-            }
-            #endregion
-
-            #region 客户与贸易类型的制约关系
-            //根据触发器[Truly_SEOrder_FXGD]改编，贸易类型，客户和海外客户有着制约关系。
-            //控制客户编码是以01，02开头的SO订单只能下国内贸易的单除三星外
-            //--控制客户是以香港信利的贸易类型不能为国内贸易
-            //--控制客户是以香港信利的海外客户必须是以05,06,04开头的单
-            int buyUint_id = Int32.Parse(buyUnit);
-            getCostomerByIdResult customer = db.getCostomerById(buyUint_id).First();
-            getCostomerByIdResult overseaclient = db.getCostomerById(Int32.Parse(oversea_client)).First(); ;
-            int tradeType = Int32.Parse(trade_type);
-            if (buyUint_id != 110354 && buyUint_id != 287045)
-            {
-                if (tradeType != 120773 && (customer.number.StartsWith("01.") || customer.number.StartsWith("02.")) && !customer.name.Contains("三星") && !customer.name.Contains("SAMSUNG"))
-                {
-                    return Json(new { success = false, msg = "国内单贸易类型必须为国内贸易" }, "text/html");
-                }
-            }
-            else
-            {
-                if (tradeType == 120773)
-                {
-                    return Json(new { success = false, msg = "国外单贸易类型不能为国内贸易" }, "text/html");
-                }
-                if (!(new string[] { "06.", "04.", "05." }).Contains(overseaclient.number.Substring(0, 3)))
-                {
-                    return Json(new { success = false, msg = "国外单海外客户必须选择国外客户" }, "text/html");
-                }
-            }
-            #endregion
-
-            #region 验证项目编号与客户是否相互对应,467表示无客户编号
-            string[] p_project_number = col.Get("p_project_number").Split(',');
-            int pn_int;
-            foreach (var pn in p_project_number)
-            {
-                if (string.IsNullOrEmpty(pn))
-                {
-                    return Json(new { success = false, msg = "保存失败：项目编号不能为空" }, "text/html");
-                }
-                if (!Int32.TryParse(pn, out pn_int))
-                {
-                    return Json(new { success = false, msg = "保存失败：项目名称[" + pn + "]不合法，必须在列表中选择" }, "text/html");
-                }
-                if (pn_int == 467)
-                {
-                    continue;
-                }
-                else
-                {
-                    if (db.VwProjectNumber.Where(v => v.id == pn_int && (v.client_number == customer.number || v.client_number == overseaclient.number)).Count() < 1)
-                    {
-                        return Json(new { success = false, msg = "保存失败：项目编号 " + pn + " 不属于当前客户。" }, "text/html");
-                    }
-                }
-            }
-            #endregion
-            //保存表单
-            Order otp = new Order();
-            //单据类别，1:销售订单；2：销售合同；3：开模销售合同
-            otp.bill_type = short.Parse(billType);
-            otp.step_version = stepVersion;
-            otp.user_id = userId;
-            if (!string.IsNullOrEmpty(orderDate))
-                otp.order_date = DateTime.Parse(orderDate);
-            otp.sys_no = sysNum;
-            otp.proc_dep_id = proc_dep_id;
-            otp.department_id = Int32.Parse(agency);
-            otp.project_group = Int32.Parse(projectGroup);
-            otp.product_type = Int32.Parse(product_type);
-            otp.product_use = product_use;
-            otp.currency = Int32.Parse(currency);
-            if (!string.IsNullOrEmpty(exchange))
-                otp.exchange_rate = double.Parse(exchange);
-            otp.clearing_way = Int32.Parse(clearingWay);
-            otp.contract_no = contractNo;
-            otp.buy_unit = Int32.Parse(buyUnit);
-            if (!string.IsNullOrEmpty(finalClient))
-                otp.final_client = Int32.Parse(finalClient);
-            if (!string.IsNullOrEmpty(planFirm))
-                otp.plan_firm = Int32.Parse(planFirm);
-            otp.order_no = order_no;
-            otp.trade_type = Int32.Parse(trade_type);
-            if (!string.IsNullOrWhiteSpace(order_type))
-                otp.order_type = Int32.Parse(order_type);
-            //otp.order_type = 40544;//生产单
-            otp.sale_way = Int32.Parse(sale_way);
-            if (!string.IsNullOrEmpty(oversea_client))
-            {
-                otp.oversea_client = Int32.Parse(oversea_client);
-            }
-            if (!string.IsNullOrEmpty(trade_rule))
-            {
-                otp.trade_rule = Int32.Parse(trade_rule);
-            }
-            //otp.create_user = Int32.Parse(create_user);
-            if (!string.IsNullOrEmpty(charger))
-            {
-                otp.charger = Int32.Parse(charger);
-            }
-            otp.delivery_place = deliveryPlace;
-            otp.oversea_percentage = string.IsNullOrEmpty(overseaPercentage) ? 0 : decimal.Parse(overseaPercentage);
-            if (!string.IsNullOrEmpty(backpaperConfirm))
-                otp.backpaper_confirm = Int32.Parse(backpaperConfirm);
-            if (!string.IsNullOrEmpty(produceWay))
-                otp.produce_way = Int32.Parse(produceWay);
-            if (!string.IsNullOrEmpty(printTruly))
-                otp.print_truly = Int32.Parse(printTruly);
-            if (!string.IsNullOrEmpty(clientLogo))
-                otp.client_logo = Int32.Parse(clientLogo);
-            otp.description = description;
-            otp.further_info = further_info;
-            otp.salePs = salerPercentage;
-
-            otp.clerk = Int32.Parse(clerk);
-            otp.group1 = group1;
-            otp.group2 = group2;
-            otp.percent1 = decimal.Parse(percent1);
-            otp.percent2 = string.IsNullOrWhiteSpace(percent2) ? 0 : decimal.Parse(percent2);
-            if (!string.IsNullOrWhiteSpace(clerk2))
-            {
-                otp.clerk2 = Int32.Parse(clerk2);
-            }
-            db.Order.InsertOnSubmit(otp);
-
-            //保存表体
-            if (!saveOrderDetails(col, otp))
-            {
-                utl.writeEventLog("审核单据_保存订单", "表体保存失败,step" + stepVersion.ToString(), sysNum, Request, -1);
-                return Json(new { success = false, msg = "保存表体失败。" }, "text/html");
-            }
-
-            try
-            {
-                db.SubmitChanges();
-            }
-            catch (Exception ex)
-            {
-                utl.writeEventLog("审核单据_保存订单", "保存事务提交失败,exception:" + ex.Message.ToString(), sysNum, Request, -1);
-                return Json(new { success = false,msg=ex.Message.ToString() }, "text/html");
-            }
-            utl.writeEventLog("审核单据_保存订单", "保存成功", sysNum, Request);
-            return Json(new { success = true }, "text/html");
-        }
-
-        //保存订单表体
-        public bool saveOrderDetails(FormCollection col, Order order)
-        {
-            string[] p_ids = col.Get("p_id").Split(',');
-            string[] p_qty = col.Get("p_qty").Split(',');
-            string[] p_quote = col.Get("p_quote").Split(',');
-            string[] p_cost = col.Get("p_cost").Split(',');
-            string[] p_deal = col.Get("p_deal").Split(',');
-            string[] p_aux = col.Get("p_aux").Split(',');
-            string[] p_del_date = col.Get("p_del_date").Split(',');
-            string[] p_tar_date = col.Get("p_tar_date").Split(',');
-            string[] p_comment = col.Get("p_comment").Split(',');
-
-            string[] p_MU = col.Get("p_MU").Split(',');
-            string[] p_commission = col.Get("p_commission").Split(',');
-            string[] p_commissionRate = col.Get("p_commissionRate").Split(',');
-            string[] p_feeRate = col.Get("p_feeRate").Split(',');
-            string[] p_disccountRate = col.Get("p_disccountRate").Split(',');
-            string[] p_unit = col.Get("p_unit").Split(',');
-            string[] p_unit_price = col.Get("p_unit_price").Split(',');
-            string[] p_tax_rate = col.Get("p_tax_rate").Split(',');
-            string[] p_suggest_date = col.Get("p_suggest_date").Split(',');
-            string[] p_confirm_date = col.Get("p_confirm_date").Split(',');
-            string[] p_project_number = col.Get("p_project_number").Split(',');
-
-            //保存表体
-            try
-            {
-                List<OrderDetail> ots = new List<OrderDetail>();
-                for (int i = 0; i < p_ids.Count(); i++)
-                {
-                    OrderDetail od = new OrderDetail();
-                    od.Order = order;
-                    od.entry_id = i + 1;
-                    od.product_id = Int32.Parse(p_ids[i]);
-                    od.qty = decimal.Parse(p_qty[i]);
-                    od.quote_no = p_quote[i];
-                    od.cost = string.IsNullOrEmpty(p_cost[i]) ? 0 : decimal.Parse(p_cost[i]);
-                    od.deal_price = string.IsNullOrEmpty(p_deal[i]) ? 0 : decimal.Parse(p_deal[i]);
-                    od.aux_tax_price = string.IsNullOrEmpty(p_aux[i]) ? 0 : decimal.Parse(p_aux[i]);
-                    od.delivery_date = string.IsNullOrEmpty(p_del_date[i]) ? null : (DateTime?)(DateTime.Parse(p_del_date[i]));
-                    od.target_date = string.IsNullOrEmpty(p_tar_date[i]) ? null : (DateTime?)(DateTime.Parse(p_tar_date[i]));
-                    od.comment = p_comment[i];
-                    od.MU = decimal.Parse(p_MU[i]);
-                    od.commission = decimal.Parse(p_commission[i]);
-                    od.commission_rate = decimal.Parse(p_commissionRate[i]);
-                    od.fee_rate = decimal.Parse(p_feeRate[i]);
-                    od.discount_rate = string.IsNullOrEmpty(p_disccountRate[i]) ? 0 : decimal.Parse(p_disccountRate[i]);
-                    od.unit = Int32.Parse(p_unit[i]);
-                    od.unit_price = string.IsNullOrEmpty(p_unit_price[i]) ? 0 : decimal.Parse(p_unit_price[i]);
-                    od.tax_rate = string.IsNullOrEmpty(p_tax_rate[i]) ? 0 : decimal.Parse(p_tax_rate[i]);
-                    od.suggested_delivery_date = string.IsNullOrEmpty(p_suggest_date[i]) ? null : (DateTime?)(DateTime.Parse(p_suggest_date[i]));
-                    od.confirm_date = string.IsNullOrEmpty(p_confirm_date[i]) ? null : (DateTime?)(DateTime.Parse(p_confirm_date[i]));
-                    od.project_number = string.IsNullOrEmpty(p_project_number[i]) ? 467 : Int32.Parse(p_project_number[i]);//467表示无客户编码
-                    ots.Add(od);
-                }
-
-                db.OrderDetail.InsertAllOnSubmit(ots);
-
-                //db.SubmitChanges();
-            }
-            catch
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        //[HttpPost]
-        //public JsonResult saveOrderDetails(FormCollection col)
-        //{
-        //    string[] p_ids = col.GetValues("p_id[]");
-        //    string[] p_qty = col.GetValues("p_qty[]");
-        //    string[] p_quote = col.GetValues("p_quote[]");
-        //    string[] p_cost = col.GetValues("p_cost[]");
-        //    string[] p_deal = col.GetValues("p_deal[]");
-        //    string[] p_aux = col.GetValues("p_aux[]");
-        //    string[] p_del_date = col.GetValues("p_del_date[]");
-        //    string[] p_tar_date = col.GetValues("p_tar_date[]");
-        //    string[] p_comment = col.GetValues("p_comment[]");
-
-        //    string[] p_MU= col.GetValues("p_MU[]");
-        //    string[] p_commission= col.GetValues("p_commission[]");
-        //    string[] p_commissionRate= col.GetValues("p_commissionRate[]");
-        //    string[] p_feeRate= col.GetValues("p_feeRate[]");
-        //    string[] p_disccountRate= col.GetValues("p_disccountRate[]");
-        //    string[] p_unit= col.GetValues("p_unit[]");
-        //    string[] p_unit_price= col.GetValues("p_unit_price[]");
-        //    string[] p_tax_rate= col.GetValues("p_tax_rate[]");
-        //    string[] p_suggest_date= col.GetValues("p_suggest_date[]");
-        //    string[] p_confirm_date = col.GetValues("p_confirm_date[]");
-        //    string orderId = col.Get("orderId");
-
-        //    //保存表体
-        //    try
-        //    {
-        //        List<OrderDetail> ots = new List<OrderDetail>();
-        //        for (int i = 0; i < p_ids.Count(); i++)
-        //        {
-        //            OrderDetail od = new OrderDetail();                    
-        //            od.order_id = Int32.Parse(orderId);
-        //            od.entry_id = i + 1;
-        //            od.product_id = Int32.Parse(p_ids[i]);
-        //            od.qty = decimal.Parse(p_qty[i]);
-        //            od.quote_no = p_quote[i];
-        //            od.cost = string.IsNullOrEmpty(p_cost[i]) ? 0 : decimal.Parse(p_cost[i]);
-        //            od.deal_price = string.IsNullOrEmpty(p_deal[i]) ? 0 : decimal.Parse(p_deal[i]);
-        //            od.aux_tax_price = string.IsNullOrEmpty(p_aux[i]) ? 0 : decimal.Parse(p_aux[i]);
-        //            od.delivery_date = string.IsNullOrEmpty(p_del_date[i]) ? null : (DateTime?)(DateTime.Parse(p_del_date[i]));
-        //            od.target_date = string.IsNullOrEmpty(p_tar_date[i]) ? null : (DateTime?)(DateTime.Parse(p_tar_date[i]));
-        //            od.comment = p_comment[i];
-        //            od.MU=decimal.Parse(p_MU[i]);
-        //            od.commission=decimal.Parse(p_commission[i]);
-        //            od.commission_rate=decimal.Parse(p_commissionRate[i]);
-        //            od.fee_rate=decimal.Parse(p_feeRate[i]);
-        //            od.discount_rate = string.IsNullOrEmpty(p_disccountRate[i]) ? 0 : decimal.Parse(p_disccountRate[i]);
-        //            od.unit=Int32.Parse(p_unit[i]);
-        //            od.unit_price = string.IsNullOrEmpty(p_unit_price[i]) ? 0 : decimal.Parse(p_unit_price[i]);
-        //            od.tax_rate = string.IsNullOrEmpty(p_tax_rate[i]) ? 0 : decimal.Parse(p_tax_rate[i]);
-        //            od.suggested_delivery_date = string.IsNullOrEmpty(p_suggest_date[i]) ? null : (DateTime?)(DateTime.Parse(p_suggest_date[i]));
-        //            od.confirm_date = string.IsNullOrEmpty(p_confirm_date[i]) ? null : (DateTime?)(DateTime.Parse(p_confirm_date[i]));
-
-        //            ots.Add(od);
-        //        }
-
-        //        db.OrderDetail.InsertAllOnSubmit(ots);
-
-        //        db.SubmitChanges();
-        //    }
-        //    catch
-        //    {
-        //        return Json(new { success = false });
-        //    }
-
-        //    return Json(new { success = true });
-        //}
-
-        //保存销售合同(维修单）表头到正式表
-        
-
-        //查看订单信息
-       
-
-        //查看维修合同信息
-        
-
-        //获取订单营业员比例
-        public JsonResult GetSalerPercentage(int id)
-        {
-            //取得step=0的order_id
-            string sys_no = db.Order.Single(o => o.id == id).sys_no;
-            int orderId = db.Order.Where(o => o.sys_no == sys_no && o.step_version == 0).First().id;
-            var sps = from sp in db.SalerPercentage
-                      where sp.order_id == orderId
-                      select new
-                      {
-                          sale_name = sp.saler_name,
-                          percent = sp.percentage
-                      };
-            if (sps.Count() >= 0)
-            {
-                string res = "";
-                foreach (var sp in sps)
-                {
-                    res += string.Format("{0}:{1}%;", sp.sale_name, Math.Round((double)sp.percent, 1));
-                }
-                return Json(new { success = true, ps = res }, "text/html");
-            }
-            return Json(new { success = false }, "text/html");
-        }
-        
-        //审核人保存开改模单
+             
+                
         public JsonResult AuditorSaveModelContract(FormCollection fc) {
             int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             int step = -1;

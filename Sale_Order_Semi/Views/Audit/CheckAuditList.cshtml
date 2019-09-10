@@ -176,7 +176,7 @@
     <div data-options="region:'north',collapsed:false,split:true" style="height: 55px; background: #fafafa;
         padding: 1px;">
         <form id="fm" method="post" action="@Url.Content("~/Audit/SearchAuditList")" style="padding:2px 5px;">
-         <table cellpadding="0" cellspacing="0" border="0" width="700px">
+         <table cellpadding="0" cellspacing="0" border="0" width="700">
             <thead>
                 <tr>
                     <td>
@@ -292,7 +292,7 @@
         <a href="#" onclick="PrintTHQS()" class="easyui-linkbutton" data-options="iconCls:'icon-document',plain:true"> 打印退货签收报表 </a>
     </div>
     <div id="xls_mm" style="width:150px;">
-        <div onclick="ExportSOExcel()" data-options="iconCls:'icon-xls'">@Html.Lang("export_so_excel")</div>
+        <div onclick="ExportAuditorExcel('销售', 'exportAuditorSOExcel')" data-options="iconCls:'icon-xls'">@Html.Lang("export_so_excel")</div>
         <div class="menu-sep"></div>
         <div onclick="ExportAuditorExcel('退换货', 'BeginExportTHExcelByAuditor')" data-options="iconCls:'icon-xls'">@Html.Lang("export_th_excel")</div>
         <div class="menu-sep"></div>
@@ -306,6 +306,6 @@
 
     @Html.Partial("_CheckAuditStatus")
 
-    @Html.Partial("_DownloadAuditorExcelPartial")
+    @*@Html.Partial("_DownloadAuditorExcelPartial")*@
 
     @*@Html.Partial("_DownloadAuditorBLExcelPartial")*@

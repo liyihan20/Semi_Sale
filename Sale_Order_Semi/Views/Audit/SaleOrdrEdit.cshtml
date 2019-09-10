@@ -353,7 +353,20 @@
             if(!$('#order_form').form('validate')){
                 return;
             }
-            var customerId = $("#buy_unit").combogrid("getValue");
+            //判断合同编号是否已存在
+            $.post("@Url.Content("~/Saler/IsContractNoExists")",
+                { contractNo: $("#contract_no").val(), sysNum: $("#sys_no").val(), billType: "SO" }, function (data) {
+                    if (data.suc) {
+                        saveOrder(false);
+                    } else {
+                        $.messager.confirm('@Html.Lang("confirm")', data.msg, function (r) {
+                            if (r) {
+                                saveOrder(false);
+                            }
+                        });
+                    }
+                });
+            @*var customerId = $("#buy_unit").combogrid("getValue");
             var currencyId = $("#currency").combobox("getValue");
             $.post("@Url.Content("~/Items/GetCustomerCreditInfo")", { customerId: customerId, currencyId: currencyId }, function (data) {
                 if (data.suc) {
@@ -365,7 +378,7 @@
                         }
                     });
                 }
-            });            
+            });*@
 
         });
 
@@ -373,7 +386,7 @@
         $("#dlg_details").dialog({
             onOpen:function(){
                 var tax_rate=$('#tax_rate').numberbox('getValue');
-                 $("#unit_price").numberbox({
+                $("#unit_price").numberbox({
                     onChange:function(newValue, oldValue){
                         if(newValue!=""){
                             $("#Aux_tax_price").numberbox("setValue",newValue * (1+tax_rate/100));
@@ -555,7 +568,7 @@
                     $.ajax({
                         type: "POST",
                         url: "@Url.Content("~/Items/verifyCostomer2")",
-                        data: "q=" + text.replace(/\&/g,"%26") + "&currency="+currency + "&customer_id="+customer_id,
+                        data: "q=" + encodeURIComponent(text) + "&currency=" + currency + "&customer_id=" + customer_id,
                         async: false,
                         success: function (data) {
                             if (data.success) {
@@ -671,26 +684,26 @@
             v_mu=100*(1-((v_cost * (1 + v_tax_rate/100)) / (v_deal_price * v_exchange))) - v_fee_rate;
         }
         var v_com_rate,v_com;
-        if(v_mu<=0){
-            v_com_rate=0;
-        }else{
+        if (v_mu <= 0) {
+            v_com_rate = 0;
+        } else {
             //同步获取佣金率
             $.ajax({
                 type: "POST",
                 dataType: "json",
                 url: "@Url.Content("~/Audit/GetCommissionRate")",
-                data: "proType=" + v_pro_type +"&MU=" + v_mu,
+                data: "proType=" + v_pro_type + "&MU=" + v_mu,
                 async: false,
                 success: function (data) {
                     v_com_rate = data;
                 }
             });
         }
-        //佣金
+        //佣金，2018-10-1变更，结果再除（1+税率%）
         if(v_pro_type == "CCM" && v_mu<-6){
-            v_com=v_deal_price*v_cost*0.002*v_exchange;
+            v_com = (v_deal_price / (1 + v_tax_rate / 100)) * v_cost * 0.002 * v_exchange;
         }else{
-            v_com=v_deal_price * v_qty *v_exchange*v_com_rate/100;
+            v_com = (v_deal_price / (1 + v_tax_rate / 100)) * v_qty * v_exchange * v_com_rate / 100;
         }
         v_com=v_com.toFixed(2);
         var theRow = {
@@ -835,8 +848,7 @@
                     @Html.Lang("trade_type"):
                 </td>
                 <td>
-                    <input class="easyui-combobox" id="trade_type" name="trade_type" url='@Url.Content("~/Items/getItems?what=trade_type")' 
-                    valuefield="id" textfield="name" style="width: 120px"  required="true" panelheight="100px"/>
+                    <input class="easyui-combobox" id="trade_type" name="trade_type" url='@Url.Content("~/Items/getItems?what=trade_type")' valuefield="id" textfield="name" style="width: 120px"  required="true" panelheight="100px"/>
                 </td>
             </tr>
             <tr>
@@ -863,8 +875,7 @@
                     @Html.Lang("pro_type"):
                 </td>
                 <td>
-                    <input class="easyui-combobox" id="product_type" name="product_type" url="@Url.Content("~/Items/getItems?what=product_type")"
-                        valuefield="id" textfield="name" style="width: 120px"  required="true"/>
+                    <input class="easyui-combobox" id="product_type" name="product_type" url="@Url.Content("~/Items/getItems?what=product_type")" valuefield="id" textfield="name" style="width: 120px"  required="true"/>
                 </td>                
             </tr>
             <tr>
@@ -878,22 +889,19 @@
                     @Html.Lang("payment"):
                 </td>
                 <td>
-                    <input class="easyui-combobox" id="clearing_way" name="clearing_way" url="@Url.Content("~/Items/getItems?what=clearing_way")"
-                        valuefield="id" textfield="name" style="width: 120px" panelWidth="240" required="true" value=""/>
+                    <input class="easyui-combobox" id="clearing_way" name="clearing_way" url="@Url.Content("~/Items/getItems?what=clearing_way")" valuefield="id" textfield="name" style="width: 120px" panelWidth="240" required="true" value=""/>
                 </td>
                 <td>
                     @Html.Lang("currency"):
                 </td>
                 <td>
-                    <input id="currency" class="easyui-combobox" name="currency" url="@Url.Content("~/Items/getItems?what=currency")"
-                        valuefield="id" textfield="name" style="width: 120px"  required="true"/>
+                    <input id="currency" class="easyui-combobox" name="currency" url="@Url.Content("~/Items/getItems?what=currency")" valuefield="id" textfield="name" style="width: 120px"  required="true"/>
                 </td>
                 <td>
                     @Html.Lang("exchange"):
                 </td>
                 <td>
-                    <input id="exchange" class="easyui-numberbox" name="exchange" min="0" precision="4" required="true"
-                        style="width: 115px" />
+                    <input id="exchange" class="easyui-numberbox" name="exchange" min="0" precision="6" required="true" style="width: 115px" />
                 </td>
             </tr> 
             <tr>
@@ -927,8 +935,7 @@
                     @Html.Lang("sale_type"):
                 </td>
                 <td>
-                    <input class="easyui-combobox" id="sale_way" name="sale_way" url="@Url.Content("~/Items/getItems?what=sale_type")"
-                valuefield="id" textfield="name" style="width: 120px"  required="true"/>
+                    <input class="easyui-combobox" id="sale_way" name="sale_way" url="@Url.Content("~/Items/getItems?what=sale_type")" valuefield="id" textfield="name" style="width: 120px"  required="true"/>
                 </td>
                 @*<td>
                     @Html.Lang("group1"):
@@ -993,8 +1000,7 @@
             </div>
             @*订单明细*@
             <br />
-            <div id="detail_div" class="easyui-panel" title="@Html.Lang("sale_order_detail")" style="+position: relative;
-                width: 800px; height: 185px">
+            <div id="detail_div" class="easyui-panel" title="@Html.Lang("sale_order_detail")" style="+position: relative; width: 800px; height: 185px">
                 <table id="order_detail">
                 </table>
             </div>

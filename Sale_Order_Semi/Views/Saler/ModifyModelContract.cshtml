@@ -253,6 +253,7 @@
                         switch (box_id) {
                             case "zz_customer_name":
                             case "plan_firm_name":
+                            case "oversea_customer_name":
                                 url = "@Url.Content("~/Items/getCostomers")";
                                 break;
                         };
@@ -380,6 +381,52 @@
             if (!$('#order_form').form('validate')) {
                 return;
             }
+            ///2018-3-20加入的一些规则
+            var currency = $("#currency_no").combobox("getText");
+            var tradeType = $("#trade_type_no").combobox("getText");
+            var fetchAdd = $("#fetch_add_no").combobox("getText");
+            var customer = $("#customer_no").combogrid("getValue");
+            var oversea = $("#oversea_customer_no").combogrid("getValue");
+            if (currency == "人民币") {
+                if (tradeType != "国内贸易") {
+                    alert("保存失败：币别为人民币的贸易类型必须是【国内贸易】");
+                    return;
+                }
+                if (fetchAdd.indexOf("国内（GN）■") < 0) {
+                    alert("保存失败：币别为人民币的交货地点必须选择【国内（GN）■香港（HK）□】");
+                    return;
+                }
+                if (customer.indexOf("01.") != 0 && customer.indexOf("04.") != 0) {
+                    alert("保存失败：币别为人民币的购货单位必须是【01.】或【04.】开头的");
+                    return;
+                }
+                if (customer != oversea) {
+                    alert("保存失败：币别为人民币的购货单位必须跟同海外客户");
+                    return;
+                }
+            } else {
+                if (tradeType != "一般贸易") {
+                    alert("保存失败：币别为非人民币的贸易类型必须是【一般贸易】");
+                    return;
+                }
+                if (fetchAdd.indexOf("香港（HK）■") < 0) {
+                    alert("保存失败：币别为非人民币的交货地点必须选择【国内（GN）□香港（HK）■】");
+                    return;
+                }
+                //if (oversea.indexOf("05.") != 0) {
+                //    alert("保存失败：币别为非人民币的海外客户必须是【05.】开头的");
+                //    return;
+                //}
+                if (customer != "04.201") {
+                    alert("保存失败：币别为非人民币的购货单位必须是【香港信利半导体有限公司】");
+                    return;
+                }
+            }
+            if ($("#clear_way").combobox("getValue") == "*") {
+                alert("保存失败：支付方式不能选择【*】");
+                return;
+            }
+
             $.messager.progress();
             $('#order_form').form('submit', {
                 url: '@Url.Content("~/Saler/SalerSaveModelContract")',
@@ -439,6 +486,15 @@
             }, "json");
         });
 
+        //$("#quotation_clerk_id").combobox({
+        //    onLoadSuccess: function () {
+        //        if ($("#quotation_clerk_id").combobox("getValue") == $("#quotation_clerk_id").combobox("getText")) {
+        //            $("#quotation_clerk_id").combobox("setValue", "");
+        //            $("#quotation_clerk_id").combobox("setText", "");
+        //        }
+        //    }
+        //});
+
         //手动设置一下从后台过来的值
         if ($("#product_model").length > 0) {
             $('#product_model').combogrid('setValue', '@mc.product_model');
@@ -450,26 +506,21 @@
     function okClick() {
         $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("confirm_pass")?', function (r) {
             if (r) {
-                $.messager.progress();
-                $('#order_form').form('submit', {
-                    url: '@Url.Content("~/Audit/AuditorSaveModelContract")',
-                    onSubmit: function (param) {
-                        param.step = "@step";
-                    },
-                    success: function (data) {
-                        var result = eval('(' + data + ')');
-                        if (result.suc) {
-                            $('#okFlag').val('true');
-                            beginAudit();
+            //判断合同编号是否已存在
+                $.post("@Url.Content("~/Saler/IsContractNoExists")",
+                    { contractNo: $("#contract_po_no").val(), sysNum: $("#sys_no").val(), billType: "CM" }, function (data) {
+                        if (data.suc) {
+                            saveForm();
+                            $.messager.progress();
                         } else {
-                            $.messager.progress("close");
-                            $.messager.show({
-                                title: '@Html.Lang("tip")',
-                                msg: "@Html.Lang("failure_save"):" + result.msg
+                            $.messager.confirm('@Html.Lang("confirm")', data.msg, function (r) {
+                                if (r) {
+                                    saveForm();
+                                    $.messager.progress();
+                                }
                             });
                         }
-                    }
-                });
+                    });
             }
         });
 
@@ -479,6 +530,28 @@
             if (r) {
                 $('#okFlag').val('false');
                 beginAudit();
+            }
+        });
+    }
+
+    function saveForm() {
+        $('#order_form').form('submit', {
+            url: '@Url.Content("~/Audit/AuditorSaveModelContract")',
+            onSubmit: function (param) {
+                param.step = "@step";
+            },
+            success: function (data) {
+                var result = eval('(' + data + ')');
+                if (result.suc) {
+                    $('#okFlag').val('true');
+                    beginAudit();
+                } else {
+                    $.messager.progress("close");
+                    $.messager.show({
+                        title: '@Html.Lang("tip")',
+                        msg: "@Html.Lang("failure_save"):" + result.msg
+                    });
+                }
             }
         });
     }
@@ -590,13 +663,19 @@
                     @Html.Lang("pro_type"):
                 </td>
                 <td>
-                    <input class="easyui-combobox" id="product_type" name="product_type"  style="width: 120px" 
+                    @*<input class="easyui-combobox" id="product_type" name="product_type"  style="width: 120px" 
                         data-options="textField:'value',valueField:'value',panelHeight:'auto', required:true,editable:false,
                                            data:[
                                            {value:'PANEL'},{value:'OLED'},{value:'COG'},{value:'H-COG'},{value:'P-COG'},{value:'S-MDS'},
                                            {value:'H-MDS'},{value:'MDS'},{value:'S-LCM'},{value:'H-S-LCM'},{value:'P-S-LCM'},{value:'LCM'},
-                                           {value:'H-LCM'},{value:'P-LCM'},{value:'SIM'},{value:'TNM'}
-                                           ]" value="@mc.product_type" />
+                                           {value:'H-LCM'},{value:'P-LCM'},{value:'SIM'},{value:'TNM'},{value:'FIC'}
+                                           ]" value="@mc.product_type" />*@
+
+                    <input class="easyui-combobox" id="product_type" name="product_type" style="width: 120px"
+                               data-options="textField:'name',valueField:'name', required:true,editable:false,"
+                               url="@Url.Content("~/Items/getItems?what=product_type")" value="@mc.product_type"
+                                />
+
                 </td>
                 <td>
                     @Html.Lang("model_type"):
@@ -663,13 +742,13 @@
                 <td>
                     <input id="project_team" name="project_team" style="width: 120px" />
                 </td>
-                <td>
+                @*<td>
                     @Html.Lang("quotation_clerk"):
                 </td>
                 <td>
                     <input class="easyui-combobox" id="quotation_clerk_id" name="quotation_clerk_id" style="width: 120px" editable="false"
-                     valuefield="user_id" textfield="user_name" url="@Url.Content("~/Items/GetGroupMembers?group_name=报价员组")" required="true" value="@mc.quotation_clerk_id" />
-                </td>
+                     valuefield="value" textfield="text" url="@Url.Content("~/Items/GetGroupMembers?group_name=报价员组")" value="@mc.quotation_clerk_id" />
+                </td>*@
             </tr>
             <tr>
                 @if (step == 4)
@@ -736,14 +815,20 @@
                     <input id="zz_customer_name" class="remotebox2" name="zz_customer_name" style="width: 120px" panelwidth="240px" value="@mc.zz_customer_name" />
                 </td>
                 <td>
+                    海外客户:
+                </td>
+                <td>
+                    <input id="oversea_customer_no" class="customerbox" name="oversea_customer_no" style="width: 120px" panelwidth="240px" value="@mc.oversea_customer_no" />
+                </td>
+            </tr>
+            <tr>
+                <td>
                     @Html.Lang("currency"):
                 </td>
                 <td>
                     <input id="currency_no" class="easyui-combobox" name="currency_no" panelHeight="150" url="@Url.Content("~/Items/getItems?what=currency")" editable="false"
                         valuefield="no" textfield="name" style="width: 120px"  required="true" value="@mc.currency_no" />
                 </td>
-            </tr>
-            <tr>
                 <td>
                     @Html.Lang("qty"):
                 </td>
@@ -762,14 +847,14 @@
                 <td>
                     <input class="easyui-validatebox" name="pro_use" id="pro_use" style="width: 115px" required="true" value="@mc.pro_use" />
                 </td>
+            </tr>
+            <tr>
                 <td>
                     @Html.Lang("customer_model"):
                 </td>
                 <td>
                     <input id="project_number" class="easyui-textbox" name="project_number" style="width: 115px" value="@mc.project_number" />
                 </td>
-            </tr>
-            <tr>
                 <td>
                     @Html.Lang("pic_number"):
                 </td>
@@ -788,6 +873,8 @@
                 <td>
                     <input id="contract_po_no" class="easyui-validatebox" name="contract_po_no" style="width: 115px" value="@mc.contract_po_no" />
                 </td>    
+            </tr>
+            <tr>                
                 <td>
                     @Html.Lang("biller"):
                 </td>

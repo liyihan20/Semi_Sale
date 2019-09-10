@@ -5,36 +5,17 @@
     $(function () {
         if (orderType == "BL") {
             var stepName="@ViewData["step_name"]";
-            if (stepName.indexOf("营业") >= 0 || stepName.indexOf("办事处") >= 0 || stepName.indexOf("总部") >= 0) {
+            if (stepName.indexOf("营业") >= 0 || stepName.indexOf("办事处") >= 0 || stepName.indexOf("市场") >= 0) {
                 canCheckBLFile = true;
             }
         }
 
         var url = '@Url.Content("~/Saler/CheckOrderDetail")' + '?id=@ViewData["order_id"]' + '&billType=' + orderType + "&canCheckBLFile=" + canCheckBLFile;
 
-        $("#agency_div").layout("panel","center").panel({
-            href:url,
-            onLoad:function(){
-                //加载完之后将生产部门赋值给运作中心的生产部门
-                if($("#new_dep")){
-                    $("#new_dep").combobox("setValue",$("#proc_dep_id").val());
-                }
-            }
-        });
+        $("#billContent").attr("src", url);
         getAuditResult();
 
-        //SO流程运作中心郭玲敏可以修改生产部门
-        if(orderType=='SO' && '@ViewData["step_name"]' == '运作中心审核'){
-            $("#agency_comment").css("width","350px");
-            $("#agency_comment").after(" 生产部门: <input id='new_dep' name='new_dep' style='width: 100px' />");
-            $("#new_dep").combobox({
-                url:'@Url.Content("~/Items/getProcDeps")',
-                valueField:"id",
-                textField:"name",
-                panelHeight:"auto",
-                editable:false
-            });
-        }
+     
     });
 
     function okClick(){
@@ -110,7 +91,7 @@
     }
 
     function submitForm(){
-        if (orderType == "SO") {
+        @*if (orderType == "SO") {
             //验证客户信用额度 2018-2-27
             $.post("@Url.Content("~/Items/GetCustomerCreditInfo2")", { orderId: orderId }, function (data) {
                 if (data.suc) {
@@ -123,9 +104,9 @@
                     });
                 }
             });
-        } else {
+        } else {*@
             beginAudit(false);
-        }
+        //}
     }
 
     function beginAudit(needOption) {
@@ -189,6 +170,8 @@
         </form>
     </div>
     <div data-options="region:'center'">
+        <iframe id="billContent" frameborder="0" style="width:100%;height:100%;padding:0;margin:0;">
+        </iframe>
     </div>
 </div>
 <div id="dlg_No" class="easyui-dialog" style="width: 340px; height: 80px; padding: 10px 5px;" closed="true" title="确认拒绝方式">

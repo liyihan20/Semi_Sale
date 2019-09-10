@@ -187,20 +187,12 @@ namespace Sale_Order_Semi.Controllers
         //buy_unit:供货客户（用于国内单）；oversea_client：海外客户（用于国外单）
         public JsonResult getProjectNumbers(string buy_unit = null, string oversea_client = null)
         {
-            string buy_unit_number = null, oversea_client_number = null;
-            if (!string.IsNullOrEmpty(buy_unit)) {
-                buy_unit_number = db.getCostomerById(Int32.Parse(buy_unit)).First().number;
-            }
-            if (!string.IsNullOrEmpty(oversea_client)) {
-                oversea_client_number = db.getCostomerById(Int32.Parse(oversea_client)).First().number;
-            }
-            
             //id为467的表示无指定编号，number为无客户机型
             var result = from v in db.VwProjectNumber
                          where v.id == 467
-                         || v.client_number == buy_unit_number
-                         || v.client_number == oversea_client_number
-                         orderby v.client_number
+                         || v.client_number == buy_unit
+                         || v.client_number == oversea_client
+                         orderby v.id
                          select new
                          {
                              id = v.id,
@@ -247,7 +239,7 @@ namespace Sale_Order_Semi.Controllers
             //            }
             //        }
             //    }
-            //}            
+            //} 
             ViewData["sys_no"] = sys_no;
             return View();
         }
@@ -568,14 +560,15 @@ namespace Sale_Order_Semi.Controllers
 
         //获取权限组里面的成员
         public JsonResult GetGroupMembers(string group_name) {
-            var result = from g in db.Group
+            var result = (from g in db.Group
                          from gu in g.GroupAndUser
                          where g.name == group_name
-                         select new
+                         select new ResultModel()
                          {
-                             user_id = gu.user_id,
-                             user_name = gu.User.real_name
-                         };
+                             value = gu.user_id.ToString(),
+                             text = gu.User.real_name
+                         }).ToList();
+            result.Insert(0, new ResultModel() { value = "", text = "" });
             return Json(result);
         }
 
@@ -627,16 +620,16 @@ namespace Sale_Order_Semi.Controllers
         }
 
         //获取客户信用是否超过额度
-        public JsonResult GetCustomerCreditInfo(int? customerId, int? currencyId)
-        {
-            var result = db.getCustomerCreditInfo(customerId, currencyId).First();
-            return Json(new { suc = (result.suc == 1 ? true : false), msg = result.msg });
-        }
-        public JsonResult GetCustomerCreditInfo2(int orderId)
-        {
-            var param = db.Order.Where(o => o.id == orderId).Select(o => new { customerId = o.buy_unit, currencyId = o.currency }).First();
-            return GetCustomerCreditInfo(param.customerId, param.currencyId);
-        }
+        //public JsonResult GetCustomerCreditInfo(int? customerId, int? currencyId)
+        //{
+        //    var result = db.getCustomerCreditInfo(customerId, currencyId).First();
+        //    return Json(new { suc = (result.suc == 1 ? true : false), msg = result.msg });
+        //}
+        //public JsonResult GetCustomerCreditInfo2(int orderId)
+        //{
+        //    var param = db.Order.Where(o => o.id == orderId).Select(o => new { customerId = o.buy_unit, currencyId = o.currency }).First();
+        //    return GetCustomerCreditInfo(param.customerId, param.currencyId);
+        //}
 
         //获取k3的客户型号和客户料号 -2018-4-12
         public JsonResult GetK3CustomerModel(int customerId, int productId)

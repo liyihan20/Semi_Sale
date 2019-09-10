@@ -37,6 +37,7 @@
                     <span>@Html.Lang("create_model_invoice")</span>
                     <ul>
                         @if (Array.IndexOf(powers, Powers.new_model.ToString()) != -1) {
+                            <li id="~/Authority/FetchModualNumber"><span>获取开模序号</span></li>
                             <li id="~/Saler/CreateModelContract"><span>@Html.Lang("new_create_model_contract")</span> </li>
                             <li id="~/Saler/CheckAllOrders?bill_type=3"><span>@Html.Lang("check_add_apply")</span> </li>
                         }

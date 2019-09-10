@@ -234,6 +234,16 @@
             ]]
         });
 
+        //$("#quotation_clerk_id").combobox({
+        //    onLoadSuccess: function () {
+        //        if ($("#quotation_clerk_id").combobox("getValue") == $("#quotation_clerk_id").combobox("getText")) {
+        //            $("#quotation_clerk_id").combobox("setValue", "");
+        //            $("#quotation_clerk_id").combobox("setText", "");
+        //        }
+        //    }
+        //});
+
+
         //手动设置一下从后台过来的值
         $('#product_model').combogrid('setValue', '@sb.product_model');
         $('#clerk_no').combobox('setText', '@sb.clerk_name');
@@ -298,14 +308,14 @@
                     }
 
                     //保存客户名称
-                    param.zz_customer_name=$('#zz_customer_no').combobox('getText');
-                    param.plan_firm_name=$('#plan_firm_no').combobox('getText');
-                    param.sea_customer_name=$('#sea_customer_no').combobox('getText');
+                    param.zz_customer_name = $('#zz_customer_no').combobox('getText');
+                    param.plan_firm_name = $('#plan_firm_no').combobox('getText');
+                    param.sea_customer_name = $('#sea_customer_no').combobox('getText');
                     return true;
                 },
                 success: function (data) {
-                    var result = eval('('+ data +')');
-                    if(result.suc){
+                    var result = eval('(' + data + ')');
+                    if (result.suc) {
                         $.messager.show({
                             title: '@Html.Lang("tip")',
                             msg: "@Html.Lang("suc_save")"
@@ -329,11 +339,19 @@
             $.post("@Url.Content("~/Saler/CheckIsBillExist")", { sysNum: $("#sys_no").val() },
             function (data) {
                 if (data.success) {
-                    $.messager.show({
-                        title: '@Html.Lang("tip")',
-                        msg: "正在提交，请等待跳转。。。"
-                    });
-                    setTimeout('window.location.href="@Url.Content("~/Saler/BeginApplySB?sys_no=")"+$("#sys_no").val();', 2000);
+                    //判断合同编号是否已存在
+                    $.post("@Url.Content("~/Saler/IsContractNoExists")",
+                        { contractNo: $("#contract_po_no").val(), sysNum: $("#sys_no").val(), billType: "SB" }, function (data) {
+                            if (data.suc) {
+                                beginApply();
+                            } else {
+                                $.messager.confirm('@Html.Lang("confirm")', data.msg, function (r) {
+                                    if (r) {
+                                        beginApply();
+                                    }
+                                });
+                            }
+                        });
                 } else {
                     $("#submitApply").linkbutton('enable');
                     $('#saveAllBut').linkbutton('enable');
@@ -345,6 +363,15 @@
             }, "json");
         });
     });
+
+    function beginApply() {
+        $.messager.show({
+            title: '@Html.Lang("tip")',
+            msg: "正在提交，请等待跳转。。。"
+        });
+        setTimeout('window.location.href="@Url.Content("~/Saler/BeginApplySB?sys_no=")"+$("#sys_no").val();', 2000);
+    }
+
     </script>
 }
 @if (step > 0)
@@ -353,37 +380,21 @@
         function okClick(){        
             $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("confirm_pass")?', function(r){
 	            if (r){
-                    $.messager.progress(); 
-                    $('#order_form').form('submit',{
-                        url: '@Url.Content("~/Audit/AuditorSaveSampleBill")',
-                        onSubmit: function(param){ 
-                            //如果规格型号的text和value不一致，则提示
-                            if($("#product_model").combogrid('getText') != $("#product_model").combogrid('getValue')){
-                                $.messager.show({
-                                    title: '@Html.Lang("tip")',
-                                    msg: "规格型号请搜索回车后从列表中选择"
+	                //判断合同编号是否已存在
+                    $.post("@Url.Content("~/Saler/IsContractNoExists")",
+                        { contractNo: $("#contract_po_no").val(), sysNum: $("#sys_no").val(), billType: "SB" }, function (data) {
+                            if (data.suc) {
+                                saveForm();
+                                $.messager.progress();
+                            } else {
+                                $.messager.confirm('@Html.Lang("confirm")', data.msg, function (r) {
+                                    if (r) {
+                                        saveForm();
+                                        $.messager.progress();
+                                    }
                                 });
-                                return false;
                             }
-                            param.step="@step";
-                            param.zz_customer_name=$('#zz_customer_no').combobox('getText');
-                            param.plan_firm_name=$('#plan_firm_no').combobox('getText');
-                            param.sea_customer_name=$('#sea_customer_no').combobox('getText');
-                        },
-                        success: function (data) {
-                            var result = eval('('+ data +')');
-                            if(result.suc){
-                                $('#okFlag').val('true');
-                                beginAudit();
-                            }else{
-                                $.messager.progress("close");
-                                $.messager.show({
-                                    title: '@Html.Lang("tip")',
-                                    msg: "@Html.Lang("failure_save"):"+result.msg
-                                });
-                            }                        
-                        }
-                    }); 
+                        });
 	            }
             });
         }
@@ -396,57 +407,90 @@
         });
     }
    
-   function beginAudit(){        
-        $("#audit_fm").form("submit",{
-            url:"@Url.Content("~/Audit/HandleAgencyAudit")",
-            success:function(data){
-                $.messager.progress('close');
-                var result=eval("("+data+")"); 
-                $.messager.show({
-                    title: '@Html.Lang("tip")',
-                    msg: result.msg + ",正在跳转..."
-                });
-                setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';",1500);
-                //getAuditResult();
+        function saveForm() {
+            $('#order_form').form('submit',{
+                url: '@Url.Content("~/Audit/AuditorSaveSampleBill")',
+                onSubmit: function(param){ 
+                    //如果规格型号的text和value不一致，则提示
+                    if($("#product_model").combogrid('getText') != $("#product_model").combogrid('getValue')){
+                        $.messager.show({
+                            title: '@Html.Lang("tip")',
+                            msg: "规格型号请搜索回车后从列表中选择"
+                        });
+                        return false;
+                    }
+                    param.step="@step";
+                    param.zz_customer_name=$('#zz_customer_no').combobox('getText');
+                    param.plan_firm_name=$('#plan_firm_no').combobox('getText');
+                    param.sea_customer_name=$('#sea_customer_no').combobox('getText');
+                },
+                success: function (data) {
+                    var result = eval('('+ data +')');
+                    if(result.suc){
+                        $('#okFlag').val('true');
+                        beginAudit();
+                    }else{
+                        $.messager.progress("close");
+                        $.messager.show({
+                            title: '@Html.Lang("tip")',
+                            msg: "@Html.Lang("failure_save"):"+result.msg
+                        });
+                }                        
             }
-        });
-    }
+            }); 
+        }
 
-    function block(){
-        var reason=$("#agency_comment").val();
-        if($.trim(reason)==""){
-            $.messager.show({
+        function beginAudit(){        
+            $("#audit_fm").form("submit",{
+                url:"@Url.Content("~/Audit/HandleAgencyAudit")",
+                success:function(data){
+                    $.messager.progress('close');
+                    var result=eval("("+data+")"); 
+                    $.messager.show({
+                        title: '@Html.Lang("tip")',
+                        msg: result.msg + ",正在跳转..."
+                    });
+                    setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';",1500);
+                    //getAuditResult();
+                }
+            });
+        }
+
+        function block(){
+            var reason=$("#agency_comment").val();
+            if($.trim(reason)==""){
+                $.messager.show({
                     title: '@Html.Lang("tip")',
                     msg: "挂起操作必须写明原因，提交失败"
                 });   
-        }else{
-             $.messager.confirm('@Html.Lang("confirm")', '确定要将订单挂起吗?', function(r){
-	         if (r){
-                 $.messager.progress();
-                 $("#audit_fm").form("submit",{
-                    url:"@Url.Content("~/Audit/BlockOrder")",
-                    success:function(data){
-                        $.messager.progress('close');
-                        var result=eval("("+data+")"); 
-                         if(result.success){
-                            $.messager.show({
-                                title: '@Html.Lang("tip")',
-                                msg: result.msg + ",正在跳转..."
-                            });
-                            setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';",1500);
-                        }else{
-                            $.messager.show({
-                                title: '@Html.Lang("tip")',
-                                msg: result.msg
-                            });
-                            setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';",3000);
-                        }
+            }else{
+                $.messager.confirm('@Html.Lang("confirm")', '确定要将订单挂起吗?', function(r){
+                    if (r){
+                        $.messager.progress();
+                        $("#audit_fm").form("submit",{
+                            url:"@Url.Content("~/Audit/BlockOrder")",
+                            success:function(data){
+                                $.messager.progress('close');
+                                var result=eval("("+data+")"); 
+                                if(result.success){
+                                    $.messager.show({
+                                        title: '@Html.Lang("tip")',
+                                        msg: result.msg + ",正在跳转..."
+                                    });
+                                    setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';",1500);
+                                }else{
+                                    $.messager.show({
+                                        title: '@Html.Lang("tip")',
+                                        msg: result.msg
+                                    });
+                                    setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';",3000);
+                                }
+                            }
+                        });
                     }
-                });
+                });  
             }
-            });  
         }
-    }
     </script>
 }
 
@@ -584,13 +628,17 @@
                     产品类别:
                 </td>
                 <td>
-                    <input class="easyui-combobox" id="product_type" name="product_type" style="width: 120px"
+                    @*<input class="easyui-combobox" id="product_type" name="product_type" style="width: 120px"
                         data-options="textField:'value',valueField:'value',panelHeight:'auto', required:true,editable:false,
                                            data:[
                                            {value:'PANEL'},{value:'OLED'},{value:'COG'},{value:'H-COG'},{value:'P-COG'},{value:'H-MDS'},
                                            {value:'MDS/S-MDS'},{value:'S-LCM/H-S-LCM'},{value:'P-LCM/P-S-LCM'},{value:'LCM'},
-                                           {value:'H-LCM'},{value:'SIM'},{value:'TNM'},{value:'测试架'}
-                                           ]" value="@sb.product_type" />
+                                           {value:'H-LCM'},{value:'SIM'},{value:'TNM'},{value:'FIC'},{value:'测试架'}
+                                           ]" value="@sb.product_type" />*@
+                    <input class="easyui-combobox" id="product_type" name="product_type" style="width: 120px"
+                               data-options="textField:'name',valueField:'name', required:true,editable:false,"
+                               url="@Url.Content("~/Items/getItems?what=product_type")" value="@sb.product_type"
+                                />
                 </td>
                 <td>
                     产品型号:
@@ -669,13 +717,13 @@
                 </td>
             </tr>
             <tr>
-                <td>
+                @*<td>
                     报价员:
                 </td>
                 <td>
                     <input class="easyui-combobox" id="quotation_clerk_id" name="quotation_clerk_id" style="width: 120px"  editable="false"
-                    valuefield="user_id" textfield="user_name" url="@Url.Content("~/Items/GetGroupMembers?group_name=报价员组")" value="@sb.quotation_clerk_id" />
-                </td>
+                    valuefield="value" textfield="text" url="@Url.Content("~/Items/GetGroupMembers?group_name=报价员组")" value="@sb.quotation_clerk_id" />
+                </td>*@
                 <td>
                     报价编号:
                 </td>
@@ -698,6 +746,12 @@
                                         data:[
                                         {value:'可靠性测试'},{value:'功能测试'},{value:'结构测试'}
                                         ]" value="@sb.sample_use" />
+                </td> 
+                <td>
+                    @Html.Lang("contract_num"):
+                </td>
+                <td>
+                    <input id="contract_po_no" class="easyui-validatebox" name="contract_po_no" style="width: 115px" value="@sb.contract_po_no" />
                 </td>
             </tr>
             <tr>
@@ -711,22 +765,14 @@
                     成交价:
                 </td>
                 <td class="freeHiddenPrice">
-                    <input id="deal_price" class="easyui-numberbox" name="deal_price" style="width: 115px" precision="4" value="@sb.deal_price" />
+                    <input id="deal_price" class="easyui-numberbox" name="deal_price" style="width: 115px" precision="5" value="@sb.deal_price" />
                 </td>
                 <td class="freeHiddenPrice">
                     合同价:
                 </td>
                 <td class="freeHiddenPrice">
-                    <input id="contract_price" class="easyui-numberbox" name="contract_price" style="width: 115px" precision="4" value="@sb.contract_price" />
-                </td>  
-                <td>
-                    @Html.Lang("contract_num"):
-                </td>
-                <td>
-                    <input id="contract_po_no" class="easyui-validatebox" name="contract_po_no" style="width: 115px" value="@sb.contract_po_no" />
-                </td>
-            </tr>
-            <tr>
+                    <input id="contract_price" class="easyui-numberbox" name="contract_price" style="width: 115px" precision="5" value="@sb.contract_price" />
+                </td> 
                 <td>
                     制单人:
                 </td>

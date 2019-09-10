@@ -240,6 +240,7 @@
                         switch (box_id) {
                             case "zz_customer_name":
                             case "plan_firm_name":
+                                //case "oversea_customer_name":
                                 url = "@Url.Content("~/Items/getCostomers")";
                                 break;
                         };
@@ -354,7 +355,7 @@
             var tradeType = $("#trade_type_no").combobox("getText");
             var fetchAdd = $("#fetch_add_no").combobox("getText");
             var customer = $("#customer_no").combogrid("getValue");
-            //var oversea = $("#oversea_customer_no").combogrid("getValue");
+            var oversea = $("#oversea_customer_no").combogrid("getValue");
             if (currency == "人民币") {
                 if (tradeType != "国内贸易") {
                     alert("保存失败：币别为人民币的贸易类型必须是【国内贸易】");
@@ -364,14 +365,14 @@
                     alert("保存失败：币别为人民币的交货地点必须选择【国内（GN）■香港（HK）□】");
                     return;
                 }
-                if (customer.indexOf("01.") != 0) {
-                    alert("保存失败：币别为人民币的购货单位必须是【01.】开头的");
+                if (customer.indexOf("01.") != 0 && customer.indexOf("04.") != 0) {
+                    alert("保存失败：币别为人民币的购货单位必须是【01.】或【04.】开头的");
                     return;
                 }
-                //if (customer != oversea) {
-                //    alert("保存失败：币别为人民币的购货单位必须跟同海外客户");
-                //    return;
-                //}
+                if (customer != oversea) {
+                    alert("保存失败：币别为人民币的购货单位必须跟同海外客户");
+                    return;
+                }
             } else {
                 if (tradeType != "一般贸易") {
                     alert("保存失败：币别为非人民币的贸易类型必须是【一般贸易】");
@@ -398,8 +399,8 @@
             $.messager.progress();
             $('#order_form').form('submit', {
                 url: '@Url.Content("~/Saler/SalerSaveModelContract")',
-                onSubmit:function(param){
-                    if(!$('#order_form').form('validate')){
+                onSubmit: function (param) {
+                    if (!$('#order_form').form('validate')) {
                         return false;
                     }
                     //国内贸易的必须填写合同编号，且格式是年月流水号，比如201801001
@@ -414,7 +415,7 @@
                         }
                     }
                     $(".remotebox2").each(function () {
-                        var text=$(this).combobox("getText");
+                        var text = $(this).combobox("getText");
                         if ($(this).combobox("getValue") == "") {
                             $(this).combobox("setValue", text);
                         }
@@ -422,8 +423,8 @@
                     return true;
                 },
                 success: function (data) {
-                    var result = eval('('+ data +')');
-                    if(result.suc){
+                    var result = eval('(' + data + ')');
+                    if (result.suc) {
                         $.messager.show({
                             title: '@Html.Lang("tip")',
                             msg: "@Html.Lang("suc_save")"
@@ -447,11 +448,19 @@
             $.post("@Url.Content("~/Saler/CheckIsBillExist")", { sysNum: $("#sys_no").val() },
             function (data) {
                 if (data.success) {
-                    $.messager.show({
-                        title: '@Html.Lang("tip")',
-                        msg: "正在提交，请等待跳转。。。"
-                    });
-                    setTimeout('window.location.href="@Url.Content("~/Saler/BeginApplyCM?sys_no=")"+$("#sys_no").val();', 2000);
+                    //判断合同编号是否已存在
+                    $.post("@Url.Content("~/Saler/IsContractNoExists")",
+                        { contractNo: $("#contract_po_no").val(), sysNum: $("#sys_no").val(), billType: "CM" }, function (data) {
+                            if (data.suc) {
+                                beginApply();
+                            } else {
+                                $.messager.confirm('@Html.Lang("confirm")', data.msg, function (r) {
+                                    if (r) {
+                                        beginApply();
+                                    }
+                                });
+                            }
+                        });
                 } else {
                     $("#submitApply").linkbutton('enable');
                     $('#saveAllBut').linkbutton('enable');
@@ -465,9 +474,24 @@
 
         $("#order_div").css("visibility", "visible");
 
+        //$("#quotation_clerk_id").combobox({
+        //    onLoadSuccess: function () {
+        //        if ($("#quotation_clerk_id").combobox("getValue") == $("#quotation_clerk_id").combobox("getText")) {
+        //            $("#quotation_clerk_id").combobox("setValue", "");
+        //            $("#quotation_clerk_id").combobox("setText", "");
+        //        }
+        //    }
+        //});
+
     });
 
-
+    function beginApply() {
+        $.messager.show({
+            title: '@Html.Lang("tip")',
+            msg: "正在提交，请等待跳转。。。"
+        });
+        setTimeout('window.location.href="@Url.Content("~/Saler/BeginApplyCM?sys_no=")"+$("#sys_no").val();', 2000);
+    }
 
 </script>
 <form id="order_form" method="post">
@@ -475,7 +499,7 @@
     background: #fafafa;+position: relative;visibility:hidden" >
         <div>
             @*表头*@
-            <table border="0" cellpadding="0" cellspacing="3px" width="800px">
+            <table border="0" cellpadding="0" cellspacing="3" style="width:800px;">
                 <tr>
                     <td>
                         @Html.Lang("order_date"):
@@ -487,13 +511,17 @@
                         @Html.Lang("pro_type"):
                     </td>
                     <td>
-                        <input class="easyui-combobox" id="product_type" name="product_type" style="width: 120px"
+                        @*<input class="easyui-combobox" id="product_type" name="product_type" style="width: 120px"
                                data-options="textField:'value',valueField:'value',panelHeight:'auto', required:true,editable:false,
                                            data:[
                                            {value:'PANEL'},{value:'OLED'},{value:'COG'},{value:'H-COG'},{value:'P-COG'},{value:'S-MDS'},
                                            {value:'H-MDS'},{value:'MDS'},{value:'S-LCM'},{value:'H-S-LCM'},{value:'P-S-LCM'},{value:'LCM'},
-                                           {value:'H-LCM'},{value:'P-LCM'},{value:'SIM'},{value:'TNM'}
-                                           ]" />
+                                           {value:'H-LCM'},{value:'P-LCM'},{value:'SIM'},{value:'TNM'},{value:'FIC'}
+                                           ]" />*@
+                        <input class="easyui-combobox" id="product_type" name="product_type" style="width: 120px"
+                               data-options="textField:'name',valueField:'name', required:true,editable:false,"
+                               url="@Url.Content("~/Items/getItems?what=product_type")"
+                                />
                     </td>
                     <td>
                         @Html.Lang("model_type"):
@@ -559,13 +587,13 @@
                     <td>
                         <input id="project_team" name="project_team" style="width: 120px" />
                     </td>
-                    <td>
+                    @*<td>
                         @Html.Lang("quotation_clerk"):
                     </td>
                     <td>
                         <input class="easyui-combobox" id="quotation_clerk_id" name="quotation_clerk_id" style="width: 120px" editable="false"
-                               valuefield="user_id" textfield="user_name" url="@Url.Content("~/Items/GetGroupMembers?group_name=报价员组")" required="true" />
-                    </td>
+                               valuefield="value" textfield="text" url="@Url.Content("~/Items/GetGroupMembers?group_name=报价员组")" />
+                    </td>*@
                 </tr>
                 <tr>
                     <td>
@@ -616,14 +644,20 @@
                     <input id="zz_customer_name" class="remotebox2" name="zz_customer_name" style="width: 120px" panelwidth="240px" />
                 </td>
                 <td>
+                    海外客户:
+                </td>
+                <td>
+                    <input id="oversea_customer_no" class="customerbox" name="oversea_customer_no" style="width: 120px" panelwidth="240px" />
+                </td>
+            </tr>
+            <tr>
+                <td>
                     @Html.Lang("currency"):
                 </td>
                 <td>
                     <input id="currency_no" class="easyui-combobox" name="currency_no" panelheight="150" url="@Url.Content("~/Items/getItems?what=currency")" editable="false"
                            valuefield="no" textfield="name" style="width: 120px" required="true" />
                 </td>
-            </tr>
-            <tr>
                 <td>
                     @Html.Lang("qty"):
                 </td>
@@ -632,9 +666,6 @@
                 </td>
                 <td>
                     @Html.Lang("price"):
-
-
-
                 </td>
                 <td>
                     <input id="price" class="easyui-numberbox" name="price" style="width: 115px" precision="2" required="true" />
@@ -645,14 +676,14 @@
                 <td>
                     <input class="easyui-validatebox" name="pro_use" id="pro_use" style="width: 115px" required="true" />
                 </td>
+            </tr>
+            <tr>
                 <td>
                     @Html.Lang("customer_model"):
                 </td>
                 <td>
                     <input id="project_number" class="easyui-textbox" name="project_number" style="width: 115px" required="true" />
                 </td>
-            </tr>
-            <tr>
                 <td>
                     @Html.Lang("pic_number"):
                 </td>
@@ -670,7 +701,9 @@
                 </td>
                 <td>
                     <input id="contract_po_no" class="easyui-validatebox" name="contract_po_no" style="width: 115px" />
-                </td>
+                </td>                
+            </tr>
+            <tr>
                 <td>
                     @Html.Lang("biller"):
                 </td>
@@ -1070,8 +1103,9 @@
 </table>
 </div>
 <br />
-@*上传文件的*@
-@Html.Partial("_UploadFilePartial")
+ @*上传文件的*@
+<input type="hidden" value="@ViewData["sys_no"]" id="wu_sysNum" />
+@Html.Partial("_UploadFilePartial_wu")
 </div>
 <div align="center">
     <a id="saveAllBut" href="#" class="easyui-linkbutton" iconcls='icon-save' style="margin: 10px 20px;">@Html.Lang("save_form")</a>

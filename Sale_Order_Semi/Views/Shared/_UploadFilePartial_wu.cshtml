@@ -1,0 +1,82 @@
+﻿@{
+    Layout = null;
+}
+<link href="@Url.Content("~/Scripts/webuploader/webuploader.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/webuploader/webuploader.withoutimage.js")" type="text/javascript"></script>
+<script type="text/javascript">
+    $(function () {
+        //上传插件
+        var uploader = WebUploader.create({
+            swf: '@Url.Content("~/Scripts/webuploader/Uploader.swf")',
+            server: '@Url.Content("~/Saler/UploadFileWu")',
+            pick: '#up_button',
+            auto: true,
+            formData: { "num": $("#wu_sysNum").val() },
+            fileNumLimit: 100,
+            fileSingleSizeLimit: 10 * 1024 * 1024,
+            accept: {
+                title: 'rar',
+                extensions: 'rar',
+                mimeTypes: 'application/x-rar-compressed'
+            }
+        });
+
+        uploader.on('uploadSuccess', function (file, res) {
+            if (!res.suc) {
+                tip("附件上传失败：" + res.msg);
+            } else {
+                var d = new Date();
+                var time = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ":" + d.getMinutes();
+                $("#up_name").html(file.name);
+                $("#up_size").html(Math.round(file.size / 1024) + "K");
+                $("#up_time").html(time);
+                tip("上传成功！");
+            }
+        });
+
+        uploader.on('uploadError', function (file) {
+            tip("上传出错");
+        });
+
+        uploader.on("error", function (type) {
+            switch (type) {
+                case "Q_TYPE_DENIED":
+                    tip("上传格式不正确");
+                    break;
+                case "F_EXCEED_SIZE":
+                    tip("单个文件大小必须少于10M");
+                    break;
+                case "F_DUPLICATE":
+                    tip("不能重复上传文件");
+                    break;
+                case "Q_EXCEED_NUM_LIMIT":
+                    tip("超出文件上传最大数量");
+                    break;
+                default:
+                    tip("上传失败：" + type);
+                    break;
+            }
+        });
+
+        //附件信息
+        $.post("@Url.Content("~/Saler/GetFileInfo")", { sys_no: $("#wu_sysNum").val() }, function (data) {
+            if(data.success){
+                $("#up_name").html(data.am.file_name);
+                $("#up_size").html(data.am.file_size);
+                $("#up_time").html(data.am.upload_time);
+            }
+        });
+
+    });
+
+</script>
+<div class="easyui-panel" style="background: #fafafa;padding:10px;width:800px;" title="@Html.Lang("upload_file")">
+    <div id="uploader" style="width: 400px; float: left;padding-top:12px;padding-left:24px;">
+        <a class="easyui-linkbutton" href="#uploader" id="up_button" iconcls='icon-upload'>上传文件</a>
+    </div>
+    <div id="uploadInfo" style="width: 300px; margin-left: 20px; float: left;">
+        @Html.Lang("file_name")：<span id="up_name" style="color: red"></span><br />
+        @Html.Lang("file_size")：<span id="up_size" style="color: red"></span><br />
+        @Html.Lang("upload_time")：<span id="up_time" style="color: red"></span>
+    </div>
+</div>
