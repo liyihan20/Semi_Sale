@@ -386,6 +386,33 @@ namespace Sale_Order_Semi.Controllers
                 }
             }
 
+            //验证客户编码与客户名称是否匹配
+            if (db.isCustomerNameAndNoMath(h.buy_unit_name, h.buy_unit_no).First().suc == false) {
+                return Json(new SimpleResultModel(false, "购货单位请输入后按回车键搜索后在列表中选择"));
+            }
+            if (db.isCustomerNameAndNoMath(h.plan_firm_name, h.plan_firm_no).First().suc == false) {
+                return Json(new SimpleResultModel(false, "方案公司请输入后按回车键搜索后在列表中选择"));
+            }
+            if (db.isCustomerNameAndNoMath(h.oversea_client_name, h.oversea_client_no).First().suc == false) {
+                return Json(new SimpleResultModel(false, "海外客户请输入后按回车键搜索后在列表中选择"));
+            }
+            if (db.isCustomerNameAndNoMath(h.final_client_name, h.final_client_no).First().suc == false) {
+                return Json(new SimpleResultModel(false, "最终客户请输入后按回车键搜索后在列表中选择"));
+            }
+
+            if (string.IsNullOrEmpty(h.clerk_no)) {
+                return Json(new SimpleResultModel(false, "业务员1请输入后按回车键搜索后在列表中选择"));
+            }
+            if (string.IsNullOrEmpty(h.charger_no)) {
+                return Json(new SimpleResultModel(false, "主管请输入后按回车键搜索后在列表中选择"));
+            }
+            if (string.IsNullOrEmpty(h.clerk2_name) && !string.IsNullOrEmpty(h.clerk2_no)) {
+                h.clerk2_no = "";
+            }
+            if (string.IsNullOrEmpty(h.clerk3_name) && !string.IsNullOrEmpty(h.clerk3_no)) {
+                h.clerk3_no = "";
+            }
+
             #region 验证营业员比例的合法性,并保存营业员比例
             string salerPercent = h.salePs.Trim();
             string[] salers = salerPercent.Split(new char[] { ';', '；' });

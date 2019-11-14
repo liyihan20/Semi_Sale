@@ -442,50 +442,6 @@
       <Association Name="ReturnBill_ReturnBillDetail" Member="ReturnBill" ThisKey="bill_id" OtherKey="id" Type="ReturnBill" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.vw_return_bill" Member="VwReturnBill">
-    <Type Name="VwReturnBill">
-      <Column Name="bill_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="sys_no" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
-      <Column Name="fdate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
-      <Column Name="return_dept" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="customer_number" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="customer_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
-      <Column Name="has_invoice" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="need_resend" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="user_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="user_name" Type="System.String" DbType="VarChar(40)" CanBeNull="true" />
-      <Column Name="comment" Type="System.String" DbType="VarChar(500)" CanBeNull="true" />
-      <Column Name="express_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="express_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="express_qty" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="all_finish" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="hide_flag" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="import_stock_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="department_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
-      <Column Name="bill_detail_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="entry_no" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="seorder_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="stock_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="stock_inter_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="stock_entry_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="product_number" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="product_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="product_model" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="aux_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
-      <Column Name="return_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
-      <Column Name="customer_back_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
-      <Column Name="ch_dep_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="qc_good_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
-      <Column Name="qc_bad_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
-      <Column Name="qc_comment" Type="System.String" DbType="VarChar(500)" CanBeNull="true" />
-      <Column Name="has_red_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
-      <Column Name="has_replace_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
-      <Column Name="detail_finish" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="real_return_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
-      <Column Name="is_online" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="audit_result" Type="System.Int32" DbType="Int" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.vw_depHasAudit_noInK3" Member="VwDepHasAuditNoInK3">
     <Type Name="VwDepHasAuditNoInK3">
       <Column Name="dep_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
@@ -669,84 +625,6 @@
       <Association Name="User_Apply" Member="User" ThisKey="user_id" OtherKey="id" Type="User" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.Sale_sample_bill" Member="SampleBill">
-    <Type Name="SampleBill">
-      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="sys_no" Type="System.String" DbType="VarChar(15)" CanBeNull="true" />
-      <Column Name="original_user_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="update_user_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="step_version" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="is_free" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
-      <Column Name="bill_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="project_team" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="clear_way" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
-      <Column Name="trade_type_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="trade_type_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="fetch_add_no" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
-      <Column Name="fetch_add_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="currency_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="currency_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="sale_type_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="sale_type_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="agency_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="agency_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="clerk_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="clerk_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="bill_date" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
-      <Column Name="demand_finish_date" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
-      <Column Name="product_type" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="product_number" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
-      <Column Name="product_model" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
-      <Column Name="product_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
-      <Column Name="customer_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="customer_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
-      <Column Name="plan_firm_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
-      <Column Name="zz_customer_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
-      <Column Name="sea_customer_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
-      <Column Name="use_existed_product" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
-      <Column Name="original_model_customer" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
-      <Column Name="pic_number" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="pic_version" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="sample_qty" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="quote_num" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
-      <Column Name="cost" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
-      <Column Name="deal_price" Type="System.Decimal" DbType="Decimal(14,5)" CanBeNull="true" />
-      <Column Name="contract_price" Type="System.Decimal" DbType="Decimal(14,5)" CanBeNull="true" />
-      <Column Name="total_sum" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
-      <Column Name="sample_use" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="is_overtop_qty" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
-      <Column Name="overtop_qty_reason" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
-      <Column Name="how_many_time" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="repeat_sample_reason" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
-      <Column Name="is_glass_remake" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
-      <Column Name="glass_remake_fee" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
-      <Column Name="for_new_project" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
-      <Column Name="new_project_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
-      <Column Name="new_project_order_qty" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="product_classification" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="product_use" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
-      <Column Name="has_video_function" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="video_model" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
-      <Column Name="video_reason" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
-      <Column Name="has_touch_panel" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="touch_panel_model" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
-      <Column Name="touch_panel_reason" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
-      <Column Name="user_comment" Type="System.String" DbType="VarChar(1000)" CanBeNull="true" />
-      <Column Name="create_date" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
-      <Column Name="product_unit" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="new_project_order_plan" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
-      <Column Name="exchange_rate" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
-      <Column Name="quotation_clerk_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="quotation_clerk_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="is_special_sample" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
-      <Column Name="oa_special_request_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="plan_firm_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="zz_customer_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="sea_customer_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="contract_po_no" Type="System.String" DbType="Varchar(50)" CanBeNull="true" />
-      <Association Name="User_SampleBill" Member="User" ThisKey="original_user_id" OtherKey="id" Type="User" IsForeignKey="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.Sale_BL_stock" Member="Sale_BL_stock">
     <Type Name="Sale_BL_stock">
       <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -886,19 +764,19 @@
   <Table Name="dbo.Sale_user" Member="User">
     <Type Name="User">
       <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="username" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="password" Type="System.String" DbType="VarChar(32)" CanBeNull="true" />
-      <Column Name="email" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
-      <Column Name="department" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="is_forbit" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
-      <Column Name="in_date" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
-      <Column Name="is_first_use" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
-      <Column Name="out_date" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
-      <Column Name="real_name" Type="System.String" DbType="VarChar(40)" CanBeNull="true" />
-      <Column Name="job" Type="System.String" DbType="VarChar(60)" CanBeNull="true" />
-      <Column Name="last_login" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
-      <Column Name="last_modify" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
-      <Column Name="can_check_deps" Type="System.String" DbType="VarChar(400)" CanBeNull="true" />
+      <Column Name="username" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="password" Type="System.String" DbType="VarChar(32)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="email" Type="System.String" DbType="VarChar(200)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="department" Type="System.Int32" DbType="Int" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="is_forbit" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="in_date" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="is_first_use" Type="System.Boolean" DbType="Bit" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="out_date" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="real_name" Type="System.String" DbType="VarChar(40)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="job" Type="System.String" DbType="VarChar(60)" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="last_login" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="last_modify" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="can_check_deps" Type="System.String" DbType="VarChar(400)" CanBeNull="true" UpdateCheck="Never" />
       <Association Name="User_GroupAndUser" Member="GroupAndUser" ThisKey="id" OtherKey="user_id" Type="GroupAndUser" />
       <Association Name="User_ApplyDetails" Member="ApplyDetails" ThisKey="id" OtherKey="user_id" Type="ApplyDetails" />
       <Association Name="User_ProcessDetail" Member="ProcessDetail" ThisKey="id" OtherKey="user_id" Type="ProcessDetail" />
@@ -907,10 +785,10 @@
       <Association Name="User_ReturnBill" Member="ReturnBill" ThisKey="id" OtherKey="user_id" Type="ReturnBill" />
       <Association Name="User_ModelContract" Member="ModelContract" ThisKey="id" OtherKey="user_id" Type="ModelContract" />
       <Association Name="User_Apply" Member="Apply" ThisKey="id" OtherKey="user_id" Type="Apply" />
-      <Association Name="User_SampleBill" Member="SampleBill" ThisKey="id" OtherKey="original_user_id" Type="SampleBill" />
       <Association Name="User_Sale_BL_stock" Member="Sale_BL_stock" ThisKey="id" OtherKey="clerk_id" Type="Sale_BL_stock" />
       <Association Name="User_Sale_BL" Member="Sale_BL" ThisKey="id" OtherKey="original_user_id" Type="Sale_BL" />
       <Association Name="User_ProcessAuthority" Member="ProcessAuthority" ThisKey="id" OtherKey="user_id" Type="ProcessAuthority" />
+      <Association Name="User_SampleBill" Member="SampleBill" ThisKey="id" OtherKey="original_user_id" Type="SampleBill" />
       <Association Name="Department_User" Member="Department1" ThisKey="department" OtherKey="id" Type="Department" IsForeignKey="true" />
     </Type>
   </Table>
@@ -1021,6 +899,158 @@
       <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="p_type" Type="System.String" DbType="Char(2)" CanBeNull="true" />
       <Column Name="p_name" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Sale_sample_bill" Member="SampleBill">
+    <Type Name="SampleBill">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="sys_no" Type="System.String" DbType="VarChar(15)" CanBeNull="true" />
+      <Column Name="original_user_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="update_user_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="step_version" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="is_free" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="bill_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="project_team" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="clear_way" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="trade_type_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="trade_type_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="fetch_add_no" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="fetch_add_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="currency_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="currency_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="sale_type_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="sale_type_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="agency_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="agency_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="clerk_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="clerk_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="bill_date" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="demand_finish_date" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="product_type" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="product_number" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="product_model" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="product_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="customer_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="customer_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="plan_firm_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="zz_customer_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="sea_customer_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="use_existed_product" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="original_model_customer" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="pic_number" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="pic_version" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="sample_qty" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="quote_num" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="cost" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="deal_price" Type="System.Decimal" DbType="Decimal(14,5)" CanBeNull="true" />
+      <Column Name="contract_price" Type="System.Decimal" DbType="Decimal(14,5)" CanBeNull="true" />
+      <Column Name="total_sum" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="sample_use" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="is_overtop_qty" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="overtop_qty_reason" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="how_many_time" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="repeat_sample_reason" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="is_glass_remake" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="glass_remake_fee" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="for_new_project" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="new_project_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="new_project_order_qty" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="product_classification" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="product_use" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="has_video_function" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="video_model" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="video_reason" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="has_touch_panel" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="touch_panel_model" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="touch_panel_reason" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="user_comment" Type="System.String" DbType="VarChar(1000)" CanBeNull="true" />
+      <Column Name="create_date" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="product_unit" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="new_project_order_plan" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="exchange_rate" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
+      <Column Name="quotation_clerk_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="quotation_clerk_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="is_special_sample" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="oa_special_request_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="plan_firm_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="zz_customer_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="sea_customer_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="contract_po_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="charger_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="charger_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="User_SampleBill" Member="User" ThisKey="original_user_id" OtherKey="id" Type="User" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Sale_HK_SO" Member="Sale_HK_SO">
+    <Type Name="Sale_HK_SO">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="sys_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="user_name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="import_time" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="error_info" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="warn_info" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="bill_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="fetch_date" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="oversea_client" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="product_type_name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="product_type_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="product_usage" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="currency_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="group1_name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="clerk1_name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="clerk1_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="item_model" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="item_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="deal_price" Type="System.Decimal" DbType="Decimal(18,6)" CanBeNull="true" />
+      <Column Name="taxed_price" Type="System.Decimal" DbType="Decimal(18,6)" CanBeNull="true" />
+      <Column Name="qty" Type="System.Decimal" DbType="Decimal(18,6)" CanBeNull="true" />
+      <Column Name="customer_po" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="customer_pn" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.vw_return_bill" Member="VwReturnBill">
+    <Type Name="VwReturnBill">
+      <Column Name="bill_id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="sys_no" Type="System.String" DbType="VarChar(20)" CanBeNull="true" />
+      <Column Name="fdate" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
+      <Column Name="return_dept" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="customer_number" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="customer_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="has_invoice" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="need_resend" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="user_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="user_name" Type="System.String" DbType="VarChar(40)" CanBeNull="true" />
+      <Column Name="comment" Type="System.String" DbType="VarChar(500)" CanBeNull="true" />
+      <Column Name="express_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="express_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="express_qty" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="all_finish" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="hide_flag" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="import_stock_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="department_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="bill_detail_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="entry_no" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="seorder_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="stock_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="stock_inter_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="stock_entry_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="product_number" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="product_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="product_model" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="aux_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
+      <Column Name="return_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
+      <Column Name="customer_back_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
+      <Column Name="ch_dep_name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="qc_good_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
+      <Column Name="qc_bad_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
+      <Column Name="qc_comment" Type="System.String" DbType="VarChar(500)" CanBeNull="true" />
+      <Column Name="has_red_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
+      <Column Name="has_replace_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
+      <Column Name="detail_finish" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="real_return_qty" Type="System.Decimal" DbType="Decimal(12,4)" CanBeNull="true" />
+      <Column Name="is_online" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="audit_result" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="finish_date" Type="System.DateTime" DbType="SmallDateTime" CanBeNull="true" />
     </Type>
   </Table>
   <Function Name="dbo.getGroupBelongToUnit" Method="getGroupBelongToUnit">
@@ -1310,35 +1340,6 @@
       <Column Name="msg" Type="System.String" DbType="VarChar(1) NOT NULL" CanBeNull="false" />
     </ElementType>
   </Function>
-  <Function Name="dbo.getAuditorBLExcels" Method="getAuditorBLExcels">
-    <Parameter Name="ids" Type="System.String" DbType="VarChar(2000)" />
-    <ElementType Name="getAuditorBLExcelsResult">
-      <Column Name="sys_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="bl_date" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="bill_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="product_model" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
-      <Column Name="qty" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="customer_name" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
-      <Column Name="plan_order_date" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="real_name" Type="System.String" DbType="VarChar(40)" CanBeNull="true" />
-      <Column Name="deal_price" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
-      <Column Name="bus_dep" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="product_use" Type="System.String" DbType="VarChar(500)" CanBeNull="true" />
-      <Column Name="agency_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
-      <Column Name="comment" Type="System.String" DbType="VarChar(1000)" CanBeNull="true" />
-      <Column Name="fmodel" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
-      <Column Name="fname" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
-      <Column Name="unitname" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="fqty" Type="System.Decimal" DbType="Decimal(28,10)" CanBeNull="true" />
-      <Column Name="total_qty" Type="System.Decimal" DbType="Decimal(28,10)" CanBeNull="true" />
-      <Column Name="order_qty" Type="System.Decimal" DbType="Decimal(28,10)" CanBeNull="true" />
-      <Column Name="k3_qty" Type="System.Decimal" DbType="Decimal(28,10)" CanBeNull="true" />
-      <Column Name="source" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
-      <Column Name="order_name" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
-      <Column Name="bl_project" Type="System.String" DbType="VarChar(2101)" CanBeNull="true" />
-      <Column Name="audit_result" Type="System.Int32" DbType="Int" CanBeNull="true" />
-    </ElementType>
-  </Function>
   <Function Name="dbo.getK3CustomerModel" Method="getK3CustomerModel">
     <Parameter Name="customerId" Type="System.Int32" DbType="Int" />
     <Parameter Name="trulyItemId" Type="System.Int32" DbType="Int" />
@@ -1365,5 +1366,43 @@
     <Parameter Name="contractNo" Type="System.String" DbType="VarChar(200)" />
     <Parameter Name="sysNum" Type="System.String" DbType="VarChar(20)" />
     <Return Type="System.Int32" />
+  </Function>
+  <Function Name="dbo.getAuditorBLExcels" Method="getAuditorBLExcels">
+    <Parameter Name="ids" Type="System.String" DbType="VarChar(2000)" />
+    <ElementType Name="getAuditorBLExcelsResult">
+      <Column Name="sys_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="bl_date" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="bill_no" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="product_model" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="qty" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="customer_name" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="plan_order_date" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="real_name" Type="System.String" DbType="VarChar(40)" CanBeNull="true" />
+      <Column Name="deal_price" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="bus_dep" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="product_use" Type="System.String" DbType="VarChar(500)" CanBeNull="true" />
+      <Column Name="agency_name" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="comment" Type="System.String" DbType="VarChar(1000)" CanBeNull="true" />
+      <Column Name="fmodel" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="fname" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="unitname" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="fqty" Type="System.Decimal" DbType="Decimal(28,10)" CanBeNull="true" />
+      <Column Name="total_qty" Type="System.Decimal" DbType="Decimal(28,10)" CanBeNull="true" />
+      <Column Name="order_qty" Type="System.Decimal" DbType="Decimal(28,10)" CanBeNull="true" />
+      <Column Name="k3_qty" Type="System.Decimal" DbType="Decimal(28,10)" CanBeNull="true" />
+      <Column Name="source" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="order_name" Type="System.String" DbType="VarChar(30)" CanBeNull="true" />
+      <Column Name="bl_project" Type="System.String" DbType="VarChar(2101)" CanBeNull="true" />
+      <Column Name="fetch_date" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="bl_type" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="audit_result" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.isCustomerNameAndNoMath" Method="isCustomerNameAndNoMath">
+    <Parameter Name="name" Type="System.String" DbType="NVarChar(100)" />
+    <Parameter Name="no" Type="System.String" DbType="VarChar(50)" />
+    <ElementType Name="isCustomerNameAndNoMathResult">
+      <Column Name="suc" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+    </ElementType>
   </Function>
 </Database>

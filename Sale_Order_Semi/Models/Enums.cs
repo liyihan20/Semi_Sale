@@ -48,5 +48,6 @@ namespace Sale_Order_Semi.Models
         new_BL, //新建备料单
         modify_bill_no, //后台修改单号
         ceo_batch_audit, //总裁办批量审批单据
+        new_hk_so, //导入香港SO
     }
 }

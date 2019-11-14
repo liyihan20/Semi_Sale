@@ -1,0 +1,157 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+<link rel="stylesheet" href="@Url.Content("~/Scripts/webuploader/webuploader.css")" />
+<script src="@Url.Content("~/Scripts/webuploader/webuploader.withoutimage.js")"></script>
+
+<script>
+    $(function () {
+        $("#dg").datagrid({
+            fit: true,
+            rownumbers: true,
+            singleSelect: true,            
+            columns: [[
+                { field: 'error_info', title: '错误信息', width: 150 },
+                { field: 'warn_info', title: '警告信息', width: 240 },
+                { field: 'bill_no', title: '销售单号', width: 100 },
+                {
+                    field: 'fetch_date', title: '交货日期', width: 100,
+                    formatter: function (value, row, index) {
+                        return toDateStr(value);
+                    }
+                },
+                { field: 'oversea_client', title: '海外客户', width: 100 },
+                { field: 'product_type_name', title: '产品类别', width: 100 },
+                //{ field: 'product_type_no', title: '产品类别代码', width: 100 },
+                { field: 'group1_name', title: '组别1', width: 100 },
+                { field: 'clerk1_name', title: '营业员1', width: 150 },
+                { field: 'clerk1_no', title: '营业员1代码', width: 100 },
+                { field: 'item_model', title: '规格型号', width: 200 },
+                { field: 'item_no', title: '产品代码', width: 120 },
+                { field: 'customer_po', title: '客户PO', width: 100 },
+                { field: 'currency_no', title: '币别', width: 80 },
+                { field: 'deal_price', title: '成交价', width: 100 },
+                { field: 'taxed_price', title: '含税单价', width: 100 },
+                { field: 'qty', title: '数量', width: 80 },
+                { field: 'customer_pn', title: '客户型号', width: 100 },
+                { field: 'product_usage', title: '产品用途', width: 100 }
+            ]],
+            //rowStyler: function(index,row){
+            //    if (row.error_info != "") {
+            //        return "color:red";
+            //    } else if (row.warn_info != "") {
+            //        return "color:orange";
+            //    } else {
+            //        return "color:green";
+            //    }
+            //},
+            toolbar: [{
+                id: 'upload_bt',
+                text: "上传excel",
+                iconCls: 'icon-upload'
+            }, '-', {
+                text: "保存数据",
+                iconCls: 'icon-save',
+                handler: function () {
+                    var rows = $("#dg").datagrid("getRows");
+                    $.messager.progress();
+                    $.post("SaveExcelData", { data: JSON.stringify(rows) }, function (result) {
+                        $.messager.progress('close');
+                        if (result.suc) {
+                            tip("保存成功，等待页面跳转...");
+                            setTimeout(function () { window.location.href = "CheckHKSO"; }, 2000);
+                        } else {
+                            tip("保存失败：" + result.msg);
+                        }
+                    });
+                }
+            }, '-',
+            {
+                text: "操作说明",
+                iconCls: "icon-help",
+                handler: function () {
+                    $("#dlg").dialog("open");
+                }
+            }]
+        });
+
+    });
+</script>
+<script>
+    $(function () {
+        var maxNum = 100; 
+        var maxSingleSize = 20 * 1024 * 1024; 
+        var uploader = WebUploader.create({
+            swf: '@Url.Content("~/Scripts/webuploader/Uploader.swf")',
+            server: 'BeginUploadKS',
+            pick: '#upload_bt',
+            resize: false,
+            auto: true,
+            duplicate: true,
+            fileNumLimit: maxNum,
+            fileSingleSizeLimit: maxSingleSize,
+            accept: {
+                title: 'MS-EXCEL',
+                extensions: 'xls,xlsx',
+                mimeTypes: 'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            }
+        });
+
+        uploader.on('startUpload', function () {
+            $("#dg").datagrid("loadData", []);
+            $("#dg").datagrid("loading");
+        });
+
+        uploader.on('uploadSuccess', function (file, res) {
+            tip("上传成功，正在读取数据...");
+            $.post("ShowExcelData", { fileName: res.extra }, function (data) {
+                $("#dg").datagrid("loaded");
+                if (data.suc) {
+                    $("#dg").datagrid("loadData", JSON.parse(data.extra));
+                    tip("读取数据成功");
+                } else {
+                    tip(data.msg);
+                }
+            });
+        });
+
+        uploader.on('uploadError', function (file) {
+            tip('上传出错');
+            $("#dg").datagrid("loaded");
+        });
+
+        //上传队列出错提示
+        uploader.on("error", function (type) {
+            switch (type) {
+                case "Q_TYPE_DENIED":
+                    tip("格式不正确");
+                    break;
+                case "F_EXCEED_SIZE":
+                    tip("单个文件大小必须少于" + (maxSingleSize / (1024 * 1024)) + "M");
+                    break;
+                case "Q_EXCEED_NUM_LIMIT":
+                    tip("最多上传文件数量是" + maxNum + "个");
+                    break;
+                default:
+                    tip("上传失败：" + type);
+                    break;
+            }
+        });
+
+    });
+</script>
+<table id="dg"></table>
+ <div id="dlg" class="easyui-dialog" title="操作说明" data-options="iconCls:'icon-help',closed:true,modal:true" style="width:600px;height:300px;padding:15px">
+        <div>1. 系统只读取上传的excel的第一个sheet表，如果有多个sheet表，其他的会忽略</div>
+        <div>2. 系统从第二行开始读取，有效数据行请最好保持在400行以内，否则可能会因为处理时间太长而引起超时，导致读取数据失败</div>
+        <div>3. 系统读取A列到O列的数据，内容顺序依次为：A销售单号、B交货日期&结束交货日期、C海外客户、D交货地点、E产品类别、F组别一、G营业员一、
+            H规格型号、I客户PO、J币别、K成交价、L含税单价、M数量、N客户型号、O产品用途
+        </div>
+        <div>
+            4. 成功导入后，系统会逐行逐个字段分析数据有效性；如果规格型号不存在或者存在多个，会在错误信息中提示，虽然可以继续保存，但是不能导入K3；
+            如果营业员1或者产品代码等在K3不存在，则会在警告信息中出现，此时可以导入K3，但是导入后需手工在K3填写
+        </div>
+        <div>
+            5. 同一张订单，不能重复保存，除非先将旧的已导入订单删除
+        </div>
+    </div>

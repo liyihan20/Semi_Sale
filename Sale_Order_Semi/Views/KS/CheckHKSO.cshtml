@@ -1,0 +1,93 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
+}
+
+<script>
+    $(function () {
+        $("#dg").datagrid({
+            fit: true,
+            rownumbers: true,
+            pagination: true,
+            pageSize: 50,
+            pageList: [20, 50, 100, 200],
+            columns: [[
+                { field: 'ck', checkbox: true },
+                { field: 'error_info', title: '错误信息', width: 150 },
+                { field: 'warn_info', title: '警告信息', width: 240 },
+                {
+                    field: 'import_time', title: '上传时间', width: 140,
+                    formatter: function (value, row, index) {
+                        return toDateStr(value,true);
+                    }
+                },
+                { field: 'sys_no', title: '流水号', width: 150 },
+                { field: 'bill_no', title: '销售单号', width: 100 },
+                {
+                    field: 'fetch_date', title: '交货日期', width: 100,
+                    formatter: function (value, row, index) {
+                        return toDateStr(value);
+                    }
+                },
+                { field: 'oversea_client', title: '海外客户', width: 100 },
+                { field: 'product_type_name', title: '产品类别', width: 100 },
+                { field: 'group1_name', title: '组别1', width: 100 },
+                { field: 'clerk1_name', title: '营业员1', width: 150 },
+                { field: 'clerk1_no', title: '营业员1代码', width: 100 },
+                { field: 'item_model', title: '规格型号', width: 200 },
+                { field: 'item_no', title: '产品代码', width: 120 },
+                { field: 'customer_po', title: '客户PO', width: 100 },
+                { field: 'currency_no', title: '币别', width: 80 },
+                { field: 'deal_price', title: '成交价', width: 100 },
+                { field: 'taxed_price', title: '含税单价', width: 100 },
+                { field: 'qty', title: '数量', width: 80 },
+                { field: 'customer_pn', title: '客户型号', width: 100 },
+                { field: 'product_usage', title: '产品用途', width: 100 }
+            ]],
+            toolbar: [{                
+                text: "删除所选单据",
+                iconCls: 'icon-remove',
+                handler: function () {
+                    var checkedRows = $("#dg").datagrid("getChecked");
+                    $.messager.confirm('操作确认', '确定要删除选中数据吗？行数：'+checkedRows.length, function (r) {
+                        if (r) {
+                            var checkedIds = checkedRows.map(function (r) { return r.id; });
+                            $.post("DeleteHKSO", { ids: JSON.stringify(checkedIds) }, function (data) {
+                                if (data.suc) {
+                                    $("#dg").datagrid("reload");
+                                } else {
+                                    tip(data.msg);
+                                }
+                            });
+                        }
+                    });                    
+
+                }
+            }]
+        });
+        $("#checkBt").on("click", function () {
+            $("#dg").datagrid({
+                url: 'SearchHKSO',
+                queryParams: {
+                    fromDate: $("#fromDate").datebox("getValue"),
+                    toDate: $("#toDate").datebox("getValue"),                    
+                    billNo: $("#billNo").textbox("getValue")
+                }
+            });
+        });
+        $("#checkBt").trigger("click");
+    });
+</script>
+<div class="easyui-layout" data-options="fit:true">
+    <div data-options="region:'north',collapsed:false,split:true" style="height: 50px; background: #fafafa;padding: 6px;">
+        导入日期:
+        <input id="fromDate" class="easyui-datebox" style="width: 120px" value="@DateTime.Now.ToString("yyyy-MM-dd")" editable="false" />
+        到:
+        <input id="toDate" class="easyui-datebox" style="width: 120px" value="@DateTime.Now.ToString("yyyy-MM-dd")" editable="false" />
+        销售单号:
+        <input id="billNo" class="easyui-textbox" style="width:140px" />
+        <a id="checkBt" href="#" class="easyui-linkbutton" iconcls="icon-search">搜索</a>
+    </div>
+    <div data-options="region:'center'">
+        <table id="dg"></table>
+    </div>
+</div>

@@ -221,7 +221,7 @@
             }
         });
 
-        
+
 
         //不含税单价，含税单价
         var stop = 0;
@@ -273,15 +273,15 @@
         if("@order.currency_no"==""){
             $("#currency_no").combobox("setValue", "RMB");
         }
-        $("#buy_unit_no").combogrid("setText","@order.buy_unit_name");
-        $("#oversea_client_no").combogrid("setText","@order.oversea_client_name");
-        $("#plan_firm_no").combogrid("setText","@order.plan_firm_name");
-        $("#final_client_no").combogrid("setText","@order.final_client_name");
+        $("#buy_unit_no").combogrid("setText","@Html.Raw(order.buy_unit_name)");
+        $("#oversea_client_no").combogrid("setText","@Html.Raw(order.oversea_client_name)");
+        $("#plan_firm_no").combogrid("setText","@Html.Raw(order.plan_firm_name)");
+        $("#final_client_no").combogrid("setText","@Html.Raw(order.final_client_name)");
         $("#clerk_no").combobox("setText","@order.clerk_name");
         $("#clerk2_no").combobox("setText","@order.clerk2_name");
         $("#charger_no").combobox("setText","@order.charger_name");
 
-    });    
+    });
 
     //保存订单时各种验证
     function beforeSaveOrder() {
@@ -1124,13 +1124,13 @@ else {
                 @Html.Lang("project_name"):
             </td>
             <td>
-                <input class="easyui-combobox" id="project_no" name="project_no" textField="name" valueField="no" panelWidth="320px" style="width: 140px" required="true" />
+                <input class="easyui-combobox" id="project_no" name="project_no" textField="name" valueField="no" panelWidth="320px" style="width: 140px" required="true" editable="false" />
             </td>
             <td>
-                &nbsp;
+                MU:
             </td>
             <td>
-                &nbsp;
+                <input class="easyui-textbox" id="MU" name="MU" readonly="readonly" style="width: 140px" />
             </td>
         </tr>
         <tr>

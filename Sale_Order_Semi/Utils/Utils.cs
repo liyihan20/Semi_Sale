@@ -222,9 +222,10 @@ namespace Sale_Order_Semi.Utils
             string marketValue = "/";
             string agencyName = db.User.Single(u => u.id == userId).Department1.name;
             string[] marketNameArr = new string[] { "中国市场部一部", "中国市场部二部", "中国市场部三部", "中国市场部四部", "中国市场部五部", "中国市场部六部",
-                "中国市场部七部","中国市场部八部","中国市场部九部","中国市场部十部", "中国市场部十一部", "中国市场部十二部", "新加坡", "华诚创", "光能", "杭州" };
+                "中国市场部七部","中国市场部八部","中国市场部九部","中国市场部十部", "中国市场部十一部", "中国市场部十二部", "中国市场部十三部", "中国市场部十四部",
+                "新加坡", "华诚创", "光能", "杭州" };
             string[] marketValueArr = new string[] { "1","2","3","4","5","6",
-                "7","8","9","10","11","12","XJP","HCC","GN","HZ" };
+                "7","8","9","10","11","12","13","14","XJP","HCC","GN","HZ" };
 
             for (var i = 0; i < marketNameArr.Length; i++) {
                 if (agencyName.Contains(marketNameArr[i])) {
@@ -269,6 +270,12 @@ namespace Sale_Order_Semi.Utils
                         break;
                     case "中国市场部十二部":
                         marketValue = "12";
+                        break;
+                    case "中国市场部十三部":
+                        marketValue = "13";
+                        break;
+                    case "中国市场部十四部":
+                        marketValue = "14";
                         break;
                     case "新加坡市场部":
                         marketValue = "XJP";
@@ -2099,6 +2106,9 @@ namespace Sale_Order_Semi.Utils
             {
                 return "业务员[" + sb.clerk_no + "]不存在，保存失败。";
             }
+            if (db.getClerk(sb.charger_no, 1).Count() < 1) {
+                return "主管[" + sb.charger_no + "]不存在，保存失败。";
+            }
             { 
                 if (sb.currency_no.Equals("RMB"))
                 {
@@ -2170,6 +2180,7 @@ namespace Sale_Order_Semi.Utils
                 sb.create_date = DateTime.Now;
                 sb.customer_name = db.getCostomer(sb.customer_no, 1).First().name;
                 sb.clerk_name = db.getClerk(sb.clerk_no, 1).First().name;
+                sb.charger_name = db.getClerk(sb.charger_no, 1).First().name;
                 sb.agency_name = db.vwItems.Where(v => v.what == "agency" && v.fid == sb.agency_no).First().fname;
                 sb.currency_name = db.vwItems.Where(v => v.what == "currency" && v.fid == sb.currency_no).First().fname;
                 sb.fetch_add_name = db.vwItems.Where(v => v.what == "delivery_place" && v.fid == sb.fetch_add_no).First().fname;
@@ -2282,6 +2293,14 @@ namespace Sale_Order_Semi.Utils
 
             if (string.IsNullOrEmpty(bl.clerk_no)) {
                 return "营业员必须在列表中输入姓名或厂牌之后按回车键选择";
+            }
+
+            if (bl.fetch_date <= bl.plan_order_date) {
+                return "计划交货期必须晚于计划下订单日期";
+            }
+
+            if (bl.bl_date >= bl.plan_order_date) {
+                return "计划下订单日期必须晚于备料日期";
             }
 
             try {

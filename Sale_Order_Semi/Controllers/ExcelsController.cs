@@ -305,7 +305,8 @@ namespace Sale_Order_Semi.Controllers
         public void exportBLExcel(string sysNo, DateTime fromDate, DateTime toDate, int userId)
         {
             var myData = (from sb in db.Sale_BL
-                          from bd in sb.Sale_BL_details
+                          join detail in db.Sale_BL_details on sb.id equals detail.bl_id into dtemp
+                          from bd in dtemp.DefaultIfEmpty()
                           where (sb.sys_no.Contains(sysNo) || sb.product_model.Contains(sysNo))
                           && sb.bl_date >= fromDate
                           && sb.bl_date <= toDate
@@ -378,13 +379,15 @@ namespace Sale_Order_Semi.Controllers
                 //cells.Add(rowIndex, ++colIndex, d.bl.bl_project);
                 cells.Add(rowIndex, ++colIndex, d.bl.comment);
 
-                cells.Add(rowIndex, ++colIndex, d.bd.fname);
-                cells.Add(rowIndex, ++colIndex, d.bd.unitname);
-                cells.Add(rowIndex, ++colIndex, d.bd.fqty);
-                cells.Add(rowIndex, ++colIndex, d.bd.total_qty);
-                cells.Add(rowIndex, ++colIndex, d.bd.highest_price);
-                cells.Add(rowIndex, ++colIndex, d.bd.comment);
-                cells.Add(rowIndex, ++colIndex, d.bd.source);
+                if (d.bd != null) {
+                    cells.Add(rowIndex, ++colIndex, d.bd.fname);
+                    cells.Add(rowIndex, ++colIndex, d.bd.unitname);
+                    cells.Add(rowIndex, ++colIndex, d.bd.fqty);
+                    cells.Add(rowIndex, ++colIndex, d.bd.total_qty);
+                    cells.Add(rowIndex, ++colIndex, d.bd.highest_price);
+                    cells.Add(rowIndex, ++colIndex, d.bd.comment);
+                    cells.Add(rowIndex, ++colIndex, d.bd.source);
+                }
             }
 
             xls.Send();
@@ -1086,7 +1089,7 @@ namespace Sale_Order_Semi.Controllers
                     18,18,16,18};
 
             //列名：
-            string[] colName = new string[] { "审核结果", "流水号","备料日期", "备料编号", "产品型号", "数量", "客户名称", "计划下订单日期", "营业员","备料项目",
+            string[] colName = new string[] { "审核结果", "流水号","备料日期", "备料编号","备料类型", "产品型号", "数量", "客户名称", "计划下订单日期","计划交货期", "营业员","备料项目",
                 "成交价（不含税）","事业部","产品用途","办事处","摘要","物料型号","物料名称","单位","单位用量","标准数量",
                 "订料数量","K3数量","来源","订料员"};
 
@@ -1132,10 +1135,12 @@ namespace Sale_Order_Semi.Controllers
                 cells.Add(rowIndex, ++colIndex, d.sys_no);
                 cells.Add(rowIndex, ++colIndex, d.bl_date);
                 cells.Add(rowIndex, ++colIndex, d.bill_no);
+                cells.Add(rowIndex, ++colIndex, d.bl_type);
                 cells.Add(rowIndex, ++colIndex, d.product_model);
                 cells.Add(rowIndex, ++colIndex, d.qty);
                 cells.Add(rowIndex, ++colIndex, d.customer_name);
                 cells.Add(rowIndex, ++colIndex, d.plan_order_date);
+                cells.Add(rowIndex, ++colIndex, d.fetch_date);
                 cells.Add(rowIndex, ++colIndex, d.real_name);
                 cells.Add(rowIndex, ++colIndex, d.bl_project);
 
@@ -1354,14 +1359,15 @@ namespace Sale_Order_Semi.Controllers
                               //FHasReturnQty = v.has_replace_qty,
                               FHasInvoice = v.has_invoice == true ? "已开" : "未开",
                               //FNeedResend = v.need_resend == true ? "换货" : "退红字",
-                              apply_status = v.audit_result == null ? "未提交" : v.audit_result == 1 ? "申请成功" : v.audit_result == -1 ? "申请失败" : "审批中"
+                              apply_status = v.audit_result == null ? "未提交" : v.audit_result == 1 ? "申请成功" : v.audit_result == -1 ? "申请失败" : "审批中",
+                              finish_date = v.finish_date
                           }).ToList();
 
             ushort[] colWidth = new ushort[] { 12, 16,16,16, 20, 20, 12, 28, 18, 24, 
-                                               28, 14, 14, 14, 14, 14, 14, 14, 14 };
+                                               28, 14, 14, 14, 14, 14, 14, 14, 14, 18 };
 
             string[] colName = new string[] { "下单日期", "退货编号","营业员","办事处", "出库单号", "订单单号", "客户代码", "客户名称", "产品编码", "产品名称",
-                                              "规格型号", "已发数量", "退货数量","实货数量", "上线状态","退货部门","出货组", "蓝字发票", "审核状态" };
+                                              "规格型号", "已发数量", "退货数量","实货数量", "上线状态","退货部门","出货组", "蓝字发票", "审核状态", "完成日期" };
 
             //設置excel文件名和sheet名
             XlsDocument xls = new XlsDocument();
@@ -1423,6 +1429,7 @@ namespace Sale_Order_Semi.Controllers
                 cells.Add(rowIndex, colIndex++, d.FHasInvoice);
                 //cells.Add(rowIndex, colIndex++, d.FNeedResend);
                 cells.Add(rowIndex, colIndex++, d.apply_status);
+                cells.Add(rowIndex, colIndex++, d.finish_date==null?"":((DateTime)d.finish_date).ToString("yyyy-MM-dd HH:mm"));
             }
 
             xls.Send();

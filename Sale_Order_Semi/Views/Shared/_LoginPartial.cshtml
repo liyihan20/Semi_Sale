@@ -96,6 +96,15 @@
                     </ul>
                 </li>
             }
+            @if (Array.IndexOf(powers, Powers.new_hk_so.ToString()) != -1) {
+                <li>                
+                    <span>香港SO管理</span>
+                    <ul>
+                        <li id="~/KS/UploadKSData"><span>开始导入</span></li>
+                        <li id="~/KS/CheckHKSO"><span>已导入数据</span></li>
+                    </ul>
+                </li>
+            }
             <li id="~/Audit/CheckAuditList"><span>@Html.Lang("audit_add_apply")</span> </li>
             @if (Array.IndexOf(powers, Powers.ceo_batch_audit.ToString()) != -1) {
                 <li id="~/Authority/CeoBatchAudit"><span>总裁办批量审批</span></li>
