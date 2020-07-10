@@ -16019,6 +16019,8 @@ namespace Sale_Order_Semi.Models
 		
 		private System.Nullable<int> _old_id;
 		
+		private string _po_number;
+		
     #region 可扩展性方法定义
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -16151,6 +16153,8 @@ namespace Sale_Order_Semi.Models
     partial void Onfurther_infoChanged();
     partial void Onold_idChanging(System.Nullable<int> value);
     partial void Onold_idChanged();
+    partial void Onpo_numberChanging(string value);
+    partial void Onpo_numberChanged();
     #endregion
 		
 		public Sale_SO()
@@ -17434,6 +17438,26 @@ namespace Sale_Order_Semi.Models
 					this._old_id = value;
 					this.SendPropertyChanged("old_id");
 					this.Onold_idChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_po_number", DbType="varchar(100)")]
+		public string po_number
+		{
+			get
+			{
+				return this._po_number;
+			}
+			set
+			{
+				if ((this._po_number != value))
+				{
+					this.Onpo_numberChanging(value);
+					this.SendPropertyChanging();
+					this._po_number = value;
+					this.SendPropertyChanged("po_number");
+					this.Onpo_numberChanged();
 				}
 			}
 		}

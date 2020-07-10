@@ -28,7 +28,7 @@ namespace Sale_Order_Semi.Controllers
 
         private string GetKSExcelPath(string fileName)
         {
-            string filepath = ConfigurationManager.AppSettings["AttachmentPath1"];// "D:\\Sale_upload_temp\\";            
+            string filepath = ConfigurationManager.AppSettings["AttachmentPath1"];// "D:\\Sale_upload_temp\\";
             var folder = Path.Combine(filepath, orderType);
             if (!Directory.Exists(folder)) {
                 Directory.CreateDirectory(folder);
@@ -124,10 +124,26 @@ namespace Sale_Order_Semi.Controllers
                 else {
                     var pinfos = db.vwProductInfo.Where(p => p.item_model == so.item_model).ToList();
                     if (pinfos.Count() < 1) {
-                        so.error_info += "规格型号不存在";
+                        //不存在的规格型号，取出横杆之前的信息，再到物料表中取液晶显示镜的，如果有符合且唯一，就取之
+                        var preModel = so.item_model.Split(new char[] { '-' }, StringSplitOptions.RemoveEmptyEntries)[0];
+                        var mirrorModel = db.vwProductInfo.Where(p => p.item_model.StartsWith(preModel) && p.item_name == "液晶显示镜").ToList();
+                        if (mirrorModel.Count == 1) {
+                            so.item_no = mirrorModel.First().item_no;
+                            so.warn_info += "型号转化为" + mirrorModel.First().item_model;
+                        }
+                        else {
+                            so.error_info += "规格型号不存在";
+                        }
+                        
                     }
                     else if (pinfos.Count() > 1) {
-                        so.error_info += "规格型号存在多个";
+                        if (pinfos.Where(p => p.item_name == "液晶显示镜").Count() == 1) {
+                            so.item_no = pinfos.Where(p => p.item_name == "液晶显示镜").First().item_no;
+                            so.warn_info += "型号多个只取显示镜";
+                        }
+                        else {
+                            so.error_info += "规格型号存在多个";
+                        }
                     }
                     else {
                         so.item_no = pinfos.First().item_no;
@@ -196,7 +212,7 @@ namespace Sale_Order_Semi.Controllers
                     return Json(new SimpleResultModel() { suc = false, msg = "订单号【" + existedBill.First().bill_no + "】已存在，不能重复保存" });
                 }
 
-                foreach (var so in sos) {                    
+                foreach (var so in sos) {
                     so.sys_no = utl.getSystemNo(orderType);
                     so.import_time = DateTime.Now;
                     so.user_name = userName;

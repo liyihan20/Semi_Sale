@@ -243,9 +243,8 @@ namespace Sale_Order_Semi.Controllers
             var ads = ap.ApplyDetails.Where(a => a.step == step && a.user_id == userId);
              
             //验证是否有审核权限
-            if (ads.Count()<1)
-            {
-                utl.writeEventLog("审核单据", "没有权限审核,applyId:" + applyId.ToString()+";step="+step, ap.sys_no, Request, 1000);
+            if (ads.Count() < 1) {
+                utl.writeEventLog("审核单据", "没有权限审核,applyId:" + applyId.ToString() + ";step=" + step, ap.sys_no, Request, 1000);
                 ViewBag.tip = "对不起，你没有权限审核或者还未轮到你审核";
                 return View("Tip");
             }

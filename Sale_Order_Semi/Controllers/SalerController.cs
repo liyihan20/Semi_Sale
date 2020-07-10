@@ -330,9 +330,7 @@ namespace Sale_Order_Semi.Controllers
             }
             return Json(new { suc = true });
         }
-
-
-
+        
         #region 销售订单
         //新建销售订单
         [SessionTimeOutFilter()]
@@ -367,9 +365,15 @@ namespace Sale_Order_Semi.Controllers
         public JsonResult saveSaleOrder(FormCollection col)
         {
             int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            Sale_SO h = JsonConvert.DeserializeObject<Sale_SO>(col.Get("head"));
-            List<Sale_SO_details> ds = JsonConvert.DeserializeObject<List<Sale_SO_details>>(col.Get("details"));
-
+            Sale_SO h;
+            List<Sale_SO_details> ds;
+            try {
+                h = JsonConvert.DeserializeObject<Sale_SO>(col.Get("head"));
+                ds = JsonConvert.DeserializeObject<List<Sale_SO_details>>(col.Get("details"));
+            }
+            catch (Exception ex) {
+                return Json(new SimpleResultModel(ex));
+            }
             //如已提交，则不能再保存
             if (h.step_version == 0) {
                 var ap = db.Apply.Where(a => a.sys_no == h.sys_no);
@@ -381,8 +385,20 @@ namespace Sale_Order_Semi.Controllers
 
             //订单号判断是否有重复
             if (!string.IsNullOrEmpty(h.order_no)) {
-                if (db.Sale_SO.Where(s => s.order_no == h.order_no).Count() > 0) {
+                if (db.Sale_SO.Where(s => s.order_no == h.order_no && s.sys_no != h.sys_no).Count() > 0) {
                     return Json(new SimpleResultModel(false, "此订单号之前已使用！"));
+                }
+            }
+
+            //2020-07-10 伟忠要求判断采购订单号是否重复，有重复的不能再下
+            if (!string.IsNullOrWhiteSpace(h.po_number)) {
+                var existedPoNumberBill = from s in db.Sale_SO
+                                          join a in db.Apply on s.sys_no equals a.sys_no
+                                          where s.po_number == h.po_number && s.sys_no != h.sys_no
+                                          && (a.success == true || a.success == null)
+                                          select s.sys_no;
+                if (existedPoNumberBill.Count() > 0) {
+                    return Json(new SimpleResultModel(false, "此采购订单号之前已经使用过，流水号：" + existedPoNumberBill.First()));
                 }
             }
 
@@ -400,6 +416,8 @@ namespace Sale_Order_Semi.Controllers
                 return Json(new SimpleResultModel(false, "最终客户请输入后按回车键搜索后在列表中选择"));
             }
 
+
+            #region 验证业务员和主管
             if (string.IsNullOrEmpty(h.clerk_no)) {
                 return Json(new SimpleResultModel(false, "业务员1请输入后按回车键搜索后在列表中选择"));
             }
@@ -412,6 +430,41 @@ namespace Sale_Order_Semi.Controllers
             if (string.IsNullOrEmpty(h.clerk3_name) && !string.IsNullOrEmpty(h.clerk3_no)) {
                 h.clerk3_no = "";
             }
+
+            var c1 = db.getClerk(h.clerk_no, 1).FirstOrDefault();
+            if (c1 == null) {
+                return Json(new SimpleResultModel(false, "业务员1不可用，请重新选择"));
+            }
+            else if (!c1.name.Equals(h.clerk_name)) {
+                return Json(new SimpleResultModel(false, "业务员1请输入后按回车键搜索后在列表中选择"));
+            }
+            if (h.percent2 != null && h.percent2 > 0) {
+                var c2 = db.getClerk(h.clerk2_no, 1).FirstOrDefault();
+                if (c2 == null) {
+                    return Json(new SimpleResultModel(false, "业务员2不可用，请重新选择"));
+                }
+                else if (!c2.name.Equals(h.clerk2_name)) {
+                    return Json(new SimpleResultModel(false, "业务员2请输入后按回车键搜索后在列表中选择"));
+                }
+            }
+            if (h.percent3 != null && h.percent3 > 0) {
+                var c3 = db.getClerk(h.clerk3_no, 1).FirstOrDefault();
+                if (c3 == null) {
+                    return Json(new SimpleResultModel(false, "业务员3不可用，请重新选择"));
+                }
+                else if (!c3.name.Equals(h.clerk3_name)) {
+                    return Json(new SimpleResultModel(false, "业务员3请输入后按回车键搜索后在列表中选择"));
+                }
+            }
+            var c4 = db.getClerk(h.charger_no, 1).FirstOrDefault();
+            if (c4 == null) {
+                return Json(new SimpleResultModel(false, "主管不可用，请重新选择"));
+            }
+            else if (!c4.name.Equals(h.charger_name)) {
+                return Json(new SimpleResultModel(false, "主管请输入后按回车键搜索后在列表中选择"));
+            }
+            #endregion
+
 
             #region 验证营业员比例的合法性,并保存营业员比例
             string salerPercent = h.salePs.Trim();
@@ -441,14 +494,14 @@ namespace Sale_Order_Semi.Controllers
                 }
                 else {
                     if (utl.getSalerId(tpName) == null) {
-                        return Json(new SimpleResultModel(false, "保存失败：以下营业员不可用："));
+                        return Json(new SimpleResultModel(false, "保存失败：以下营业员不可用：" + tpName));
                     }
                 }
                 if (tpPercent.Contains("%")) {
                     tpPercent = tpPercent.Substring(0, tpPercent.IndexOf('%'));
                 }
                 if (!float.TryParse(tpPercent, out percent)) {
-                    return Json(new { success = false, msg = "保存失败：以下比例不合法：" + tpPercent }, "text/html");
+                    return Json(new SimpleResultModel(false, "保存失败：以下比例不合法：" + tpPercent));
                 }
                 if (percent < 0 || percent > 100) {
                     return Json(new SimpleResultModel(false, "保存失败：以下比例超出范围：" + tpPercent));
@@ -472,7 +525,7 @@ namespace Sale_Order_Semi.Controllers
                 spList.Add(spm);
             }
             if (spList.Sum(l => l.percent) != 100) {
-                return Json(new { success = false, msg = "保存失败：营业员比例之和不等以100%" }, "text/html");
+                return Json(new SimpleResultModel(false, "保存失败：营业员比例之和不等以100%"));
             }
             #endregion
 

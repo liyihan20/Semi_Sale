@@ -1,13 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Web.Mvc;
-using org.in2bits.MyXls;
+﻿using org.in2bits.MyXls;
+using Sale_Order_Semi.Filter;
 using Sale_Order_Semi.Models;
 using Sale_Order_Semi.Utils;
-using Sale_Order_Semi.Filter;
-using System.Data.SqlClient;
-using System.Data;
-using System.Configuration;
+using System;
+using System.Linq;
+using System.Web.Mvc;
 
 namespace Sale_Order_Semi.Controllers
 {

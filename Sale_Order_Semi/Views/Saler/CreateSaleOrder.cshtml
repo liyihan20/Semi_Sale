@@ -429,6 +429,8 @@
 
         if (row.deal_price > 0) {
             row.MU = 100 * (1 - ((row.cost * (1 + row.tax_rate / 100)) / (row.deal_price * v_exchange))) - row.fee_rate;
+        }else{
+            row.MU = 0;
         }
 
         if (row.MU <= 0) {
@@ -863,6 +865,12 @@ else {
                             <td>
                                 <input class="easyui-numberbox" id="percent2" name="percent2" min="0" max="100" precision="1" style="width: 140px" value="@order.percent2" />
                             </td>
+                            <td>
+                                @Html.Lang("po_no"):
+                            </td>
+                            <td>
+                                <input class="easyui-textbox" id="po_number" name="po_number" style="width: 140px" value="@order.po_number" />
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -1024,7 +1032,7 @@ else {
                 @Html.Lang("qty"):
             </td>
             <td>
-                <input class="easyui-numberbox" id="qty" name="qty" style="width: 140px" precision="2" min="0" required="true" />
+                <input class="easyui-numberbox" id="qty" name="qty" style="width: 140px" precision="6" min="0" required="true" />
             </td>
             <td>
                 @Html.Lang("quote_num"):

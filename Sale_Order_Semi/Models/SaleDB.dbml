@@ -858,6 +858,7 @@
       <Column Name="produce_dep_name" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Column Name="further_info" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
       <Column Name="old_id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="po_number" Type="System.String" DbType="varchar(100)" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.Sale_SO_details" Member="Sale_SO_details">

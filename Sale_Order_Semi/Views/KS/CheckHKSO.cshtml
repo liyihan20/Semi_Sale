@@ -21,7 +21,11 @@
                     }
                 },
                 { field: 'sys_no', title: '流水号', width: 150 },
-                { field: 'bill_no', title: '销售单号', width: 100 },
+                {
+                    field: 'bill_no', title: '销售单号', width: 100, formatter: function (value, row, index) {
+                        return "<span id='bill_no_" + index + "'>" + row.bill_no + "</span>";
+                    }
+                },
                 {
                     field: 'fetch_date', title: '交货日期', width: 100,
                     formatter: function (value, row, index) {
@@ -62,7 +66,18 @@
                     });                    
 
                 }
-            }]
+            }],
+            onClickRow: function (index, row) {
+                var range = document.createRange();
+                var tar = document.querySelector('#bill_no_' + index);
+                range.selectNodeContents(tar);
+                var selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                document.execCommand('copy');
+                selection.removeAllRanges();
+
+            }
         });
         $("#checkBt").on("click", function () {
             $("#dg").datagrid({

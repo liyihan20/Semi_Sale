@@ -186,7 +186,7 @@ namespace Sale_Order_Semi.Controllers
             ViewData["details"] = billDetails;
             ViewData["isCurrentMonth"] = isCurrentMonth;
 
-            utl.writeEventLog(MODELNAME, "新建一张退换货申请", bill.sys_no, Request);
+            utl.writeEventLog(MODELNAME, "新建一张退换货申请;FInterid:" + FInterIDS + ";FEntryID:" + FEntryIDS, bill.sys_no, Request);
             return View();
         }
 
@@ -512,6 +512,16 @@ namespace Sale_Order_Semi.Controllers
                 return Json(new { suc = false, msg = "不能重复提交！" });
             }
 
+            var entrys = db.ReturnBill.Where(r => r.sys_no == sys_no).First().ReturnBillDetail;
+            //2.1 不能同时出现两行相同的出货分录
+            var sameRecord = from e in entrys
+                             group e by new { e.stock_no, e.stock_entry_id } into g
+                             where g.Count() > 1
+                             select g.Key;
+            if (sameRecord.Count() > 0) {
+                return Json(new { suc = false, msg = "存在相同的销售出库单行，单号：" + sameRecord.First().stock_no + ";出库单行号：" + sameRecord.First().stock_entry_id });
+            }
+
             //2.1 PMC审核人没有选择不能保存
             //if (db.ReturnBill.Where(r => r.sys_no == sys_no && r.pmc_id != null).Count() < 1) {
             //    return Json(new { suc = false, msg = "退货PMC审核人不能为空！" });
@@ -521,7 +531,7 @@ namespace Sale_Order_Semi.Controllers
             //3.1. 检查每一条单据分录，如果在申请中的退货数量总量 + 7天内申请完成但未导入K3的数量 > K3中的可提交数量
             //4. 检查每一条出库单据分录，如果销售订单的关联数量小于退货数量，则不能提交
             int? FInterID, FEntryID, LineNo;
-            foreach (var det in db.ReturnBill.Where(r => r.sys_no == sys_no).First().ReturnBillDetail)
+            foreach (var det in entrys)
             {
                 FInterID = det.stock_inter_id;
                 FEntryID = det.stock_entry_id;

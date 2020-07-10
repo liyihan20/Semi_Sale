@@ -223,9 +223,9 @@ namespace Sale_Order_Semi.Utils
             string agencyName = db.User.Single(u => u.id == userId).Department1.name;
             string[] marketNameArr = new string[] { "中国市场部一部", "中国市场部二部", "中国市场部三部", "中国市场部四部", "中国市场部五部", "中国市场部六部",
                 "中国市场部七部","中国市场部八部","中国市场部九部","中国市场部十部", "中国市场部十一部", "中国市场部十二部", "中国市场部十三部", "中国市场部十四部",
-                "新加坡", "华诚创", "光能", "杭州" };
+                "中国市场部十五部","中国市场部十六部","新加坡", "华诚创", "光能", "杭州" };
             string[] marketValueArr = new string[] { "1","2","3","4","5","6",
-                "7","8","9","10","11","12","13","14","XJP","HCC","GN","HZ" };
+                "7","8","9","10","11","12","13","14","15","16","XJP","HCC","GN","HZ" };
 
             for (var i = 0; i < marketNameArr.Length; i++) {
                 if (agencyName.Contains(marketNameArr[i])) {
@@ -276,6 +276,12 @@ namespace Sale_Order_Semi.Utils
                         break;
                     case "中国市场部十四部":
                         marketValue = "14";
+                        break;
+                    case "中国市场部十五部":
+                        marketValue = "15";
+                        break;
+                    case "中国市场部十六部":
+                        marketValue = "16";
                         break;
                     case "新加坡市场部":
                         marketValue = "XJP";
