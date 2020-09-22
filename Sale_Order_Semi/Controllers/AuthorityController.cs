@@ -9,10 +9,8 @@ using System.Web;
 
 namespace Sale_Order_Semi.Controllers
 {
-    public class AuthorityController : Controller
+    public class AuthorityController : BaseController
     {
-
-        SaleDBDataContext db = new SaleDBDataContext();
         SomeUtils utl = new SomeUtils();
 
         //部门管理
@@ -806,7 +804,6 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public ActionResult BackgroundSearchBills(string sys_no, string proModel, string saler, string fromDate, string toDate, string auditResult)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             ViewData["sys_no"] = sys_no;
             ViewData["saler"] = saler;
             ViewData["pro_model"] = proModel;
@@ -816,7 +813,7 @@ namespace Sale_Order_Semi.Controllers
             fromDate = string.IsNullOrWhiteSpace(fromDate) ? "1901-1-1" : fromDate;
             toDate = string.IsNullOrWhiteSpace(toDate) ? "2099-9-9" : toDate;
 
-            var billTypeArr = db.ProcessAuthority.Where(p => p.user_id == userId).Select(p => p.bill_type).Distinct().ToArray();
+            var billTypeArr = db.ProcessAuthority.Where(p => p.user_id == currentUser.userId).Select(p => p.bill_type).Distinct().ToArray();
 
             var res = from ap in db.Apply
                       join u in db.User on ap.user_id equals u.id
@@ -855,7 +852,7 @@ namespace Sale_Order_Semi.Controllers
                     break;
             }
             if (billTypeArr.Contains("BL")) {
-                var BLDepNos = db.ProcessAuthority.Where(p => p.user_id == userId && p.bill_type == "BL").Select(p => p.dept_no);
+                var BLDepNos = db.ProcessAuthority.Where(p => p.user_id == currentUser.userId && p.bill_type == "BL").Select(p => p.dept_no);
                 if (!BLDepNos.Contains(null)) {
                     res = from re in res
                           join sb in db.Sale_BL on re.ap.sys_no equals sb.sys_no
@@ -1007,7 +1004,6 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public ActionResult GetProcExcuteTimeList(string sys_no, string saler, string fromDate, string toDate, string auditResult)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             ViewData["sys_no"] = sys_no;
             ViewData["saler"] = saler;
             ViewData["from_date"] = fromDate;
@@ -1017,7 +1013,7 @@ namespace Sale_Order_Semi.Controllers
             toDate = string.IsNullOrWhiteSpace(toDate) ? "2099-9-9" : toDate;
 
             //测试有没有查看权限
-            var billTypeArr = db.ProcessAuthority.Where(p => p.user_id == userId).Select(p => p.bill_type).Distinct().ToArray();
+            var billTypeArr = db.ProcessAuthority.Where(p => p.user_id == currentUser.userId).Select(p => p.bill_type).Distinct().ToArray();
             
             var res = from ap in db.Apply
                       where ap.sys_no.Contains(sys_no)
@@ -1030,7 +1026,7 @@ namespace Sale_Order_Semi.Controllers
             //如果是TH，则要进一步判断退货部门的权限。为null表示可以查看所有退货部门。
             if (billTypeArr.Contains("TH"))
             {
-                var returnDepNos = db.ProcessAuthority.Where(p => p.user_id == userId && p.bill_type == "TH").Select(p => p.dept_no);
+                var returnDepNos = db.ProcessAuthority.Where(p => p.user_id == currentUser.userId && p.bill_type == "TH").Select(p => p.dept_no);
                 if (!returnDepNos.Contains(null))
                 {
                     res = from re in res
@@ -1280,8 +1276,7 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public ActionResult CheckProcBills()
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            ViewData["userid"] = userId;
+            ViewData["userid"] = currentUser.userId;
             ViewData["proc_dep"] = "all";
             //查询参数保存在Cookie，方便下次继续查询
             var queryData = Request.Cookies["semi_qd"];
@@ -1300,8 +1295,7 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public JsonResult GetDepBills(FormCollection fcl)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            var user = db.User.Single(u => u.id == userId);
+            var user = db.User.Single(u => u.id == currentUser.userId);
             string sysNo = fcl.Get("sys_no");
             string billNo = fcl.Get("bill_no");
             string saler = fcl.Get("saler");
@@ -1477,8 +1471,7 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public ActionResult CheckReturnBillsBackground()
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            ViewData["userid"] = userId;
+            ViewData["userid"] = currentUser.userId;
             ViewData["proc_dep"] = "all";
             return View();
         }
@@ -1486,7 +1479,6 @@ namespace Sale_Order_Semi.Controllers
         [HttpPost]
         public JsonResult BackgroundSearchReturnBills(FormCollection fcl)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             string custNo = fcl.Get("cust_no");
             string sysNo = fcl.Get("sys_no");
             string billNo = fcl.Get("bill_no");
@@ -1497,7 +1489,7 @@ namespace Sale_Order_Semi.Controllers
             toDate = string.IsNullOrWhiteSpace(toDate) ? "2099-9-9" : toDate;
             string[] depArr;
             if ("all".Equals(procDep)) {
-                string userCanCheckDeps = db.User.Single(u => u.id == userId).can_check_deps;
+                string userCanCheckDeps = db.User.Single(u => u.id == currentUser.userId).can_check_deps;
                 if (userCanCheckDeps.Equals("*")) {
                     depArr = db.Department.Where(d => d.dep_type == "退货事业部").Select(d => d.name).ToArray();
                 }
@@ -1545,8 +1537,7 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public ActionResult UploadQualityReport()
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            if (!utl.hasGotPower(userId, "uploadQualityReport"))
+            if (!utl.hasGotPower(currentUser.userId, "uploadQualityReport"))
             {
                 ViewBag.tip = " 没有权限";
                 return View("Tip");
@@ -1614,8 +1605,7 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public ActionResult CeoBatchAudit()
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            if (!utl.hasGotPower(userId, "ceo_batch_audit")) {
+            if (!utl.hasGotPower(currentUser.userId, "ceo_batch_audit")) {
                 ViewBag.tip = "没有权限。";
                 return View("error");
             }
@@ -1735,12 +1725,10 @@ namespace Sale_Order_Semi.Controllers
 
         public JsonResult GetNextModualNumber(string modualType)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            var user = db.User.Single(u => u.id == userId);
             string result = "";
 
             try {
-                db.getNextModualNumber(modualType, user.real_name, ref result);
+                db.getNextModualNumber(modualType, currentUser.realName, ref result);
             }
             catch (Exception ex) {
                 return Json(new { suc = false, msg = "取得编号失败：" + ex.Message });
@@ -1751,11 +1739,8 @@ namespace Sale_Order_Semi.Controllers
 
         public JsonResult GetModualNumLog(int page, int rows)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            var user = db.User.Single(u => u.id == userId);
-
             var logs = db.vw_modualNumberLog
-                .Where(l => l.op_user == user.real_name)
+                .Where(l => l.op_user == currentUser.realName)
                 .OrderByDescending(l => l.id)
                 .Select(l => new
                 {

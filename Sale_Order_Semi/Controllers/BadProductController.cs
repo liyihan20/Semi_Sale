@@ -10,10 +10,9 @@ using System.Configuration;
 
 namespace Sale_Order_Semi.Controllers
 {
-    public class BadProductController : Controller
+    public class BadProductController : BaseController
     {
         SomeUtils utl = new SomeUtils();
-        SaleDBDataContext db = new SaleDBDataContext();
         string MODELNAME = "退换货";
 
         //查询销售出库单
@@ -136,9 +135,8 @@ namespace Sale_Order_Semi.Controllers
         //新建退修单
         [SessionTimeOutFilter()]
         public ActionResult CreateReturnBill(string FInterIDS, string FEntryIDS)
-        {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            ViewData["userName"] = db.User.Single(u => u.id == userId).real_name;
+        {            
+            ViewData["userName"] = currentUser.realName;
 
             string[] interIdArr = FInterIDS.Split(',');
             string[] entryIdArr = FEntryIDS.Split(',');
@@ -194,8 +192,8 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public ActionResult NewOrderFromOld(string sys_no) {
 
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            ViewData["userName"] = db.User.Single(u => u.id == userId).real_name;
+
+            ViewData["userName"] = currentUser.realName;
 
             var bill = db.ReturnBill.Where(b => b.sys_no == sys_no).First();
             ViewData["details"] = bill.ReturnBillDetail.ToList(); 
@@ -214,8 +212,6 @@ namespace Sale_Order_Semi.Controllers
         [HttpPost]
         public JsonResult saveReturnBill(FormCollection fc)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-
             //表头
             string fDate = fc.Get("fdate");
             string sysNo = fc.Get("sys_no");
@@ -262,7 +258,7 @@ namespace Sale_Order_Semi.Controllers
 
             //表头内容设置
             ReturnBill bill = new ReturnBill();
-            bill.user_id = userId;
+            bill.user_id = currentUser.userId;
             bill.fdate = DateTime.Parse(fDate);
             bill.sys_no = sysNo;
             bill.return_dept = Int32.Parse(returnDep);
@@ -364,9 +360,7 @@ namespace Sale_Order_Semi.Controllers
         {
             //db.updateReturnRedQty();
             //utl.writeEventLog(MODELNAME, "查询退换货申请之前，更新红字与状态", "", Request);
-
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-
+            
             string customerNumber = fc.Get("cust_no");
             string stockNo = fc.Get("stock_no");
             string model = fc.Get("pro_model");
@@ -394,7 +388,7 @@ namespace Sale_Order_Semi.Controllers
             if (!Int32.TryParse(auditResultStr, out auditResult)) auditResult = 10;
             
             var result = (from v in db.VwReturnBill
-                          where v.user_id == userId
+                          where v.user_id == currentUser.userId
                           && (v.hide_flag == null || v.hide_flag == false)
                           && (v.customer_number.Contains(customerNumber) || v.customer_name.Contains(customerNumber))
                           && (v.stock_no.Contains(stockNo) || v.seorder_no.Contains(stockNo))
@@ -627,12 +621,10 @@ namespace Sale_Order_Semi.Controllers
         //提交申请
         public ActionResult BeginApply(string sys_no)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-
             string processType = "TH_RED";           
 
             Apply apply = new Apply();
-            apply.user_id = userId;
+            apply.user_id = currentUser.userId;
             apply.sys_no = sys_no;
             apply.start_date = DateTime.Now;
             apply.ip = Request.UserHostAddress;
@@ -644,16 +636,16 @@ namespace Sale_Order_Semi.Controllers
             List<ApplyDetails> ads = new List<ApplyDetails>();
             //int? aud_id = null;
             int? produceDepId = db.ReturnBill.Where(r => r.sys_no == sys_no).First().return_dept;
-
+            
             try
             {
                 if (testFlag)
                 {
-                    ads = utl.getTestApplySequence(apply, processType, userId);
+                    ads = utl.getTestApplySequence(apply, processType, currentUser.userId);
                 }
                 else
                 {
-                    ads = utl.getApplySequence(apply, processType, userId, db.User.Single(u => u.id == userId).Department1.dep_no, produceDepId);
+                    ads = utl.getApplySequence(apply, processType, currentUser.userId, db.User.Single(u => u.id == currentUser.userId).Department1.dep_no, produceDepId);
                 }
             }
             catch (Exception ex)

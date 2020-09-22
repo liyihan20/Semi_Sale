@@ -1,0 +1,428 @@
+﻿@using Sale_Order_Semi.Models;
+@{
+    ReturnBill bill = (ReturnBill)ViewData["bill"];
+    List<ReturnBillDetail> details = (List<ReturnBillDetail>)ViewData["details"];
+    List<BlockOrder> blocks = (List<BlockOrder>)ViewData["blockInfo"];
+    var sys_no = bill.sys_no;
+}
+<link rel="stylesheet" href="@Url.Content("~/Scripts/webuploader/webuploader.css")" />
+<script src="@Url.Content("~/Scripts/webuploader/webuploader.withoutimage.js")"></script>
+<script src="@Url.Content("~/Scripts/MyUploader.js")"></script>
+<script>
+    $(function () {
+        $("#file_div").myUploader({
+            sysNum: "@bill.sys_no",            
+            canUpload:false
+        });
+    })
+</script>
+<script type="text/javascript">
+    $(function () {
+        $("#bill_detail").datagrid({
+            width: "900",
+            fitColumns: true,
+            rownumbers: true,
+            singleSelect: true,
+            columns: [[
+                        { field: 'entry_no', title: '行号', width: 50, align: 'center' },
+    					{ field: 'product_name', title: '产品名称', width: 120 },
+                        { field: 'product_model', title: '规格型号', width: 150 },
+                        { field: 'aux_qty', title: '已发数量', width: 70, align: 'right' },
+    					{ field: 'qty', title: '退货数量', width: 70, align: 'right' },
+                        { field: 'real_qty', title: '实退数量', width: 70, align: 'right' },
+                        {
+                            field: 'is_online', title: '是否已上线', width: 70, align: 'center', editor: { type: 'checkbox', options: { on: '已上线', off: '未上线' } },
+                            styler: function (value, row, index) {
+                                if (value == '已上线') {
+                                    return 'color:green;';
+                                } else {
+                                    return 'color:red;';
+                                }
+                            }
+                        },
+                        { field: 'ch_dep_name', title: '出货组', width: 100 },
+                        { field: 'seorder_no', title: '销售订单编号', width: 100 },
+                        { field: 'stock_no', title: '销售出库单号', width: 100 }
+            ]]
+        });
+
+        $("#order_div input[type='text'],#comment,#saler_comment,#market_comment").attr("readonly", "readonly");
+        $("input[type='radio']").not("input:checked").attr("disabled", "true");
+    });
+
+    function okClick() {
+        if ($("#express_fee").numberbox("getValue") == "") {
+            tip("运输费用必须填写");
+            return;
+        }
+        if ($("#who_to_blame").combobox("getValue") == "") {
+            tip("责任方必须选择")
+            return;
+        }
+        $("#okFlag").val("true");
+        $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("confirm_pass")?', function (r) {
+            if (r) {
+                submitForm();
+            }
+        });
+    }
+
+    function noClick() {
+        $("#okFlag").val("false");
+        if (parseInt("@ViewData["step"]") > 1) {
+            //可以退回下单者或者上一审批人
+            $("#dlg_No").dialog("open");
+        } else {
+            $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("confirm_reject")?', function (r) {
+                if (r) {
+                    submitForm();
+                }
+            });
+        }
+    }
+
+    function NoToSalerClick() {
+        $("#backToPrevious").val("0");
+        $("#dlg_No").dialog("close");
+        submitForm();
+    }
+
+    function NoToPreviousClick() {
+        $("#backToPrevious").val("1");
+        $("#dlg_No").dialog("close");
+        submitForm();
+    }
+
+    function block() {
+        var reason = $("#agency_comment").val();
+        if ($.trim(reason) == "") {
+            $.messager.show({
+                title: '@Html.Lang("tip")',
+                msg: "挂起操作必须写明原因，提交失败"
+            });
+        } else {
+            $.messager.confirm('@Html.Lang("confirm")', '确定要将订单挂起吗?', function (r) {
+                if (r) {
+                    $.messager.progress();
+                    $("#audit_fm").form("submit", {
+                        url: "@Url.Content("~/Audit/BlockOrder")",
+                        success: function (data) {
+                            $.messager.progress('close');
+                            var result = eval("(" + data + ")");
+                            $.messager.show({
+                                title: '@Html.Lang("tip")',
+                                msg: result.msg + ",正在跳转..."
+                            });
+                            setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';", 1500);
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    function submitForm() {
+        $.messager.progress();
+        $("#audit_fm").form("submit", {
+            url: "@Url.Content("~/Audit/HandleAgencyAudit")",
+            onSubmit: function (param) {
+                param.express_fee = $("#express_fee").numberbox("getValue");
+                param.who_to_blame = $("#who_to_blame").combobox("getValue");
+            },
+            success: function (data) {
+                $.messager.progress('close');
+                var result = eval("(" + data + ")");
+                tip(result.msg);
+                if (result.success) {
+                    setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';", 1500);
+                }
+            }
+        });
+    }
+
+</script>
+
+<div class="easyui-layout" data-options="fit:true" id="agency_div">
+    @*挂起信息*@
+    @if (blocks.Count() > 0) {
+        <div data-options="region:'north',title:'订单挂起信息',split:true" style="background: #fafafa; height: 74px;
+            padding: 3px 10px;">
+            <table style="border: 0;  text-align: center" cellspacing="0">
+                <tr style="font-weight:bold;">
+                    <td style="width: 100px;border-bottom:1px solid;">
+                        审核步骤
+                    </td>
+                    <td style="width: 80px;border-bottom:1px solid;">
+                        操作人
+                    </td>
+                    <td style="width: 120px;border-bottom:1px solid;">
+                        挂起时间
+                    </td>
+                    <td style="width:500px;border-bottom:1px solid;">
+                        挂起原因
+                    </td>
+                </tr>
+                @foreach (var blo in blocks) {
+                    <tr>
+                        <td>
+                            @blo.step_name
+                        </td>
+                        <td>
+                            @blo.User.real_name
+                        </td>
+                        <td>
+                            @(((DateTime)(blo.block_time)).ToString("yyyy-MM-dd HH:mm"))
+                        </td>
+                        <td>
+                            @blo.reason
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    }
+    <div data-options="region:'south',collapsed:false" style="height: 42px; background: #fafafa;padding:6px;">
+        <form id="audit_fm" method="post">
+            @Html.Lang("audit_opinion"):
+            <input type="hidden" name="step" value="@ViewData["step"]" />
+            <input type="hidden" name="applyId" value="@ViewData["applyId"]" />
+            <input type="hidden" name="okFlag" id="okFlag" value="" />
+            <input type="hidden" name="sys_no" id="sys_no" value="@ViewData["sys_no"]" />
+            <input type="hidden" name="backToPrevious" id="backToPrevious" value="0" />
+            <input id="agency_comment" name="agency_comment" style="width: 450px" />&nbsp;
+            <a id="OKBt" href="#agency_div" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="okClick()">@Html.Lang("pass")</a>
+            <a id="NOBt" href="#agency_div" class="easyui-linkbutton" data-options="iconCls:'icon-no'" onclick="noClick()">@Html.Lang("reject")</a>
+            <a id="blockBt" href="#agency_div" class="easyui-linkbutton" data-options="iconCls:'icon-help'" onclick="block()">挂起</a>
+        </form>
+    </div>
+    <div data-options="region:'center'">
+
+        <div id="order_div" class="easyui-panel" title="查看退货申请" style="width: 780px; padding: 10px; background: #fafafa;">
+            <div>
+                @*表头*@
+                <table border="0" cellpadding="0" cellspacing="3" width="740">
+                    <tr>
+                        <td>
+                            退货日期:
+                        </td>
+                        <td>
+                            <input type="text" name="fdate" value="@(((DateTime)bill.fdate).ToShortDateString())" />
+                        </td>
+                        <td>
+                            退货编号:
+                        </td>
+                        <td>
+                            @bill.sys_no
+                        </td>
+                        <td>
+                            状态:
+                        </td>
+                        <td>
+                            <span style="color: red" id="status">
+                                @ViewData["status"]
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            退货事业部:
+                        </td>
+                        <td>
+                            <input type="text" name="return_dep" value="@ViewData["return_dep"]" />
+                        </td>
+                        <td>
+                            客户编码:
+                        </td>
+                        <td>
+                            @bill.customer_number
+                        </td>
+                        <td>
+                            客户名称:
+                        </td>
+                        <td>
+                            @bill.customer_name
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            是否已开蓝字发票:
+                        </td>
+                        @if (bill.has_invoice == true) {
+                            <td>
+                                <input type="radio" name="has_invoice" value="0" />未开
+                                <input type="radio" name="has_invoice" value="1" checked="checked" />已开
+                            </td>
+                        }
+                        else if (bill.has_invoice == false) {
+                            <td>
+                                <input type="radio" name="has_invoice" value="0" checked="checked" />未开
+                                <input type="radio" name="has_invoice" value="1" />已开
+                            </td>
+                        }
+                        <td>
+                            是否补货:
+                        </td>
+                        @if (bill.need_resend == true) {
+                            <td>
+                                <input type="radio" name="need_resend" value="1" checked="checked" />需补货
+                            </td>
+                        }
+                        else {
+                            <td>
+                                <input type="radio" name="need_resend" value="0" checked="checked" />不补货
+                            </td>
+                        }
+                        <td>
+                            制单人:
+                        </td>
+                        <td>
+                            @ViewData["userName"]
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            旧退货编号:
+                        </td>
+                        <td>
+                            @bill.old_sys_no
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+            <br />
+            <div>
+                @*表体*@
+                <div id="detail_div" class="easyui-panel" title="退货信息明细" style="+position: relative;
+                    width: 740px; height: 225px">
+                    <table id="bill_detail">
+                        @foreach (var det in details) {
+                            <tr>
+                                <td>@det.entry_no</td>
+                                <td>@det.product_name</td>
+                                <td>@det.product_model</td>
+                                <td>@det.aux_qty</td>
+                                <td>@det.return_qty</td>
+                                <td>@det.real_return_qty</td>
+                                <td>@(det.is_online == true ? "已上线" : "未上线")</td>
+                                <td>@det.ch_dep_name</td>
+                                <td>@det.seorder_no</td>
+                                <td>@det.stock_no</td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+            <br />
+            <div>
+                @*表尾*@
+                <table border="0" cellpadding="0" cellspacing="3" width="740">
+                    <tr>
+                        <td>
+                            快递公司名称:
+                        </td>
+                        <td>
+                            <input type="text" id="express_name" name="express_name" style="width: 120px" value="@bill.express_name" />
+                        </td>
+                        <td>
+                            快递单号:
+                        </td>
+                        <td>
+                            <input type="text" id="express_no" name="express_no" style="width: 120px" value="@bill.express_no" />
+                        </td>
+                        <td>
+                            件数:
+                        </td>
+                        <td>
+                            <input id="express_qty" type="text" name="express_qty" style="width: 120px" value="@bill.express_qty" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            运输费用(元):
+                        </td>
+                        <td>
+                            <input class="easyui-numberbox" name="express_fee" id="express_fee" style="width:120px" required value="@bill.express_fee" />
+                        </td>
+                        <td>
+                            责任方:
+                        </td>
+                        <td>
+                            <input class="easyui-combobox" style="width: 128px" name="who_to_blame" id="who_to_blame"
+                                   data-options="textField:'value',valueField:'value',panelHeight:'auto', required:true,editable:false,
+                                           data:[
+                                           {value:'客户'},{value:'货运'},{value:'物流中心'},{value:'事业部品质'},{value:'营业员'}
+                                           ]" value="@bill.who_to_blame" />
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            退货原因:
+                        </td>
+                        <td colspan="5">
+                            <textarea cols="83" rows="3" name="comment" id="comment" style="margin: 0;">@bill.comment</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            营业备注:
+                        </td>
+                        <td colspan="5">
+                            <textarea cols="83" rows="3" name="saler_comment" id="saler_comment" style="margin: 0;">@bill.saler_comment</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            市场部备注:
+                        </td>
+                        <td colspan="5">
+                            <textarea cols="83" rows="3" name="market_comment" id="market_comment" style="margin: 0;">@bill.market_comment</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            客服组备注:
+                        </td>
+                        <td colspan="5">
+                            <textarea cols="83" rows="3" name="qty_comment" id="qty_comment" style="margin: 0;">@bill.qty_comment</textarea>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="file_div" class="easyui-panel" title="附件清单" style="width: 740px;height:188px;">
+                @*存放附件table*@
+            </div>
+            <div style="line-height:18px;margin-top:8px;">
+                <div style="color:red">操作说明：</div>
+                <div>
+                    <1>
+                        . 【退货事业部】字段务必正确选择，后续审核人员对应于所选退货事业部。<br />
+                        <2>
+                            . 勾稽状态：Y表示已开发票，N表示未开发票；Y与N不能提交在同一张申请中。<br />
+                            <3>
+                                . 同一客户同批退货包含多个型号的务必提交成一张申请。<br />
+                                <4>
+                                    . <span style="color:red">【此规则已于2017-05-23作废】</span>如申请的数据包含当月的出货，那么出货日期当月与当月之前的不能放在同一张申请，并且必须在退货原因注明是本月出货退货，没有注明是本月出货退货的一律搁置到下月处理，不另行通知。<br />
+                                    <5>. 提交申请后，原出货未开发票的申请在市场部未办理好K3数据之前，千万不要通知会计部开票；如在办理期间通知会计部开票造成申请的开票状态与K3不同的，一律退回申请重新走流程，不另行通知。<br />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="dlg_No" class="easyui-dialog" style="width: 340px; height: 80px; padding: 10px 5px;" closed="true" title="确认拒绝方式">
+    <a id="NoToSaler" href="#agency_div" class="easyui-linkbutton"
+       data-options="iconCls:'icon-no'" onclick="NoToSalerClick()">拒绝到申请人</a>
+    <a id="NoToPrevious" href="#agency_div" class="easyui-linkbutton" data-options="iconCls:'icon-undo'"
+       onclick="NoToPreviousClick()">拒绝到上一步审核人</a>
+</div>
+
+<div id="mm" class="easyui-menu" style="width:120px;">
+    <div onclick="addRow()" data-options="iconCls:'icon-add'">复制行</div>
+    <div onclick="removeRow()" data-options="iconCls:'icon-remove'">删除行</div>
+</div>

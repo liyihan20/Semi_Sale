@@ -8,11 +8,8 @@ using System.Collections.Generic;
 
 namespace Sale_Order_Semi.Controllers
 {
-    public class ItemsController : Controller
-    {
-        //
-        // GET: /Items/
-        SaleDBDataContext db = new SaleDBDataContext();
+    public class ItemsController : BaseController
+    {       
         SomeUtils utl = new SomeUtils();
 
         //获取各个字段的选择列表
@@ -156,18 +153,19 @@ namespace Sale_Order_Semi.Controllers
                           where vp.item_no.StartsWith(q)
                           || vp.item_name.Contains(q)
                           || vp.item_model.Contains(q)
-                          select new { 
-                            id=vp.item_id,
-                            name=vp.item_name,
-                            model=vp.item_model,
-                            number=vp.item_no,
-                            qtyPrecision=vp.qty_decimal,
-                            taxRate=vp.tax_rate,
-                            pricePrecision=vp.price_decimal,
-                            unit_id=vp.unit_id,
-                            unit_name=vp.unit_name,
-                            unit_number=vp.unit_number
-                          }).Take(20).ToList();
+                          select new
+                          {
+                              id = vp.item_id,
+                              name = vp.item_name,
+                              model = vp.item_model,
+                              number = vp.item_no,
+                              qtyPrecision = vp.qty_decimal,
+                              taxRate = vp.tax_rate,
+                              pricePrecision = vp.price_decimal,
+                              unit_id = vp.unit_id,
+                              unit_name = vp.unit_name,
+                              unit_number = vp.unit_number
+                          }).Take(50).ToList();
             return Json(result);
         }
 
@@ -363,12 +361,11 @@ namespace Sale_Order_Semi.Controllers
         //获取用户配置文件，sel为1包括默认模板，为0只包括用户模板
         public JsonResult getExcelTemplate(int sel)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             if (sel == 1)
             {
                 var result = from ex in db.UserExcelTemplate
                              where ex.user_id == 0
-                             || ex.user_id == userId
+                             || ex.user_id == currentUser.userId
                              select new
                              {
                                  value = ex.id,
@@ -379,7 +376,7 @@ namespace Sale_Order_Semi.Controllers
             else
             {
                 var result = from ex in db.UserExcelTemplate
-                             where ex.user_id == userId
+                             where ex.user_id == currentUser.userId
                              select new
                              {
                                  value = ex.id,
@@ -392,8 +389,7 @@ namespace Sale_Order_Semi.Controllers
         //获取用户模板，放到datagrid
         public JsonResult GetMyTemplate()
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            var result = db.UserExcelTemplate.Where(u => u.user_id == userId);
+            var result = db.UserExcelTemplate.Where(u => u.user_id == currentUser.userId);
             return Json(result);
         }
 
@@ -407,7 +403,6 @@ namespace Sale_Order_Semi.Controllers
         //新增模板
         public JsonResult addTemplate(FormCollection fc)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             string shortName = fc.Get("short_name");
             string segInfo = fc.Get("seg_info");
             segInfo = segInfo.Replace('，', ',').Replace(",,", ",");
@@ -415,7 +410,7 @@ namespace Sale_Order_Semi.Controllers
             {
                 segInfo = segInfo.Substring(0, segInfo.Length - 1);
             }
-            if (db.UserExcelTemplate.Where(u => u.user_id == userId && u.short_name == shortName).Count() > 0)
+            if (db.UserExcelTemplate.Where(u => u.user_id == currentUser.userId && u.short_name == shortName).Count() > 0)
             {
                 return Json(new { success = false, msg = "模板名称不能重复，保存失败" }, "text/html");
             }
@@ -428,7 +423,7 @@ namespace Sale_Order_Semi.Controllers
             tem.short_name = shortName;
             tem.seg_info = segInfo;
             tem.bill_type = "SO";
-            tem.user_id = userId;
+            tem.user_id = currentUser.userId;
             db.UserExcelTemplate.InsertOnSubmit(tem);
             db.SubmitChanges();
 
@@ -535,9 +530,8 @@ namespace Sale_Order_Semi.Controllers
         //获取可以上传品质报告的客退编号
         public JsonResult getUnfinishedSysNo()
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             var result = (from ad in db.ApplyDetails
-                          where ad.user_id == userId
+                          where ad.user_id == currentUser.userId
                           && ad.Apply.success == null
                           && ad.pass == true
                           select new { name = ad.Apply.sys_no }).Distinct().ToList();

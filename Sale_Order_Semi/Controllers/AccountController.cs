@@ -11,9 +11,8 @@ using Sale_Order_Semi.Utils;
 namespace Sale_Order_Semi.Controllers
 {
     
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
-        SaleDBDataContext db = new SaleDBDataContext();
         SomeUtils utl = new SomeUtils();
 
         [AllowAnonymous]
@@ -21,10 +20,7 @@ namespace Sale_Order_Semi.Controllers
         {
             return View();
         }
-
-
-        //
-        // GET: /Account/LogOff
+        
 
         public ActionResult LogOut()
         {   
@@ -33,6 +29,7 @@ namespace Sale_Order_Semi.Controllers
                 utl.writeEventLog("登录模块", "登出系统", "", Request);
                 cookie.Expires = DateTime.Now.AddSeconds(-1);
                 Response.AppendCookie(cookie);
+                Session.Clear();
             }
             return RedirectToAction("Login");
         }     

@@ -11,9 +11,8 @@ using Newtonsoft.Json;
 
 namespace Sale_Order_Semi.Controllers
 {
-    public class AuditController : Controller
+    public class AuditController : BaseController
     {
-        SaleDBDataContext db = new SaleDBDataContext();
         SomeUtils utl = new SomeUtils();
 
         //审批人查看自己审核的单据
@@ -95,8 +94,6 @@ namespace Sale_Order_Semi.Controllers
         {
             DateTime fromDate = string.IsNullOrWhiteSpace(from_date) ? DateTime.Parse("1980-1-1") : DateTime.Parse(from_date);
             DateTime toDate = string.IsNullOrWhiteSpace(to_date) ? DateTime.Parse("2099-9-9") : DateTime.Parse(to_date);
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            var auditor = db.User.Single(u => u.id == userId);
             SomeUtils utl = new SomeUtils();
             List<AuditListModel> list = new List<AuditListModel>();
             int step;
@@ -107,7 +104,7 @@ namespace Sale_Order_Semi.Controllers
             int maxRecordNum = 200;
             int recordNum = 0;
             var details = from ad in db.ApplyDetails
-                          where ad.user_id == userId
+                          where ad.user_id == currentUser.userId
                           && ad.Apply.sys_no.Contains(sysNo)
                           //&& ad.Apply.User.real_name.Contains(saler)
                           && ad.Apply.start_date >= fromDate
@@ -232,7 +229,6 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public ActionResult BeginAudit(int step, int applyId)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             var aps = db.Apply.Where(a => a.id == applyId);
             if (aps==null || aps.Count() < 1) {
                 utl.writeEventLog("审核单据", "单据不存在,applylId:" + applyId.ToString(), "", Request, 1000);
@@ -240,7 +236,7 @@ namespace Sale_Order_Semi.Controllers
                 return View("Tip");
             }
             var ap = aps.First();
-            var ads = ap.ApplyDetails.Where(a => a.step == step && a.user_id == userId);
+            var ads = ap.ApplyDetails.Where(a => a.step == step && a.user_id == currentUser.userId);
              
             //验证是否有审核权限
             if (ads.Count() < 1) {
@@ -335,8 +331,17 @@ namespace Sale_Order_Semi.Controllers
                         ViewData["details"] = bill.ReturnBillDetail.OrderBy(r => r.entry_no).ToList();
                         ViewData["userName"] = bill.User.real_name;
                         ViewData["status"] = "审核中";
+                        ViewData["currentAuditor"] = currentUser.realName;
                         ViewData["return_dep"] = db.Department.Where(d => d.dep_type == "退货事业部" && d.dep_no == bill.return_dept).Count() < 1 ? "不存在" : db.Department.Where(d => d.dep_type == "退货事业部" && d.dep_no == bill.return_dept).First().name;
-                        return View("EditReturnBillQty");
+                        if (ad.step_name.Contains("客服")) {
+                            return View("EditReturnBillQty");
+                        }
+                        else if (ad.step_name.Contains("物流")) {
+                            return View("LogEditReturnBill");
+                        }
+                        else {
+                            return View("Error");
+                        }
                     default:
                         return View("Error");
                 }
@@ -351,9 +356,6 @@ namespace Sale_Order_Semi.Controllers
         //审核员处理申请
         public JsonResult HandleAgencyAudit(FormCollection fc)
         {
-
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-
             int applyId = int.Parse(fc.Get("applyId"));
             Apply ap = db.Apply.Single(a => a.id == applyId);
             int step = int.Parse(fc.Get("step"));
@@ -361,8 +363,7 @@ namespace Sale_Order_Semi.Controllers
             string backToPrevious = fc.Get("backToPrevious");
             string comment = fc.Get("agency_comment");
             string newProcDept = fc.Get("new_dep");
-            string msg = "审核成功";
-            
+            string msg = "审核成功";            
 
             //如果已结束，提示
             if (ap.success != null)
@@ -371,67 +372,48 @@ namespace Sale_Order_Semi.Controllers
                 return Json(new { success = false, msg = "此申请已结束" }, "text/html");
             }
 
-            ApplyDetails thisDetail = ap.ApplyDetails.Where(ad => ad.user_id == userId && ad.step == step).OrderBy(ad=>ad.pass).First();
+            ApplyDetails thisDetail = ap.ApplyDetails.Where(ad => ad.user_id == currentUser.userId && ad.step == step).OrderBy(ad=>ad.pass).First();
             //已审核或者不是会签的别人已审核，则提示
             if (thisDetail.pass != null || ap.ApplyDetails.Where(ad => ad.step == step && ad.pass != null && (ad.countersign == null || ad.countersign == false)).Count() > 0)
             {
                 utl.writeEventLog("审核单据", "该订单已被审核:", ap.sys_no + ":" + step.ToString(), Request, 100);
                 return Json(new { success = false, msg = "该订单已被审核" }, "text/html");
-            }                      
-
-
-            #region 备料单特殊处理
-
-            //if (ap.order_type.Equals("BL")) {
-            //    Sale_BL bl = db.Sale_BL.Single(s => s.sys_no == ap.sys_no);
-
-            //    //计划经理审批后
-            //    if (thisDetail.step_name.Contains("计划经理") && isOK) {
-                    //string busDep = bl.bus_dep;  
-                    //utl.AppendStepAtLast(ap.id, "计划审批", new int?[] { bl.planner_id },step, true);
-                    //utl.AppendStepAtLast(ap.id, "运作中心二审", new int?[] { 243 }, step); //李卓明
-                //    utl.AppendStepAtLast(ap.id, "市场总部审批", new int?[] { 92 }, step); //王创浩
-                //}
-                //计划经理审批后，如果有修改，则在最后插入营业审批
-                //if (thisDetail.step_name.Contains("计划审批") && isOK) {
-                //    int?[] orderIds = bl.order_ids.Split(new char[] { ',' }).Select(i => { int? id = Int32.Parse(i); return id; }).ToArray();
-                //    utl.AppendStepAtLast(ap.id, "订料会签", orderIds, step, true, false, true);
-                //    utl.AppendStepAtLast(ap.id, "营业员确认", new int?[] { bl.original_user_id }, step);
-                //    utl.AppendStepAtLast(ap.id, "运作中心二审", new int?[] { 243 }, step); //李卓明
-                //    utl.AppendStepAtLast(ap.id, "市场总部审批", new int?[] { 92 }, step); //王创浩
-                //}
-            //}
-
-            #endregion
-
-            //int maxStep = (int)ap.ApplyDetails.Max(ad => ad.step);
+            }
+            
             int maxStep = (int)db.ApplyDetails.Where(ad => ad.apply_id == ap.id).Max(ad => ad.step);
 
             #region 退换货申请特殊处理
-            //验证勾稽状态与蓝字发票状态是否一致
-            if (isOK && ap.order_type.Equals("TH") && step == maxStep)
-            {
-                string validateResult = utl.ValidateHasInvoiceFlag(ap.sys_no);
-                if (!string.IsNullOrEmpty(validateResult))
-                {
-                    utl.writeEventLog("审核申请", validateResult, ap.sys_no, Request, 10);
-                    return Json(new { success = false, msg = validateResult }, "text/html");
-                }
-            }                
-            //可以退回到上一步 2014-2-25新增
-            if (ap.order_type.Equals("TH") && !isOK && backToPrevious.Equals("1") && step > 1)
-            {
-                return BackToPreviousStep(ap, step, comment);
-            }
+            if (ap.order_type.Equals("TH")) {
+                //验证勾稽状态与蓝字发票状态是否一致
 
-            //退换货，市场部林秋海（步骤2）需要将符合规则的意见（以备注：开头）插入到市场部备注字段，然后将意见删除
-            if (ap.order_type.Equals("TH") && step == 2)
-            {
-                if (comment.Trim().StartsWith("备注：") || comment.Trim().StartsWith("备注:"))
-                {
+                if (isOK  && step == maxStep) {
+                    string validateResult = utl.ValidateHasInvoiceFlag(ap.sys_no);
+                    if (!string.IsNullOrEmpty(validateResult)) {
+                        utl.writeEventLog("审核申请", validateResult, ap.sys_no, Request, 10);
+                        return Json(new { success = false, msg = validateResult }, "text/html");
+                    }
+                }
+                //可以退回到上一步 2014-2-25新增
+                if (!isOK && backToPrevious.Equals("1") && step > 1) {
+                    return BackToPreviousStep(ap, step, comment);
+                }
+
+                //退换货，市场部林秋海（步骤2）需要将符合规则的意见（以备注：开头）插入到市场部备注字段，然后将意见删除
+                if (step == 2) {
+                    if (comment.Trim().StartsWith("备注：") || comment.Trim().StartsWith("备注:")) {
+                        var returnBill = db.ReturnBill.Single(r => r.sys_no == ap.sys_no);
+                        returnBill.market_comment = comment.Substring(3);
+                        comment = "";
+                    }
+                }
+
+                //2020-9-14 物流需保存运输费用和责任方
+                string expressFee = fc.Get("express_fee");
+                string whoToBlame = fc.Get("who_to_blame");
+                if (!string.IsNullOrEmpty(expressFee)) {
                     var returnBill = db.ReturnBill.Single(r => r.sys_no == ap.sys_no);
-                    returnBill.market_comment = comment.Substring(3);
-                    comment = "";
+                    returnBill.express_fee = decimal.Parse(expressFee);
+                    returnBill.who_to_blame = whoToBlame;
                 }
             }
             #endregion
@@ -442,7 +424,7 @@ namespace Sale_Order_Semi.Controllers
                 //更新这一步骤的状态
                 thisDetail.ip = Request.UserHostAddress;
                 thisDetail.pass = isOK;
-                thisDetail.user_id = userId;
+                thisDetail.user_id = currentUser.userId;
                 thisDetail.comment = comment;
                 thisDetail.finish_date = DateTime.Now;
                 
@@ -488,24 +470,6 @@ namespace Sale_Order_Semi.Controllers
                             var sb = db.SampleBill.Single(s => s.sys_no == ap.sys_no);
                             sb.bill_no = utl.getYPBillNo(sb.currency_no, sb.is_free == "免费");
                         }
-
-                    }
-                    else
-                    {
-                        //将订单号回收
-                        //try
-                        //{
-                        //    string orderNumber = db.Order.Where(o => o.sys_no == ap.sys_no).First().order_no;
-                        //    if (!string.IsNullOrEmpty(orderNumber))
-                        //    {
-                        //        db.put_number_in_recycle(orderNumber);
-                        //        utl.writeEventLog("审核单据", "不通过，收回订单号:" + orderNumber, ap.sys_no, Request);
-                        //    }
-                        //}
-                        //catch (Exception ex)
-                        //{
-                        //    utl.writeEventLog("审核单据", "不通过，订单号收回失败!:" + ex.Message, ap.sys_no, Request, 100);
-                        //}
                     }
                 }
                 //提交数据
@@ -571,12 +535,9 @@ namespace Sale_Order_Semi.Controllers
                 utl.writeEventLog("审核单据", "删除子步骤失败", ap.sys_no + ":" + step.ToString(), Request);
                 return Json(new { success = false, msg = "审核发生错误，删除子步骤失败" }, "text/html");
             }
-
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            User user = db.User.Single(u => u.id == userId);
-
+            
             //发送邮件通知上一环节审批人
-            if (utl.emailToPrevious(ap.id,step-1, reason,user.real_name))
+            if (utl.emailToPrevious(ap.id,step-1, reason,currentUser.realName))
             {
                 utl.writeEventLog("发送邮件", "通知下一环节：发送成功", ap.sys_no + ":" + step.ToString(), Request);
             }
@@ -591,8 +552,6 @@ namespace Sale_Order_Semi.Controllers
         //退红字单，客服审核，如果数量有变更，需要通知营业员，插入一个审核步骤
         public JsonResult HandleQtyEditTHAudit(FormCollection fc)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-
             int applyId = int.Parse(fc.Get("applyId"));
             Apply ap = db.Apply.Single(a => a.id == applyId);
             int step = int.Parse(fc.Get("step"));
@@ -623,7 +582,7 @@ namespace Sale_Order_Semi.Controllers
             try
             {
                 //更新这一步骤的状态                
-                ApplyDetails thisDetail = ap.ApplyDetails.Where(ad => ad.user_id == userId && ad.step == step).First();
+                ApplyDetails thisDetail = ap.ApplyDetails.Where(ad => ad.user_id == currentUser.userId && ad.step == step).First();
                 thisDetail.ip = Request.UserHostAddress;
                 thisDetail.pass = isOK;
                 thisDetail.comment = comment;
@@ -734,15 +693,13 @@ namespace Sale_Order_Semi.Controllers
         //审核员挂起申请
         public JsonResult BlockOrder(FormCollection fc)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-
             int applyId = int.Parse(fc.Get("applyId"));
             Apply ap = db.Apply.Single(a => a.id == applyId);
             int step = int.Parse(fc.Get("step"));
             string comment = fc.Get("agency_comment");
 
             //验证是否有重复挂起操作
-            var existblocks = db.BlockOrder.Where(b => b.sys_no == ap.sys_no && b.step == step && b.@operator == userId);
+            var existblocks = db.BlockOrder.Where(b => b.sys_no == ap.sys_no && b.step == step && b.@operator == currentUser.userId);
             if (existblocks.Count() > 0)
             {
                 return Json(new { success = false, msg = "不能重复进行挂起操作。" }, "text/html");
@@ -750,7 +707,7 @@ namespace Sale_Order_Semi.Controllers
 
             db.BlockOrder.InsertOnSubmit(new BlockOrder()
             {
-                @operator = userId,
+                @operator = currentUser.userId,
                 block_time = DateTime.Now,
                 step = step,
                 step_name = ap.ApplyDetails.Where(ad => ad.step == step).First().step_name,
@@ -762,7 +719,7 @@ namespace Sale_Order_Semi.Controllers
             utl.writeEventLog("审核单据", "将订单暂时挂起", ap.sys_no, Request);
 
             //发送通知邮件给申请者
-            if (utl.emailForBlock(applyId, userId, comment))
+            if (utl.emailForBlock(applyId, currentUser.userId, comment))
             {
                 utl.writeEventLog("发送邮件", "挂起通知营业员：发送成功", ap.sys_no + ":" + step.ToString(), Request);
             }
@@ -777,7 +734,6 @@ namespace Sale_Order_Semi.Controllers
         //刷新处理结果
         public JsonResult RefleshAuditResult(int applyId, int step)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             var details = db.ApplyDetails.Where(ad => ad.apply_id == applyId && ad.step == step);
             bool hasAudited = false;
             bool? pass = false;
@@ -787,7 +743,7 @@ namespace Sale_Order_Semi.Controllers
                 //被NG的
                 hasAudited = true;
                 pass = false;
-                comment = details.Where(d => d.user_id == userId).First().comment;
+                comment = details.Where(d => d.user_id == currentUser.userId).First().comment;
             }
             else if (details.Where(d => d.pass != null).Count() == 0) {
                 //全部未被审核的
@@ -799,17 +755,17 @@ namespace Sale_Order_Semi.Controllers
                     //不是会签
                     hasAudited = true;
                     pass = true;
-                    comment = details.Where(d => d.user_id == userId).First().comment;
+                    comment = details.Where(d => d.user_id == currentUser.userId).First().comment;
                 }
                 else {
                     //是会签
-                    if (details.Where(d => d.user_id == userId && d.pass == null).Count() > 0) {
+                    if (details.Where(d => d.user_id == currentUser.userId && d.pass == null).Count() > 0) {
                         hasAudited = false;
                     }
                     else {
                         hasAudited = true;
                         pass = true;
-                        comment = details.Where(d => d.user_id == userId).First().comment;
+                        comment = details.Where(d => d.user_id == currentUser.userId).First().comment;
                     }
                 }
             }
@@ -1055,13 +1011,12 @@ namespace Sale_Order_Semi.Controllers
              
                 
         public JsonResult AuditorSaveModelContract(FormCollection fc) {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             int step = -1;
             if (!Int32.TryParse(fc.Get("step"), out step)) {
                 return Json(new { suc = false, msg = "步骤不对，保存失败" }, "text/html");
             }
 
-            string saveResult = utl.saveModelContract(fc, step, userId);
+            string saveResult = utl.saveModelContract(fc, step, currentUser.userId);
             if (string.IsNullOrWhiteSpace(saveResult))
             {
                 return Json(new { suc = true },"text/html");
@@ -1075,14 +1030,13 @@ namespace Sale_Order_Semi.Controllers
         //审核人保存样品单
         public JsonResult AuditorSaveSampleBill(FormCollection fc)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             int step = -1;
             if (!Int32.TryParse(fc.Get("step"), out step))
             {
                 return Json(new { suc = false, msg = "步骤不对，保存失败" }, "text/html");
             }
 
-            string saveResult = utl.saveSampleBill(fc, step, userId);
+            string saveResult = utl.saveSampleBill(fc, step, currentUser.userId);
             if (string.IsNullOrWhiteSpace(saveResult))
             {
                 return Json(new { suc = true }, "text/html");
@@ -1096,7 +1050,6 @@ namespace Sale_Order_Semi.Controllers
         //审核人保存备料单
         public JsonResult AuditorSaveBLBill(FormCollection fc)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             int step = -1;
             if (!Int32.TryParse(fc.Get("step"), out step)) {
                 return Json(new { suc = false, msg = "步骤不对，保存失败" }, "text/html");
@@ -1124,7 +1077,7 @@ namespace Sale_Order_Semi.Controllers
 
                 bl.order_ids = orderIds;
                 bl.order_names = orderNames;
-                bl.update_user_id = userId;
+                bl.update_user_id = currentUser.userId;
                 bl.step_version = step;
                 bl.planner_comment = plannerComment;
             }
@@ -1157,9 +1110,9 @@ namespace Sale_Order_Semi.Controllers
                     //因为是会签，同时审批时如果将旧数据删除，会造成数据丢失的情况，A、B同时编辑时，A保存后，B再保存，那么A编辑的内容将会消失。
                     //改为只删除和插入自己的那些分录，其它不动。
 
-                    db.Sale_BL_details.DeleteAllOnSubmit(bl.Sale_BL_details.Where(b => b.order_id == userId));
-                    bl.Sale_BL_details.AddRange(details.Where(d => d.order_id == userId));
-                    bl.update_user_id = userId;
+                    db.Sale_BL_details.DeleteAllOnSubmit(bl.Sale_BL_details.Where(b => b.order_id == currentUser.userId));
+                    bl.Sale_BL_details.AddRange(details.Where(d => d.order_id == currentUser.userId));
+                    bl.update_user_id = currentUser.userId;
                     bl.step_version = step;
                 }
             }

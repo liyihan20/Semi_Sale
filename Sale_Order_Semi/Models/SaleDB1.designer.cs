@@ -84,9 +84,6 @@ namespace Sale_Order_Semi.Models
     partial void InsertAuditorsRelation(AuditorsRelation instance);
     partial void UpdateAuditorsRelation(AuditorsRelation instance);
     partial void DeleteAuditorsRelation(AuditorsRelation instance);
-    partial void InsertReturnBill(ReturnBill instance);
-    partial void UpdateReturnBill(ReturnBill instance);
-    partial void DeleteReturnBill(ReturnBill instance);
     partial void InsertReturnBillDetail(ReturnBillDetail instance);
     partial void UpdateReturnBillDetail(ReturnBillDetail instance);
     partial void DeleteReturnBillDetail(ReturnBillDetail instance);
@@ -141,6 +138,12 @@ namespace Sale_Order_Semi.Models
     partial void InsertSale_HK_SO(Sale_HK_SO instance);
     partial void UpdateSale_HK_SO(Sale_HK_SO instance);
     partial void DeleteSale_HK_SO(Sale_HK_SO instance);
+    partial void InsertReturnBill(ReturnBill instance);
+    partial void UpdateReturnBill(ReturnBill instance);
+    partial void DeleteReturnBill(ReturnBill instance);
+    partial void InsertSale_HC_fileInfo(Sale_HC_fileInfo instance);
+    partial void UpdateSale_HC_fileInfo(Sale_HC_fileInfo instance);
+    partial void DeleteSale_HC_fileInfo(Sale_HC_fileInfo instance);
     #endregion
 		
 		public SaleDBDataContext() : 
@@ -381,14 +384,6 @@ namespace Sale_Order_Semi.Models
 			}
 		}
 		
-		public System.Data.Linq.Table<ReturnBill> ReturnBill
-		{
-			get
-			{
-				return this.GetTable<ReturnBill>();
-			}
-		}
-		
 		public System.Data.Linq.Table<ReturnBillDetail> ReturnBillDetail
 		{
 			get
@@ -594,6 +589,22 @@ namespace Sale_Order_Semi.Models
 			get
 			{
 				return this.GetTable<VwReturnBill>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ReturnBill> ReturnBill
+		{
+			get
+			{
+				return this.GetTable<ReturnBill>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Sale_HC_fileInfo> Sale_HC_fileInfo
+		{
+			get
+			{
+				return this.GetTable<Sale_HC_fileInfo>();
 			}
 		}
 		
@@ -7534,593 +7545,6 @@ namespace Sale_Order_Semi.Models
 					this._FStockQty = value;
 				}
 			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Return_bill")]
-	public partial class ReturnBill : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _id;
-		
-		private string _sys_no;
-		
-		private System.Nullable<System.DateTime> _fdate;
-		
-		private System.Nullable<int> _return_dept;
-		
-		private string _customer_number;
-		
-		private string _customer_name;
-		
-		private System.Nullable<bool> _has_invoice;
-		
-		private System.Nullable<bool> _need_resend;
-		
-		private System.Nullable<int> _user_id;
-		
-		private System.Nullable<int> _pmc_id;
-		
-		private string _comment;
-		
-		private string _express_name;
-		
-		private string _express_no;
-		
-		private System.Nullable<int> _express_qty;
-		
-		private System.Nullable<bool> _all_finish;
-		
-		private string _qty_comment;
-		
-		private string _saler_comment;
-		
-		private string _market_comment;
-		
-		private System.Nullable<bool> _hide_flag;
-		
-		private string _old_sys_no;
-		
-		private EntitySet<ReturnBillDetail> _ReturnBillDetail;
-		
-		private EntityRef<User> _User;
-		
-    #region 可扩展性方法定义
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnidChanging(int value);
-    partial void OnidChanged();
-    partial void Onsys_noChanging(string value);
-    partial void Onsys_noChanged();
-    partial void OnfdateChanging(System.Nullable<System.DateTime> value);
-    partial void OnfdateChanged();
-    partial void Onreturn_deptChanging(System.Nullable<int> value);
-    partial void Onreturn_deptChanged();
-    partial void Oncustomer_numberChanging(string value);
-    partial void Oncustomer_numberChanged();
-    partial void Oncustomer_nameChanging(string value);
-    partial void Oncustomer_nameChanged();
-    partial void Onhas_invoiceChanging(System.Nullable<bool> value);
-    partial void Onhas_invoiceChanged();
-    partial void Onneed_resendChanging(System.Nullable<bool> value);
-    partial void Onneed_resendChanged();
-    partial void Onuser_idChanging(System.Nullable<int> value);
-    partial void Onuser_idChanged();
-    partial void Onpmc_idChanging(System.Nullable<int> value);
-    partial void Onpmc_idChanged();
-    partial void OncommentChanging(string value);
-    partial void OncommentChanged();
-    partial void Onexpress_nameChanging(string value);
-    partial void Onexpress_nameChanged();
-    partial void Onexpress_noChanging(string value);
-    partial void Onexpress_noChanged();
-    partial void Onexpress_qtyChanging(System.Nullable<int> value);
-    partial void Onexpress_qtyChanged();
-    partial void Onall_finishChanging(System.Nullable<bool> value);
-    partial void Onall_finishChanged();
-    partial void Onqty_commentChanging(string value);
-    partial void Onqty_commentChanged();
-    partial void Onsaler_commentChanging(string value);
-    partial void Onsaler_commentChanged();
-    partial void Onmarket_commentChanging(string value);
-    partial void Onmarket_commentChanged();
-    partial void Onhide_flagChanging(System.Nullable<bool> value);
-    partial void Onhide_flagChanged();
-    partial void Onold_sys_noChanging(string value);
-    partial void Onold_sys_noChanged();
-    #endregion
-		
-		public ReturnBill()
-		{
-			this._ReturnBillDetail = new EntitySet<ReturnBillDetail>(new Action<ReturnBillDetail>(this.attach_ReturnBillDetail), new Action<ReturnBillDetail>(this.detach_ReturnBillDetail));
-			this._User = default(EntityRef<User>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int id
-		{
-			get
-			{
-				return this._id;
-			}
-			set
-			{
-				if ((this._id != value))
-				{
-					this.OnidChanging(value);
-					this.SendPropertyChanging();
-					this._id = value;
-					this.SendPropertyChanged("id");
-					this.OnidChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_sys_no", DbType="VarChar(20)")]
-		public string sys_no
-		{
-			get
-			{
-				return this._sys_no;
-			}
-			set
-			{
-				if ((this._sys_no != value))
-				{
-					this.Onsys_noChanging(value);
-					this.SendPropertyChanging();
-					this._sys_no = value;
-					this.SendPropertyChanged("sys_no");
-					this.Onsys_noChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_fdate", DbType="SmallDateTime")]
-		public System.Nullable<System.DateTime> fdate
-		{
-			get
-			{
-				return this._fdate;
-			}
-			set
-			{
-				if ((this._fdate != value))
-				{
-					this.OnfdateChanging(value);
-					this.SendPropertyChanging();
-					this._fdate = value;
-					this.SendPropertyChanged("fdate");
-					this.OnfdateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_return_dept", DbType="Int")]
-		public System.Nullable<int> return_dept
-		{
-			get
-			{
-				return this._return_dept;
-			}
-			set
-			{
-				if ((this._return_dept != value))
-				{
-					this.Onreturn_deptChanging(value);
-					this.SendPropertyChanging();
-					this._return_dept = value;
-					this.SendPropertyChanged("return_dept");
-					this.Onreturn_deptChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_customer_number", DbType="VarChar(50)")]
-		public string customer_number
-		{
-			get
-			{
-				return this._customer_number;
-			}
-			set
-			{
-				if ((this._customer_number != value))
-				{
-					this.Oncustomer_numberChanging(value);
-					this.SendPropertyChanging();
-					this._customer_number = value;
-					this.SendPropertyChanged("customer_number");
-					this.Oncustomer_numberChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_customer_name", DbType="VarChar(100)")]
-		public string customer_name
-		{
-			get
-			{
-				return this._customer_name;
-			}
-			set
-			{
-				if ((this._customer_name != value))
-				{
-					this.Oncustomer_nameChanging(value);
-					this.SendPropertyChanging();
-					this._customer_name = value;
-					this.SendPropertyChanged("customer_name");
-					this.Oncustomer_nameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_has_invoice", DbType="Bit")]
-		public System.Nullable<bool> has_invoice
-		{
-			get
-			{
-				return this._has_invoice;
-			}
-			set
-			{
-				if ((this._has_invoice != value))
-				{
-					this.Onhas_invoiceChanging(value);
-					this.SendPropertyChanging();
-					this._has_invoice = value;
-					this.SendPropertyChanged("has_invoice");
-					this.Onhas_invoiceChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_need_resend", DbType="Bit")]
-		public System.Nullable<bool> need_resend
-		{
-			get
-			{
-				return this._need_resend;
-			}
-			set
-			{
-				if ((this._need_resend != value))
-				{
-					this.Onneed_resendChanging(value);
-					this.SendPropertyChanging();
-					this._need_resend = value;
-					this.SendPropertyChanged("need_resend");
-					this.Onneed_resendChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_user_id", DbType="Int")]
-		public System.Nullable<int> user_id
-		{
-			get
-			{
-				return this._user_id;
-			}
-			set
-			{
-				if ((this._user_id != value))
-				{
-					if (this._User.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.Onuser_idChanging(value);
-					this.SendPropertyChanging();
-					this._user_id = value;
-					this.SendPropertyChanged("user_id");
-					this.Onuser_idChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_pmc_id", DbType="Int")]
-		public System.Nullable<int> pmc_id
-		{
-			get
-			{
-				return this._pmc_id;
-			}
-			set
-			{
-				if ((this._pmc_id != value))
-				{
-					this.Onpmc_idChanging(value);
-					this.SendPropertyChanging();
-					this._pmc_id = value;
-					this.SendPropertyChanged("pmc_id");
-					this.Onpmc_idChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_comment", DbType="VarChar(500)")]
-		public string comment
-		{
-			get
-			{
-				return this._comment;
-			}
-			set
-			{
-				if ((this._comment != value))
-				{
-					this.OncommentChanging(value);
-					this.SendPropertyChanging();
-					this._comment = value;
-					this.SendPropertyChanged("comment");
-					this.OncommentChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_express_name", DbType="VarChar(50)")]
-		public string express_name
-		{
-			get
-			{
-				return this._express_name;
-			}
-			set
-			{
-				if ((this._express_name != value))
-				{
-					this.Onexpress_nameChanging(value);
-					this.SendPropertyChanging();
-					this._express_name = value;
-					this.SendPropertyChanged("express_name");
-					this.Onexpress_nameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_express_no", DbType="VarChar(50)")]
-		public string express_no
-		{
-			get
-			{
-				return this._express_no;
-			}
-			set
-			{
-				if ((this._express_no != value))
-				{
-					this.Onexpress_noChanging(value);
-					this.SendPropertyChanging();
-					this._express_no = value;
-					this.SendPropertyChanged("express_no");
-					this.Onexpress_noChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_express_qty", DbType="Int")]
-		public System.Nullable<int> express_qty
-		{
-			get
-			{
-				return this._express_qty;
-			}
-			set
-			{
-				if ((this._express_qty != value))
-				{
-					this.Onexpress_qtyChanging(value);
-					this.SendPropertyChanging();
-					this._express_qty = value;
-					this.SendPropertyChanged("express_qty");
-					this.Onexpress_qtyChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_all_finish", DbType="Bit")]
-		public System.Nullable<bool> all_finish
-		{
-			get
-			{
-				return this._all_finish;
-			}
-			set
-			{
-				if ((this._all_finish != value))
-				{
-					this.Onall_finishChanging(value);
-					this.SendPropertyChanging();
-					this._all_finish = value;
-					this.SendPropertyChanged("all_finish");
-					this.Onall_finishChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_qty_comment", DbType="VarChar(2000)")]
-		public string qty_comment
-		{
-			get
-			{
-				return this._qty_comment;
-			}
-			set
-			{
-				if ((this._qty_comment != value))
-				{
-					this.Onqty_commentChanging(value);
-					this.SendPropertyChanging();
-					this._qty_comment = value;
-					this.SendPropertyChanged("qty_comment");
-					this.Onqty_commentChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_saler_comment", DbType="VarChar(500)")]
-		public string saler_comment
-		{
-			get
-			{
-				return this._saler_comment;
-			}
-			set
-			{
-				if ((this._saler_comment != value))
-				{
-					this.Onsaler_commentChanging(value);
-					this.SendPropertyChanging();
-					this._saler_comment = value;
-					this.SendPropertyChanged("saler_comment");
-					this.Onsaler_commentChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_market_comment", DbType="VarChar(500)")]
-		public string market_comment
-		{
-			get
-			{
-				return this._market_comment;
-			}
-			set
-			{
-				if ((this._market_comment != value))
-				{
-					this.Onmarket_commentChanging(value);
-					this.SendPropertyChanging();
-					this._market_comment = value;
-					this.SendPropertyChanged("market_comment");
-					this.Onmarket_commentChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_hide_flag", DbType="bit")]
-		public System.Nullable<bool> hide_flag
-		{
-			get
-			{
-				return this._hide_flag;
-			}
-			set
-			{
-				if ((this._hide_flag != value))
-				{
-					this.Onhide_flagChanging(value);
-					this.SendPropertyChanging();
-					this._hide_flag = value;
-					this.SendPropertyChanged("hide_flag");
-					this.Onhide_flagChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_old_sys_no", DbType="Varchar(20)")]
-		public string old_sys_no
-		{
-			get
-			{
-				return this._old_sys_no;
-			}
-			set
-			{
-				if ((this._old_sys_no != value))
-				{
-					this.Onold_sys_noChanging(value);
-					this.SendPropertyChanging();
-					this._old_sys_no = value;
-					this.SendPropertyChanged("old_sys_no");
-					this.Onold_sys_noChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ReturnBill_ReturnBillDetail", Storage="_ReturnBillDetail", ThisKey="id", OtherKey="bill_id")]
-		public EntitySet<ReturnBillDetail> ReturnBillDetail
-		{
-			get
-			{
-				return this._ReturnBillDetail;
-			}
-			set
-			{
-				this._ReturnBillDetail.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_ReturnBill", Storage="_User", ThisKey="user_id", OtherKey="id", IsForeignKey=true)]
-		public User User
-		{
-			get
-			{
-				return this._User.Entity;
-			}
-			set
-			{
-				User previousValue = this._User.Entity;
-				if (((previousValue != value) 
-							|| (this._User.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._User.Entity = null;
-						previousValue.ReturnBill.Remove(this);
-					}
-					this._User.Entity = value;
-					if ((value != null))
-					{
-						value.ReturnBill.Add(this);
-						this._user_id = value.id;
-					}
-					else
-					{
-						this._user_id = default(Nullable<int>);
-					}
-					this.SendPropertyChanged("User");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_ReturnBillDetail(ReturnBillDetail entity)
-		{
-			this.SendPropertyChanging();
-			entity.ReturnBill = this;
-		}
-		
-		private void detach_ReturnBillDetail(ReturnBillDetail entity)
-		{
-			this.SendPropertyChanging();
-			entity.ReturnBill = null;
 		}
 	}
 	
@@ -15178,8 +14602,6 @@ namespace Sale_Order_Semi.Models
 		
 		private EntitySet<BlockOrder> _BlockOrder;
 		
-		private EntitySet<ReturnBill> _ReturnBill;
-		
 		private EntitySet<ModelContract> _ModelContract;
 		
 		private EntitySet<Apply> _Apply;
@@ -15191,6 +14613,8 @@ namespace Sale_Order_Semi.Models
 		private EntitySet<ProcessAuthority> _ProcessAuthority;
 		
 		private EntitySet<SampleBill> _SampleBill;
+		
+		private EntitySet<ReturnBill> _ReturnBill;
 		
 		private EntityRef<Department> _Department1;
 		
@@ -15235,13 +14659,13 @@ namespace Sale_Order_Semi.Models
 			this._ProcessDetail = new EntitySet<ProcessDetail>(new Action<ProcessDetail>(this.attach_ProcessDetail), new Action<ProcessDetail>(this.detach_ProcessDetail));
 			this._AgencyAndMarket = new EntitySet<AgencyAndMarket>(new Action<AgencyAndMarket>(this.attach_AgencyAndMarket), new Action<AgencyAndMarket>(this.detach_AgencyAndMarket));
 			this._BlockOrder = new EntitySet<BlockOrder>(new Action<BlockOrder>(this.attach_BlockOrder), new Action<BlockOrder>(this.detach_BlockOrder));
-			this._ReturnBill = new EntitySet<ReturnBill>(new Action<ReturnBill>(this.attach_ReturnBill), new Action<ReturnBill>(this.detach_ReturnBill));
 			this._ModelContract = new EntitySet<ModelContract>(new Action<ModelContract>(this.attach_ModelContract), new Action<ModelContract>(this.detach_ModelContract));
 			this._Apply = new EntitySet<Apply>(new Action<Apply>(this.attach_Apply), new Action<Apply>(this.detach_Apply));
 			this._Sale_BL_stock = new EntitySet<Sale_BL_stock>(new Action<Sale_BL_stock>(this.attach_Sale_BL_stock), new Action<Sale_BL_stock>(this.detach_Sale_BL_stock));
 			this._Sale_BL = new EntitySet<Sale_BL>(new Action<Sale_BL>(this.attach_Sale_BL), new Action<Sale_BL>(this.detach_Sale_BL));
 			this._ProcessAuthority = new EntitySet<ProcessAuthority>(new Action<ProcessAuthority>(this.attach_ProcessAuthority), new Action<ProcessAuthority>(this.detach_ProcessAuthority));
 			this._SampleBill = new EntitySet<SampleBill>(new Action<SampleBill>(this.attach_SampleBill), new Action<SampleBill>(this.detach_SampleBill));
+			this._ReturnBill = new EntitySet<ReturnBill>(new Action<ReturnBill>(this.attach_ReturnBill), new Action<ReturnBill>(this.detach_ReturnBill));
 			this._Department1 = default(EntityRef<Department>);
 			OnCreated();
 		}
@@ -15595,19 +15019,6 @@ namespace Sale_Order_Semi.Models
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_ReturnBill", Storage="_ReturnBill", ThisKey="id", OtherKey="user_id")]
-		public EntitySet<ReturnBill> ReturnBill
-		{
-			get
-			{
-				return this._ReturnBill;
-			}
-			set
-			{
-				this._ReturnBill.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_ModelContract", Storage="_ModelContract", ThisKey="id", OtherKey="user_id")]
 		public EntitySet<ModelContract> ModelContract
 		{
@@ -15683,6 +15094,19 @@ namespace Sale_Order_Semi.Models
 			set
 			{
 				this._SampleBill.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_ReturnBill", Storage="_ReturnBill", ThisKey="id", OtherKey="user_id")]
+		public EntitySet<ReturnBill> ReturnBill
+		{
+			get
+			{
+				return this._ReturnBill;
+			}
+			set
+			{
+				this._ReturnBill.Assign(value);
 			}
 		}
 		
@@ -15800,18 +15224,6 @@ namespace Sale_Order_Semi.Models
 			entity.User = null;
 		}
 		
-		private void attach_ReturnBill(ReturnBill entity)
-		{
-			this.SendPropertyChanging();
-			entity.User = this;
-		}
-		
-		private void detach_ReturnBill(ReturnBill entity)
-		{
-			this.SendPropertyChanging();
-			entity.User = null;
-		}
-		
 		private void attach_ModelContract(ModelContract entity)
 		{
 			this.SendPropertyChanging();
@@ -15879,6 +15291,18 @@ namespace Sale_Order_Semi.Models
 		}
 		
 		private void detach_SampleBill(SampleBill entity)
+		{
+			this.SendPropertyChanging();
+			entity.User = null;
+		}
+		
+		private void attach_ReturnBill(ReturnBill entity)
+		{
+			this.SendPropertyChanging();
+			entity.User = this;
+		}
+		
+		private void detach_ReturnBill(ReturnBill entity)
 		{
 			this.SendPropertyChanging();
 			entity.User = null;
@@ -21563,6 +20987,775 @@ namespace Sale_Order_Semi.Models
 				{
 					this._finish_date = value;
 				}
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Return_bill")]
+	public partial class ReturnBill : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _id;
+		
+		private string _sys_no;
+		
+		private System.Nullable<System.DateTime> _fdate;
+		
+		private System.Nullable<int> _return_dept;
+		
+		private string _customer_number;
+		
+		private string _customer_name;
+		
+		private System.Nullable<bool> _has_invoice;
+		
+		private System.Nullable<bool> _need_resend;
+		
+		private System.Nullable<int> _user_id;
+		
+		private System.Nullable<int> _pmc_id;
+		
+		private string _comment;
+		
+		private string _express_name;
+		
+		private string _express_no;
+		
+		private System.Nullable<int> _express_qty;
+		
+		private System.Nullable<bool> _all_finish;
+		
+		private string _qty_comment;
+		
+		private string _saler_comment;
+		
+		private string _market_comment;
+		
+		private System.Nullable<bool> _hide_flag;
+		
+		private string _old_sys_no;
+		
+		private System.Nullable<decimal> _express_fee;
+		
+		private string _who_to_blame;
+		
+		private EntitySet<ReturnBillDetail> _ReturnBillDetail;
+		
+		private EntityRef<User> _User;
+		
+    #region 可扩展性方法定义
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnidChanging(int value);
+    partial void OnidChanged();
+    partial void Onsys_noChanging(string value);
+    partial void Onsys_noChanged();
+    partial void OnfdateChanging(System.Nullable<System.DateTime> value);
+    partial void OnfdateChanged();
+    partial void Onreturn_deptChanging(System.Nullable<int> value);
+    partial void Onreturn_deptChanged();
+    partial void Oncustomer_numberChanging(string value);
+    partial void Oncustomer_numberChanged();
+    partial void Oncustomer_nameChanging(string value);
+    partial void Oncustomer_nameChanged();
+    partial void Onhas_invoiceChanging(System.Nullable<bool> value);
+    partial void Onhas_invoiceChanged();
+    partial void Onneed_resendChanging(System.Nullable<bool> value);
+    partial void Onneed_resendChanged();
+    partial void Onuser_idChanging(System.Nullable<int> value);
+    partial void Onuser_idChanged();
+    partial void Onpmc_idChanging(System.Nullable<int> value);
+    partial void Onpmc_idChanged();
+    partial void OncommentChanging(string value);
+    partial void OncommentChanged();
+    partial void Onexpress_nameChanging(string value);
+    partial void Onexpress_nameChanged();
+    partial void Onexpress_noChanging(string value);
+    partial void Onexpress_noChanged();
+    partial void Onexpress_qtyChanging(System.Nullable<int> value);
+    partial void Onexpress_qtyChanged();
+    partial void Onall_finishChanging(System.Nullable<bool> value);
+    partial void Onall_finishChanged();
+    partial void Onqty_commentChanging(string value);
+    partial void Onqty_commentChanged();
+    partial void Onsaler_commentChanging(string value);
+    partial void Onsaler_commentChanged();
+    partial void Onmarket_commentChanging(string value);
+    partial void Onmarket_commentChanged();
+    partial void Onhide_flagChanging(System.Nullable<bool> value);
+    partial void Onhide_flagChanged();
+    partial void Onold_sys_noChanging(string value);
+    partial void Onold_sys_noChanged();
+    partial void Onexpress_feeChanging(System.Nullable<decimal> value);
+    partial void Onexpress_feeChanged();
+    partial void Onwho_to_blameChanging(string value);
+    partial void Onwho_to_blameChanged();
+    #endregion
+		
+		public ReturnBill()
+		{
+			this._ReturnBillDetail = new EntitySet<ReturnBillDetail>(new Action<ReturnBillDetail>(this.attach_ReturnBillDetail), new Action<ReturnBillDetail>(this.detach_ReturnBillDetail));
+			this._User = default(EntityRef<User>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int id
+		{
+			get
+			{
+				return this._id;
+			}
+			set
+			{
+				if ((this._id != value))
+				{
+					this.OnidChanging(value);
+					this.SendPropertyChanging();
+					this._id = value;
+					this.SendPropertyChanged("id");
+					this.OnidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_sys_no", DbType="VarChar(20)")]
+		public string sys_no
+		{
+			get
+			{
+				return this._sys_no;
+			}
+			set
+			{
+				if ((this._sys_no != value))
+				{
+					this.Onsys_noChanging(value);
+					this.SendPropertyChanging();
+					this._sys_no = value;
+					this.SendPropertyChanged("sys_no");
+					this.Onsys_noChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_fdate", DbType="SmallDateTime")]
+		public System.Nullable<System.DateTime> fdate
+		{
+			get
+			{
+				return this._fdate;
+			}
+			set
+			{
+				if ((this._fdate != value))
+				{
+					this.OnfdateChanging(value);
+					this.SendPropertyChanging();
+					this._fdate = value;
+					this.SendPropertyChanged("fdate");
+					this.OnfdateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_return_dept", DbType="Int")]
+		public System.Nullable<int> return_dept
+		{
+			get
+			{
+				return this._return_dept;
+			}
+			set
+			{
+				if ((this._return_dept != value))
+				{
+					this.Onreturn_deptChanging(value);
+					this.SendPropertyChanging();
+					this._return_dept = value;
+					this.SendPropertyChanged("return_dept");
+					this.Onreturn_deptChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_customer_number", DbType="VarChar(50)")]
+		public string customer_number
+		{
+			get
+			{
+				return this._customer_number;
+			}
+			set
+			{
+				if ((this._customer_number != value))
+				{
+					this.Oncustomer_numberChanging(value);
+					this.SendPropertyChanging();
+					this._customer_number = value;
+					this.SendPropertyChanged("customer_number");
+					this.Oncustomer_numberChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_customer_name", DbType="VarChar(100)")]
+		public string customer_name
+		{
+			get
+			{
+				return this._customer_name;
+			}
+			set
+			{
+				if ((this._customer_name != value))
+				{
+					this.Oncustomer_nameChanging(value);
+					this.SendPropertyChanging();
+					this._customer_name = value;
+					this.SendPropertyChanged("customer_name");
+					this.Oncustomer_nameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_has_invoice", DbType="Bit")]
+		public System.Nullable<bool> has_invoice
+		{
+			get
+			{
+				return this._has_invoice;
+			}
+			set
+			{
+				if ((this._has_invoice != value))
+				{
+					this.Onhas_invoiceChanging(value);
+					this.SendPropertyChanging();
+					this._has_invoice = value;
+					this.SendPropertyChanged("has_invoice");
+					this.Onhas_invoiceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_need_resend", DbType="Bit")]
+		public System.Nullable<bool> need_resend
+		{
+			get
+			{
+				return this._need_resend;
+			}
+			set
+			{
+				if ((this._need_resend != value))
+				{
+					this.Onneed_resendChanging(value);
+					this.SendPropertyChanging();
+					this._need_resend = value;
+					this.SendPropertyChanged("need_resend");
+					this.Onneed_resendChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_user_id", DbType="Int")]
+		public System.Nullable<int> user_id
+		{
+			get
+			{
+				return this._user_id;
+			}
+			set
+			{
+				if ((this._user_id != value))
+				{
+					if (this._User.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.Onuser_idChanging(value);
+					this.SendPropertyChanging();
+					this._user_id = value;
+					this.SendPropertyChanged("user_id");
+					this.Onuser_idChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_pmc_id", DbType="Int")]
+		public System.Nullable<int> pmc_id
+		{
+			get
+			{
+				return this._pmc_id;
+			}
+			set
+			{
+				if ((this._pmc_id != value))
+				{
+					this.Onpmc_idChanging(value);
+					this.SendPropertyChanging();
+					this._pmc_id = value;
+					this.SendPropertyChanged("pmc_id");
+					this.Onpmc_idChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_comment", DbType="VarChar(500)")]
+		public string comment
+		{
+			get
+			{
+				return this._comment;
+			}
+			set
+			{
+				if ((this._comment != value))
+				{
+					this.OncommentChanging(value);
+					this.SendPropertyChanging();
+					this._comment = value;
+					this.SendPropertyChanged("comment");
+					this.OncommentChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_express_name", DbType="VarChar(50)")]
+		public string express_name
+		{
+			get
+			{
+				return this._express_name;
+			}
+			set
+			{
+				if ((this._express_name != value))
+				{
+					this.Onexpress_nameChanging(value);
+					this.SendPropertyChanging();
+					this._express_name = value;
+					this.SendPropertyChanged("express_name");
+					this.Onexpress_nameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_express_no", DbType="VarChar(50)")]
+		public string express_no
+		{
+			get
+			{
+				return this._express_no;
+			}
+			set
+			{
+				if ((this._express_no != value))
+				{
+					this.Onexpress_noChanging(value);
+					this.SendPropertyChanging();
+					this._express_no = value;
+					this.SendPropertyChanged("express_no");
+					this.Onexpress_noChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_express_qty", DbType="Int")]
+		public System.Nullable<int> express_qty
+		{
+			get
+			{
+				return this._express_qty;
+			}
+			set
+			{
+				if ((this._express_qty != value))
+				{
+					this.Onexpress_qtyChanging(value);
+					this.SendPropertyChanging();
+					this._express_qty = value;
+					this.SendPropertyChanged("express_qty");
+					this.Onexpress_qtyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_all_finish", DbType="Bit")]
+		public System.Nullable<bool> all_finish
+		{
+			get
+			{
+				return this._all_finish;
+			}
+			set
+			{
+				if ((this._all_finish != value))
+				{
+					this.Onall_finishChanging(value);
+					this.SendPropertyChanging();
+					this._all_finish = value;
+					this.SendPropertyChanged("all_finish");
+					this.Onall_finishChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_qty_comment", DbType="VarChar(2000)")]
+		public string qty_comment
+		{
+			get
+			{
+				return this._qty_comment;
+			}
+			set
+			{
+				if ((this._qty_comment != value))
+				{
+					this.Onqty_commentChanging(value);
+					this.SendPropertyChanging();
+					this._qty_comment = value;
+					this.SendPropertyChanged("qty_comment");
+					this.Onqty_commentChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_saler_comment", DbType="VarChar(500)")]
+		public string saler_comment
+		{
+			get
+			{
+				return this._saler_comment;
+			}
+			set
+			{
+				if ((this._saler_comment != value))
+				{
+					this.Onsaler_commentChanging(value);
+					this.SendPropertyChanging();
+					this._saler_comment = value;
+					this.SendPropertyChanged("saler_comment");
+					this.Onsaler_commentChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_market_comment", DbType="VarChar(500)")]
+		public string market_comment
+		{
+			get
+			{
+				return this._market_comment;
+			}
+			set
+			{
+				if ((this._market_comment != value))
+				{
+					this.Onmarket_commentChanging(value);
+					this.SendPropertyChanging();
+					this._market_comment = value;
+					this.SendPropertyChanged("market_comment");
+					this.Onmarket_commentChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_hide_flag", DbType="Bit")]
+		public System.Nullable<bool> hide_flag
+		{
+			get
+			{
+				return this._hide_flag;
+			}
+			set
+			{
+				if ((this._hide_flag != value))
+				{
+					this.Onhide_flagChanging(value);
+					this.SendPropertyChanging();
+					this._hide_flag = value;
+					this.SendPropertyChanged("hide_flag");
+					this.Onhide_flagChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_old_sys_no", DbType="VarChar(20)")]
+		public string old_sys_no
+		{
+			get
+			{
+				return this._old_sys_no;
+			}
+			set
+			{
+				if ((this._old_sys_no != value))
+				{
+					this.Onold_sys_noChanging(value);
+					this.SendPropertyChanging();
+					this._old_sys_no = value;
+					this.SendPropertyChanged("old_sys_no");
+					this.Onold_sys_noChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_express_fee", DbType="Decimal(10,2)")]
+		public System.Nullable<decimal> express_fee
+		{
+			get
+			{
+				return this._express_fee;
+			}
+			set
+			{
+				if ((this._express_fee != value))
+				{
+					this.Onexpress_feeChanging(value);
+					this.SendPropertyChanging();
+					this._express_fee = value;
+					this.SendPropertyChanged("express_fee");
+					this.Onexpress_feeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_who_to_blame", DbType="NVarChar(100)")]
+		public string who_to_blame
+		{
+			get
+			{
+				return this._who_to_blame;
+			}
+			set
+			{
+				if ((this._who_to_blame != value))
+				{
+					this.Onwho_to_blameChanging(value);
+					this.SendPropertyChanging();
+					this._who_to_blame = value;
+					this.SendPropertyChanged("who_to_blame");
+					this.Onwho_to_blameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ReturnBill_ReturnBillDetail", Storage="_ReturnBillDetail", ThisKey="id", OtherKey="bill_id")]
+		public EntitySet<ReturnBillDetail> ReturnBillDetail
+		{
+			get
+			{
+				return this._ReturnBillDetail;
+			}
+			set
+			{
+				this._ReturnBillDetail.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_ReturnBill", Storage="_User", ThisKey="user_id", OtherKey="id", IsForeignKey=true)]
+		public User User
+		{
+			get
+			{
+				return this._User.Entity;
+			}
+			set
+			{
+				User previousValue = this._User.Entity;
+				if (((previousValue != value) 
+							|| (this._User.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._User.Entity = null;
+						previousValue.ReturnBill.Remove(this);
+					}
+					this._User.Entity = value;
+					if ((value != null))
+					{
+						value.ReturnBill.Add(this);
+						this._user_id = value.id;
+					}
+					else
+					{
+						this._user_id = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("User");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_ReturnBillDetail(ReturnBillDetail entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReturnBill = this;
+		}
+		
+		private void detach_ReturnBillDetail(ReturnBillDetail entity)
+		{
+			this.SendPropertyChanging();
+			entity.ReturnBill = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Sale_HC_fileInfo")]
+	public partial class Sale_HC_fileInfo : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _id;
+		
+		private string _sys_no;
+		
+		private string _file_name;
+		
+		private string _uploader;
+		
+    #region 可扩展性方法定义
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnidChanging(int value);
+    partial void OnidChanged();
+    partial void Onsys_noChanging(string value);
+    partial void Onsys_noChanged();
+    partial void Onfile_nameChanging(string value);
+    partial void Onfile_nameChanged();
+    partial void OnuploaderChanging(string value);
+    partial void OnuploaderChanged();
+    #endregion
+		
+		public Sale_HC_fileInfo()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int id
+		{
+			get
+			{
+				return this._id;
+			}
+			set
+			{
+				if ((this._id != value))
+				{
+					this.OnidChanging(value);
+					this.SendPropertyChanging();
+					this._id = value;
+					this.SendPropertyChanged("id");
+					this.OnidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_sys_no", DbType="VarChar(50)")]
+		public string sys_no
+		{
+			get
+			{
+				return this._sys_no;
+			}
+			set
+			{
+				if ((this._sys_no != value))
+				{
+					this.Onsys_noChanging(value);
+					this.SendPropertyChanging();
+					this._sys_no = value;
+					this.SendPropertyChanged("sys_no");
+					this.Onsys_noChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_file_name", DbType="NVarChar(500)")]
+		public string file_name
+		{
+			get
+			{
+				return this._file_name;
+			}
+			set
+			{
+				if ((this._file_name != value))
+				{
+					this.Onfile_nameChanging(value);
+					this.SendPropertyChanging();
+					this._file_name = value;
+					this.SendPropertyChanged("file_name");
+					this.Onfile_nameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_uploader", DbType="NVarChar(50)")]
+		public string uploader
+		{
+			get
+			{
+				return this._uploader;
+			}
+			set
+			{
+				if ((this._uploader != value))
+				{
+					this.OnuploaderChanging(value);
+					this.SendPropertyChanging();
+					this._uploader = value;
+					this.SendPropertyChanged("uploader");
+					this.OnuploaderChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
 	}

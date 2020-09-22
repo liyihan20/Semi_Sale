@@ -2430,5 +2430,30 @@ namespace Sale_Order_Semi.Utils
         {
             return url.Replace("(equal)", "=").Replace("(and)", "&").Replace("(slash)", "/").Replace("(ask)", "?");
         }
+
+        //获取文件
+        public List<AttachmentModelNew> GetAttachmentInfo(string sysNum)
+        {
+            var list = new List<AttachmentModelNew>();
+            var folder = Path.Combine(SomeUtils.getOrderPath(sysNum), sysNum);
+
+            DirectoryInfo di = new DirectoryInfo(folder);
+            if (di.Exists) {
+                int idx = 0;
+                foreach (FileInfo fi in di.GetFiles()) {
+                    if (fi.Name.EndsWith(".db")) {
+                        continue; //将目录自动生成的thumb.db文件过滤掉
+                    }
+                    list.Add(new AttachmentModelNew()
+                    {
+                        file_id = "f_" + idx++,
+                        file_name = fi.Name,
+                        file_size = Math.Round((decimal)fi.Length / 1024, 1).ToString()
+                    });
+                }
+            }
+            return list;
+        }
+
     }
 }

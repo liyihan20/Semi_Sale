@@ -1,24 +1,28 @@
 ﻿@using Sale_Order_Semi.Models;
 @{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
     ModelContract mc = (ModelContract)ViewData["mc"];
     ModelContractExtra extra = (ModelContractExtra)ViewData["extra"];
 }
+<style type="text/css">
+    #order_div input {
+        width: 140px;
+    }
+</style>
 <script type="text/javascript">
 
     $(function () {
-        $("#order_div input[type='text']").attr("readonly", "readonly");
-        $("#order_div textarea").attr("readonly", "readonly");
+        $("#order_div .easyui-textbox").textbox("readonly");
     });
 
 </script>
 <div class="easyui-layout" data-options="fit:true">
     @*订单内容*@
     <div data-options="region:'center'">
-        <div id="order_div" class="easyui-panel" title="@Html.Lang("check_create_model_contract")" style="width: 840px; padding: 10px;
-    background: #fafafa;+position: relative;">
+        <div id="order_div" class="easyui-panel" title="@Html.Lang("check_create_model_contract")" style="width: 940px; padding: 10px; background: #fafafa;">
             <div>
                 @*表头*@
-                <table border="0" cellpadding="0" cellspacing="3" width="800">
+                <table border="0" cellpadding="0" cellspacing="3" width="900">
                     @if (!string.IsNullOrWhiteSpace(mc.old_bill_no))
                     {
                         <tr>
@@ -26,7 +30,7 @@
                                 @Html.Lang("order_no"):
                             </td>
                             <td>
-                                <input type="text" name="old_bill_no" id="old_bill_no" style="width:115px" value="@mc.old_bill_no"/>
+                                <input class="easyui-textbox" value="@mc.old_bill_no"/>
                             </td>
                             @for (var i = 0; i < 6; i++)
                             { 
@@ -40,25 +44,25 @@
                             @Html.Lang("order_date"):
                         </td>
                         <td>
-                            <input type="text" id="bill_date" name="bill_date" style="width: 120px" value="@(((DateTime)mc.bill_date).ToString("yyyy-MM-dd"))"/>
+                            <input class="easyui-textbox" id="bill_date" name="bill_date"  value="@(((DateTime)mc.bill_date).ToString("yyyy-MM-dd"))"/>
                         </td>
                         <td>
                             @Html.Lang("pro_type"):
                         </td>
                         <td>
-                            <input type="text" id="product_type" name="product_type" style="width: 120px" value="@mc.product_type" />
+                            <input class="easyui-textbox" id="product_type" name="product_type"  value="@mc.product_type" />
                         </td>
                         <td>
                             @Html.Lang("model_type"):
                         </td>
                         <td>
-                            <input type="text" style="width: 120px" name="model_type" id="model_type" value="@mc.model_type" />
+                            <input class="easyui-textbox"  name="model_type" id="model_type" value="@mc.model_type" />
                         </td>
                         <td>
                             @Html.Lang("sys_num"):
                         </td>
                         <td>
-                            <input type="text" name="sys_no" id="sys_no" style="width:120px" value="@mc.sys_no"/>
+                            <input class="easyui-textbox" name="sys_no" id="sys_no" style="width:120px" value="@mc.sys_no"/>
                         </td>
                     </tr>
                     <tr>
@@ -66,25 +70,25 @@
                             @Html.Lang("agency"):
                         </td>
                         <td>
-                            <input type="text" id="agency_name" name="agency_name" style="width: 120px" value="@mc.agency_name"/>
+                            <input class="easyui-textbox" id="agency_name" name="agency_name"  value="@mc.agency_name"/>
                         </td>
                         <td>
                             @Html.Lang("clerk"):
                         </td>
                         <td>
-                            <input type="text"  id="clerk_name"  name="clerk_no" style="width: 120px" value="@mc.clerk_name" />
+                            <input class="easyui-textbox"  id="clerk_name"  name="clerk_no"  value="@mc.clerk_name" />
                         </td>
                         <td>
                             @Html.Lang("tel_num"):
                         </td>
                         <td>
-                            <input type="text" style="width: 120px" name="telephone" id="telephone" value="@mc.telephone" />
+                            <input class="easyui-textbox"  name="telephone" id="telephone" value="@mc.telephone" />
                         </td>
                         <td>
                             EMAIL:
                         </td>
                         <td>
-                            <input type="text" name="email" id="email" style="width: 120px" value="@mc.email" />
+                            <input class="easyui-textbox" name="email" id="email"  value="@mc.email" />
                         </td>
                     </tr>
                     <tr>
@@ -92,25 +96,25 @@
                             @Html.Lang("delivery_date"):
                         </td>
                         <td>
-                            <input type="text" id="fetch_date" name="fetch_date" style="width: 120px" value="@(mc.fetch_date == null ? "" : ((DateTime)mc.fetch_date).ToString("yyyy-MM-dd"))" />
+                            <input class="easyui-textbox" id="fetch_date" name="fetch_date"  value="@(mc.fetch_date == null ? "" : ((DateTime)mc.fetch_date).ToString("yyyy-MM-dd"))" />
                         </td>
                         <td>
                             @Html.Lang("bus_dep"):
                         </td>
                         <td>
-                            <input type="text" name="bus_dep" id="bus_dep" style="width: 120px" value="@mc.bus_dep" />
+                            <input class="easyui-textbox" name="bus_dep" id="bus_dep"  value="@mc.bus_dep" />
                         </td>
                         <td>
                             @Html.Lang("project_team"):
                         </td>
                         <td>
-                            <input type="text" name="project_team" id="project_team" style="width: 120px" value="@mc.project_team" />
+                            <input class="easyui-textbox" name="project_team" id="project_team"  value="@mc.project_team" />
                         </td>
                         <td>
                             @Html.Lang("quotation_clerk"):
                         </td>
                         <td>
-                            <input type="text" name="quotation_clerk_name" id="quotation_clerk_name" style="width: 120px" value="@mc.quotation_clerk_name" />
+                            <input class="easyui-textbox" name="quotation_clerk_name" id="quotation_clerk_name"  value="@mc.quotation_clerk_name" />
                         </td>
                     </tr>
                     <tr>
@@ -118,36 +122,36 @@
                     @Html.Lang("pro_num"):
                 </td>
                 <td>
-                    <input type="text" id="product_number" name="product_number" style="width: 120px" value="@mc.product_number" />
+                    <input class="easyui-textbox" id="product_number" name="product_number"  value="@mc.product_number" />
                 </td>
                 <td>
                     @Html.Lang("pro_name"):
                 </td>
                 <td>
-                    <input type="text" id="product_name" name="product_name" style="width: 120px" value="@mc.product_name" />
+                    <input class="easyui-textbox" id="product_name" name="product_name"  value="@mc.product_name" />
                 </td>*@
                         <td>
                             @Html.Lang("pro_model"):
                         </td>
                         <td>
-                            <input type="text" id="product_model" name="product_model" style="width: 120px" value="@mc.product_model" />
+                            <input class="easyui-textbox" id="product_model" name="product_model"  value="@mc.product_model" />
                         </td>
                         <td>@Html.Lang("classification"):
                         </td>
                         <td>
-                            <input type="text" name="classification" id="classification" style="width: 120px" value="@mc.classification" />
+                            <input class="easyui-textbox" name="classification" id="classification"  value="@mc.classification" />
                         </td>
                         <td>
                             @Html.Lang("trade_type"):
                         </td>
                         <td>
-                            <input type="text" id="trade_type_no" name="trade_type_no" style="width: 120px" value="@mc.trade_type_name" />
+                            <input class="easyui-textbox" id="trade_type_no" name="trade_type_no"  value="@mc.trade_type_name" />
                         </td>
                         <td>
                             @Html.Lang("payment"):
                         </td>
                         <td>
-                            <input type="text" id="clear_way" name="clear_way" style="width: 120px" value="@mc.clear_way"/>
+                            <input class="easyui-textbox" id="clear_way" name="clear_way"  value="@mc.clear_way"/>
                         </td>
                     </tr>
                     <tr>
@@ -155,25 +159,25 @@
                             @Html.Lang("customer_name"):
                         </td>
                         <td>
-                            <input type="text" id="customer_no"name="customer_no" style="width: 120px" value="@mc.customer_name" />
+                            <input class="easyui-textbox" id="customer_no"name="customer_no"  value="@mc.customer_name" />
                         </td>
                         <td>
                             @Html.Lang("plan_firm"):
                         </td>
                         <td>
-                            <input type="text" id="plan_firm_name" name="plan_firm_name" style="width: 120px" value="@mc.plan_firm_name" />
+                            <input class="easyui-textbox" id="plan_firm_name" name="plan_firm_name"  value="@mc.plan_firm_name" />
                         </td>
                         <td>
                             @Html.Lang("end_customer"):
                         </td>
                         <td>
-                            <input type="text" id="zz_customer_name" name="zz_customer_name" style="width: 120px" value="@mc.zz_customer_name" />
+                            <input class="easyui-textbox" id="zz_customer_name" name="zz_customer_name"  value="@mc.zz_customer_name" />
                         </td>
                         <td>
                             海外客户:
                         </td>
                         <td>
-                            <input type="text" id="oversea_customer_name" name="oversea_customer_name" style="width: 120px" value="@mc.oversea_customer_name" />
+                            <input class="easyui-textbox" id="oversea_customer_name" name="oversea_customer_name"  value="@mc.oversea_customer_name" />
                         </td>
                     </tr>
                     <tr>
@@ -181,25 +185,25 @@
                             @Html.Lang("currency"):
                         </td>
                         <td>
-                            <input type="text" id="currency_name" name="currency_name" style="width: 120px" value="@mc.currency_name" />
+                            <input class="easyui-textbox" id="currency_name" name="currency_name"  value="@mc.currency_name" />
                         </td>
                         <td>
                             @Html.Lang("qty"):
                         </td>
                         <td>
-                            <input type="text" id="qty" name="qty" style="width: 120px" value="@mc.qty" />
+                            <input class="easyui-textbox" id="qty" name="qty"  value="@mc.qty" />
                         </td>
                         <td>
                             @Html.Lang("price"):
                         </td>
                         <td>
-                            <input type="text" id="price" name="price" style="width: 120px" value="@mc.price" />
+                            <input class="easyui-textbox" id="price" name="price"  value="@mc.price" />
                         </td>
                         <td>
                             @Html.Lang("pro_use"):
                         </td>
                         <td>
-                            <input type="text" name="pro_use" id="pro_use" style="width: 120px"  value="@mc.pro_use" />
+                            <input class="easyui-textbox" name="pro_use" id="pro_use"   value="@mc.pro_use" />
                         </td>
                     </tr>
                     <tr>
@@ -207,25 +211,25 @@
                             @Html.Lang("customer_model"):
                         </td>
                         <td>
-                            <input type="text" id="project_number" name="project_number" style="width: 120px" value="@mc.project_number" />
+                            <input class="easyui-textbox" id="project_number" name="project_number"  value="@mc.project_number" />
                         </td>
                         <td>
                             @Html.Lang("pic_number"):
                         </td>
                         <td>
-                            <input type="text" id="pic_number" name="pic_number" style="width: 120px" value="@mc.pic_number" />
+                            <input class="easyui-textbox" id="pic_number" name="pic_number"  value="@mc.pic_number" />
                         </td>
                         <td>
                             @Html.Lang("pic_version"):
                         </td>
                         <td>
-                            <input type="text" id="pic_version" name="pic_version" style="width: 120px" value="@mc.pic_version" />
+                            <input class="easyui-textbox" id="pic_version" name="pic_version"  value="@mc.pic_version" />
                         </td>
                         <td>
                             @Html.Lang("contract_num"):
                         </td>
                         <td>
-                            <input type='text' style="width: 120px" value="@mc.contract_po_no" />
+                            <input class="easyui-textbox" value="@mc.contract_po_no" />
                         </td>
                     </tr>
                     <tr>                        
@@ -233,7 +237,7 @@
                             @Html.Lang("biller"):
                         </td>
                         <td>
-                            <input type="text" id="create_user" name="create_user" style="width: 120px" value="@mc.User.real_name" />
+                            <input class="easyui-textbox" id="create_user" name="create_user"  value="@mc.User.real_name" />
                         </td>
                     </tr>
                     <tr>
@@ -242,27 +246,26 @@
                         </td>
                         <td colspan="7">
                             @Html.Lang("charge")
-                            <input type="text" id="charge" name="charge" style="width: 100px" value="@mc.charge" />
+                            <input class="easyui-textbox" id="charge" name="charge" style="width: 100px" value="@mc.charge" />
                             &nbsp;
                             @Html.Lang("free")
-                            <input type="text" id="free" name="free" style="width: 100px" value="@mc.free" />
+                            <input class="easyui-textbox" id="free" name="free" style="width: 100px" value="@mc.free" />
                             @if (string.IsNullOrWhiteSpace(mc.count_in_bus_dep))
                             {
-                                <input type="checkbox" name="count_in_bus_dep" value="计入事业部" disabled="disabled" /><span>计入事业部</span>
+                                <input type="checkbox" name="count_in_bus_dep" value="计入事业部" disabled="disabled" style="width:20px;"/><span>计入事业部</span>
                             }
                             else
                             { 
-                                <input type="checkbox" name="count_in_bus_dep" value="计入事业部" disabled="disabled"
-                                    checked="checked" /><span>计入事业部</span>
+                                <input type="checkbox" name="count_in_bus_dep" value="计入事业部" disabled="disabled" checked="checked" style="width:20px;"/><span>计入事业部</span>
                             }
                             &nbsp;
                             @if (string.IsNullOrWhiteSpace(mc.special_model))
                             {
-                                <input type="checkbox" name="special_model" value="特殊开模单" disabled="disabled" /><span>特殊开模单</span>
+                                <input type="checkbox" name="special_model" value="特殊开模单" disabled="disabled" style="width:20px;"/><span>特殊开模单</span>
                             }
                             else
                             { 
-                                <input type="checkbox" name="special_model" value="特殊开模单" checked="checked" disabled="disabled" /><span>特殊开模单</span>
+                                <input type="checkbox" name="special_model" value="特殊开模单" checked="checked" disabled="disabled" style="width:20px;"/><span>特殊开模单</span>
                             }
                         </td>
                     </tr>
@@ -271,7 +274,7 @@
                             @Html.Lang("comment"):
                         </td>
                         <td colspan="7">
-                            <textarea cols="84" rows="2" name="comment" id="comment" style="margin: 0;">@mc.comment</textarea>
+                            <input class="easyui-textbox" multiline="true" style="width:700px;height:40px" value="@mc.comment" />
                         </td>
                     </tr>
                     <tr>
@@ -279,13 +282,13 @@
                             @Html.Lang("delivery_place"):
                         </td>
                         <td>
-                            <input type="text" id="fetch_add_name" name="fetch_add_name" style="width: 120px" value="@mc.fetch_add_name" />
+                            <input class="easyui-textbox" id="fetch_add_name" name="fetch_add_name"  value="@mc.fetch_add_name" />
                         </td>
                         <td>
                             @Html.Lang("quote_num"):
                         </td>
                         <td>
-                            <input type="text" name="quote_num" id="quote_num" style="width: 120px" value="@mc.quote_num" />
+                            <input class="easyui-textbox" name="quote_num" id="quote_num"  value="@mc.quote_num" />
                         </td>
                         <td>
                         </td>
@@ -300,12 +303,12 @@
                         <td>@Html.Lang("has_sample"):
                         </td>
                         <td colspan="7">
-                            <input type="text" style="width: 80px" name="has_customer_sample" id="has_customer_sample" value="@mc.has_customer_sample" />
+                            <input class="easyui-textbox" style="width: 80px" name="has_customer_sample" id="has_customer_sample" value="@mc.has_customer_sample" />
                             <span id="has_sample_span">
-                                @Html.Lang("pcs"):<input type="text"  id="customer_sample_num" name="customer_sample_num" style="width: 80px;" value="@(mc.customer_sample_num == null ? "" : mc.customer_sample_num.ToString() + " PCS")" />
-                                @Html.Lang("refer_to"):<input type="text" style="width: 180px" name="has_sample_refer"
+                                @Html.Lang("pcs"):<input class="easyui-textbox"  id="customer_sample_num" name="customer_sample_num" style="width: 80px;" value="@(mc.customer_sample_num == null ? "" : mc.customer_sample_num.ToString() + " PCS")" />
+                                @Html.Lang("refer_to"):<input class="easyui-textbox" style="width: 180px" name="has_sample_refer"
                             id="has_sample_refer" value="@mc.has_sample_refer" />
-                                @Html.Lang("customer_model_disadvantage"):<input type="text" name="has_customer_disadvantage" id="has_customer_disadvantage" style="width: 80px" value="@mc.has_customer_disadvantage" />
+                                @Html.Lang("customer_model_disadvantage"):<input class="easyui-textbox" name="has_customer_disadvantage" id="has_customer_disadvantage" style="width: 80px" value="@mc.has_customer_disadvantage" />
                             </span>
                         </td>
                     </tr>
@@ -313,16 +316,16 @@
                         <td>@Html.Lang("same_with_customer_sample"):
                         </td>
                         <td colspan="7">
-                            <input type="text" name="same_with_customer_sample" id="same_with_customer_sample" style="width: 80px" value="@mc.same_with_customer_sample" />
+                            <input class="easyui-textbox" name="same_with_customer_sample" id="same_with_customer_sample" style="width: 80px" value="@mc.same_with_customer_sample" />
                             @if (!string.IsNullOrEmpty(mc.same_with_customer_sample))
                             {
                                 <span id="same_with_customer_sample_span">
                                     @Html.Lang("change_cutomer_software"):
-                                    <input type="text" style="width: 80px" name="change_cutomer_software" id="change_cutomer_software" value="@mc.change_cutomer_software" />
+                                    <input class="easyui-textbox" style="width: 80px" name="change_cutomer_software" id="change_cutomer_software" value="@mc.change_cutomer_software" />
                                     @Html.Lang("theory"):
-                                    <input type="text" style="width: 80px" name="customer_sample_theory" id="customer_sample_theory" value="@mc.customer_sample_theory" />
+                                    <input class="easyui-textbox" style="width: 80px" name="customer_sample_theory" id="customer_sample_theory" value="@mc.customer_sample_theory" />
                                     @Html.Lang("structure"):
-                                    <input type="text" style="width: 80px" name="customer_sample_structure" id="customer_sample_structure" value="@mc.customer_sample_structure" />
+                                    <input class="easyui-textbox" style="width: 80px" name="customer_sample_structure" id="customer_sample_structure" value="@mc.customer_sample_structure" />
                                 </span>
                             }
                         </td>
@@ -331,17 +334,17 @@
                         <td>@Html.Lang("has_video_function"):
                         </td>
                         <td colspan="7">
-                            <input type="text" style="width: 240px" name="has_video_function" id="has_video_function" value="@mc.has_video_function" />
+                            <input class="easyui-textbox" style="width: 240px" name="has_video_function" id="has_video_function" value="@mc.has_video_function" />
                             @if ("带摄像功能，摄像头由TRULY提供".Equals(mc.has_video_function))
                             {
                                 <span id="has_video_function_model_span">
-                                    @Html.Lang("model"):<input type="text" name="video_model" id="video_model" style="width: 300px" value="@mc.video_model" />
+                                    @Html.Lang("model"):<input class="easyui-textbox" name="video_model" id="video_model" style="width: 300px" value="@mc.video_model" />
                                 </span>
                             }
                             @if ("带摄像功能，摄像头不是TRULY提供".Equals(mc.has_video_function))
                             {
                                 <span id="has_video_function_reason_span">
-                                    @Html.Lang("reason"):<input type="text" name="video_reason" id="video_reason" style="width: 300px" value="@mc.video_reason" />
+                                    @Html.Lang("reason"):<input class="easyui-textbox" name="video_reason" id="video_reason" style="width: 300px" value="@mc.video_reason" />
                                 </span>
                             }
                         </td>
@@ -350,17 +353,17 @@
                         <td>@Html.Lang("has_touch_panel"):
                         </td>
                         <td colspan="7">
-                            <input type="text" style="width: 240px" name="has_touch_panel" id="has_touch_panel" value="@mc.has_touch_panel" />
+                            <input class="easyui-textbox" style="width: 240px" name="has_touch_panel" id="has_touch_panel" value="@mc.has_touch_panel" />
                             @if ("带触摸屏，触摸屏由TRULY提供".Equals(mc.has_touch_panel))
                             {
                                 <span id="has_touch_panel_model_span">
-                                    @Html.Lang("model"):<input type="text" name="touch_panel_model" id="touch_panel_model" style="width: 300px" value="@mc.touch_panel_model" />
+                                    @Html.Lang("model"):<input class="easyui-textbox" name="touch_panel_model" id="touch_panel_model" style="width: 300px" value="@mc.touch_panel_model" />
                                 </span>
                             }
                             @if ("带触摸屏，触摸屏不是TRULY提供".Equals(mc.has_touch_panel))
                             {
                                 <span id="has_touch_panel_reason_span">
-                                    @Html.Lang("reason"):<input type="text" name="touch_panel_reason" id="touch_panel_reason" style="width: 300px" value="@mc.touch_panel_reason" />
+                                    @Html.Lang("reason"):<input class="easyui-textbox" name="touch_panel_reason" id="touch_panel_reason" style="width: 300px" value="@mc.touch_panel_reason" />
                                 </span>
                             }
                         </td>
@@ -370,18 +373,18 @@
                             @Html.Lang("dustproof_demand"):
                         </td>
                         <td colspan="7">
-                            <input type="text" style="width: 300px" name="dustproof_demand" id="dustproof_demand" value="@mc.dustproof_demand" />
+                            <input class="easyui-textbox" style="width: 300px" name="dustproof_demand" id="dustproof_demand" value="@mc.dustproof_demand" />
                         </td>
                     </tr>
                     <tr>
                         <td>@Html.Lang("sample_use"):
                         </td>
                         <td colspan="7">
-                            <input type="text" style="width: 190px" name="sample_use" id="sample_use" value="@mc.sample_use" />
+                            <input class="easyui-textbox" style="width: 190px" name="sample_use" id="sample_use" value="@mc.sample_use" />
                             @Html.Lang("uv_test"):
-                            <input type="text" style="width: 80px" name="uv_test" id="uv_test" value="@mc.uv_test" />
+                            <input class="easyui-textbox" style="width: 80px" name="uv_test" id="uv_test" value="@mc.uv_test" />
                             @Html.Lang("mechanical_shock_test"):
-                            <input type="text" style="width: 80px" name="mechanical_shock_test" id="mechanical_shock_test" value="@mc.mechanical_shock_test" />（UV试验和机械冲击试验需向客户收费）
+                            <input class="easyui-textbox" style="width: 80px" name="mechanical_shock_test" id="mechanical_shock_test" value="@mc.mechanical_shock_test" />（UV试验和机械冲击试验需向客户收费）
                         </td>
                     </tr>
                     <tr>
@@ -389,11 +392,11 @@
                             @Html.Lang("env_demand"):
                         </td>
                         <td colspan="7">
-                            <input type="text" style="width: 100px" name="env_demand" id="env_demand" value="@mc.env_demand" />
+                            <input class="easyui-textbox" style="width: 100px" name="env_demand" id="env_demand" value="@mc.env_demand" />
                             @if ("特殊标准:".Equals(mc.env_demand))
                             {
                                 <span id="env_special_span">
-                                    <input type="text" name="env_special" id="env_special" style="width: 180px" value="@mc.env_special" />
+                                    <input class="easyui-textbox" name="env_special" id="env_special" style="width: 180px" value="@mc.env_special" />
                                 </span>
                             }
                         </td>
@@ -403,7 +406,7 @@
                             @Html.Lang("engineer_content"):
                         </td>
                         <td colspan="7">
-                            <textarea cols="90" rows="2" name="engineer_content" id="engineer_content" style="margin: 0;">@mc.engineer_content</textarea>
+                            <input class="easyui-textbox" multiline="true" style="width:700px;height:40px" value="@mc.engineer_content" />
                         </td>
                     </tr>
                     <tr>
@@ -411,14 +414,14 @@
                             @Html.Lang("small_batch_production"):
                         </td>
                         <td colspan="7">
-                            <input type="text" style="width: 80px" name="small_batch_production" id="small_batch_production" value="@mc.small_batch_production" />
+                            <input class="easyui-textbox" style="width: 80px" name="small_batch_production" id="small_batch_production" value="@mc.small_batch_production" />
                             @if ("需要".Equals(mc.small_batch_production))
                             {
                                 <span id="small_batch_production_span">
                                     @Html.Lang("start_time"):
-                                    <input type="text" name="small_batch_start_time" id="small_batch_start_time" style="width: 120px" value="@((mc.small_batch_start_time == null ? "" : ((DateTime)mc.small_batch_start_time).ToString("yyyy-MM-dd")))"/>
+                                    <input class="easyui-textbox" name="small_batch_start_time" id="small_batch_start_time"  value="@((mc.small_batch_start_time == null ? "" : ((DateTime)mc.small_batch_start_time).ToString("yyyy-MM-dd")))"/>
                                     @Html.Lang("qty"):
-                                    <input type="text" id="small_batch_qty" name="small_batch_qty" style="width: 120px" value="@mc.small_batch_qty"/>
+                                    <input class="easyui-textbox" id="small_batch_qty" name="small_batch_qty"  value="@mc.small_batch_qty"/>
                                 </span>
                             }
                         </td>
@@ -428,19 +431,19 @@
                             @Html.Lang("plan_production_date"):
                         </td>
                         <td>
-                            <input type="text" name="plan_start_date" id="plan_start_date" style="width: 120px;" value="@(mc.plan_start_date == null ? "" : ((DateTime)mc.plan_start_date).ToString("yyyy-MM-dd"))" />
+                            <input class="easyui-textbox" name="plan_start_date" id="plan_start_date" style="width: 120px;" value="@(mc.plan_start_date == null ? "" : ((DateTime)mc.plan_start_date).ToString("yyyy-MM-dd"))" />
                         </td>
                         <td>
                             @Html.Lang("end_time"):
                         </td>
                         <td>
-                            <input type="text" name="plan_finish_date" id="plan_finish_date" style="width: 120px" value="@(mc.plan_finish_date == null ? "" : ((DateTime)mc.plan_finish_date).ToString("yyyy-MM-dd"))" />
+                            <input class="easyui-textbox" name="plan_finish_date" id="plan_finish_date"  value="@(mc.plan_finish_date == null ? "" : ((DateTime)mc.plan_finish_date).ToString("yyyy-MM-dd"))" />
                         </td>
                         <td>
                             @Html.Lang("estimated_quantity"):
                         </td>
                         <td>
-                            <input type="text" id="estimated_quantity" name="estimated_quantity" style="width: 120px;" value="@(mc.estimated_quantity == null ? "" : mc.estimated_quantity.ToString() + " K")" />
+                            <input class="easyui-textbox" id="estimated_quantity" name="estimated_quantity" style="width: 120px;" value="@(mc.estimated_quantity == null ? "" : mc.estimated_quantity.ToString() + " K")" />
                         </td>
                         <td>
                         </td>
@@ -452,17 +455,17 @@
                             @Html.Lang("competitor"):
                         </td>
                         <td>
-                            <input type="text" id="competitor" name="competitor" style="width: 120px" value="@mc.competitor" />
+                            <input class="easyui-textbox" id="competitor" name="competitor"  value="@mc.competitor" />
                         </td>
                         <td>
                             @Html.Lang("competitor_price"):
                         </td>
                         <td>
-                            <input type="text" id="competitor_price" name="competitor_price" style="width: 120px" value="@mc.competitor_price" />
+                            <input class="easyui-textbox" id="competitor_price" name="competitor_price"  value="@mc.competitor_price" />
                         </td>
                         <td colspan="4">
                             @Html.Lang("competitor_configuration"):
-                            <input type="text" id="competitor_configuration" name="competitor_configuration" style="width: 120px" value="@mc.competitor_configuration" />
+                            <input class="easyui-textbox" id="competitor_configuration" name="competitor_configuration"  value="@mc.competitor_configuration" />
                         </td>
                     </tr>
                     @if ("改模".Equals(mc.model_type))
@@ -472,9 +475,9 @@
                                 @Html.Lang("has_bill"):
                             </td>
                             <td colspan="7">
-                                <input type="text" style="width: 120px" name="modify_model_has_bill" id="modify_model_has_bill" value="@mc.modify_model_has_bill" />
+                                <input class="easyui-textbox"  name="modify_model_has_bill" id="modify_model_has_bill" value="@mc.modify_model_has_bill" />
                                 @Html.Lang("deal_with_bill"):
-                                <input type="text" id="modify_model_has_bill_deal_way" name="modify_model_has_bill_deal_way" style="width: 120px" value="@mc.modify_model_has_bill_deal_way" />
+                                <input class="easyui-textbox" id="modify_model_has_bill_deal_way" name="modify_model_has_bill_deal_way"  value="@mc.modify_model_has_bill_deal_way" />
                             </td>
                         </tr>
                     }
@@ -489,19 +492,19 @@
                                     @Html.Lang("product_level"):
                                 </td>
                                 <td>
-                                    <input type="text" style="width: 120px" name="product_level" id="product_level" value="@extra.product_level" />
+                                    <input class="easyui-textbox"  name="product_level" id="product_level" value="@extra.product_level" />
                                 </td>
                                 <td>
                                     @Html.Lang("Quality_desire"):
                                 </td>
                                 <td>
-                                    <input type="text" style="width: 120px" name="quality_demand" id="quality_demand" value="@extra.quality_demand" />
+                                    <input class="easyui-textbox"  name="quality_demand" id="quality_demand" value="@extra.quality_demand" />
                                 </td>
                                 <td>
                                     @Html.Lang("LCD_type"):
                                 </td>
                                 <td>
-                                    <input type="text" style="width: 120px" name="LCD_type" id="LCD_type" value="@extra.LCD_type" />
+                                    <input class="easyui-textbox"  name="LCD_type" id="LCD_type" value="@extra.LCD_type" />
                                 </td>
                             </tr>
                             <tr>
@@ -509,7 +512,7 @@
                                     @Html.Lang("up_polarizer"):
                                 </td>
                                 <td>
-                                    <input type="text" style="width: 120px" name="up_polarizer" id="up_polarizer" value="@extra.up_polarizer" />
+                                    <input class="easyui-textbox"  name="up_polarizer" id="up_polarizer" value="@extra.up_polarizer" />
                                 </td>
                                 @if ("抗反射".Equals(extra.up_polarizer))
                                 {
@@ -517,7 +520,7 @@
                                         @Html.Lang("reflectivity_percent"):
                                     </td>
                                     <td>
-                                        <input type="text" id="up_polarizer_reflectivity" name="up_polarizer_reflectivity" style="width: 120px;" value="@(extra.up_polarizer_reflectivity == null ? "" : extra.up_polarizer_reflectivity.ToString() + " %")" />
+                                        <input class="easyui-textbox" id="up_polarizer_reflectivity" name="up_polarizer_reflectivity" style="width: 120px;" value="@(extra.up_polarizer_reflectivity == null ? "" : extra.up_polarizer_reflectivity.ToString() + " %")" />
                                     </td>
                                 }
                                 else
@@ -531,11 +534,11 @@
                                     @Html.Lang("LCD_mode"):
                                 </td>
                                 <td>
-                                    <input type="text" style="width: 70px" name="LCD_mode" id="LCD_mode" value="@extra.LCD_mode" />
+                                    <input class="easyui-textbox" style="width: 70px" name="LCD_mode" id="LCD_mode" value="@extra.LCD_mode" />
                                     @if ("负像".Equals(extra.LCD_mode))
                                     {
                                         <span id="LCD_mode_bl_color_span">@Html.Lang("bl_color"):
-                                            <input type="text" id="LCD_mode_bl_color" name="LCD_mode_bl_color" style="width: 60px" value="@extra.LCD_mode_bl_color" />
+                                            <input class="easyui-textbox" id="LCD_mode_bl_color" name="LCD_mode_bl_color" style="width: 60px" value="@extra.LCD_mode_bl_color" />
                                         </span>
                                     }
                                 </td>
@@ -545,19 +548,19 @@
                                     @Html.Lang("under_polarizer"):
                                 </td>
                                 <td>
-                                    <input type="text" style="width: 120px" name="down_polarizer" id="down_polarizer" value="@extra.down_polarizer" />
+                                    <input class="easyui-textbox"  name="down_polarizer" id="down_polarizer" value="@extra.down_polarizer" />
                                 </td>
                                 <td>
                                     @Html.Lang("bl_type"):
                                 </td>
                                 <td>
-                                    <input type="text" style="width: 120px" name="BL_type" id="BL_type" value="@extra.BL_type" />
+                                    <input class="easyui-textbox"  name="BL_type" id="BL_type" value="@extra.BL_type" />
                                 </td>
                                 <td>
                                     @Html.Lang("bls_color"):
                                 </td>
                                 <td>
-                                    <input type="text" style="width: 120px" name="BL_color" id="BL_color" value="@extra.BL_color" />
+                                    <input class="easyui-textbox"  name="BL_color" id="BL_color" value="@extra.BL_color" />
                                 </td>
                             </tr>
                             <tr>
@@ -565,11 +568,11 @@
                                     @Html.Lang("temperature_character"):
                                 </td>
                                 <td colspan="5">
-                                    <input type="text" style="width: 120px" name="temperature_character" id="temperature_character" value="@extra.temperature_character" />
+                                    <input class="easyui-textbox"  name="temperature_character" id="temperature_character" value="@extra.temperature_character" />
                                     @if ("特注".Equals(extra.temperature_character))
                                     {
-                                        <span id="temperature_character_span">Top:<input type="text" id="temperature_character_top" name="temperature_character_top" style="width: 80px;" value="@(extra.temperature_character_top == null ? "" : extra.temperature_character_top.ToString() + " ℃")" />
-                                            Tst:<input type="text" id="temperature_character_tst" name="temperature_character_tst"  style="width: 80px;" value="@(extra.temperature_character_tst == null ? "" : extra.temperature_character_tst.ToString() + " ℃")" />
+                                        <span id="temperature_character_span">Top:<input class="easyui-textbox" id="temperature_character_top" name="temperature_character_top" style="width: 80px;" value="@(extra.temperature_character_top == null ? "" : extra.temperature_character_top.ToString() + " ℃")" />
+                                            Tst:<input class="easyui-textbox" id="temperature_character_tst" name="temperature_character_tst"  style="width: 80px;" value="@(extra.temperature_character_tst == null ? "" : extra.temperature_character_tst.ToString() + " ℃")" />
                                         </span>
                                     }
                                 </td>

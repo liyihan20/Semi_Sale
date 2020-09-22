@@ -4,6 +4,18 @@
     ReturnBill bill = (ReturnBill)ViewData["bill"];
     List<ReturnBillDetail> details = (List<ReturnBillDetail>)ViewData["details"];
 }
+<link rel="stylesheet" href="@Url.Content("~/Scripts/webuploader/webuploader.css")" />
+<script src="@Url.Content("~/Scripts/webuploader/webuploader.withoutimage.js")"></script>
+<script src="@Url.Content("~/Scripts/MyUploader.js")"></script>
+<script>
+    $(function () {
+        $("#file_div").myUploader({
+            sysNum: "@bill.sys_no",
+            uploadUser: "@ViewData["userName"]",
+            canUpload:true
+        });
+    })
+</script>
 <script type="text/javascript">
     $(function () {
         var isCurrentMonth='@ViewData["isCurrentMonth"]';
@@ -614,6 +626,11 @@
             </tr>
         </table>
     </div>
+
+    <div id="file_div" class="easyui-panel" title="附件清单" style="width: 740px;height:188px;">
+        @*存放附件table*@
+    </div>
+
     <div align="center">
         <a id="saveAllBut" class="easyui-linkbutton" iconcls='icon-save' style="margin: 10px 20px;">
             保存表单</a> <a id="submitApply" class="easyui-linkbutton" iconcls='icon-document' style="margin: 10px 20px;">

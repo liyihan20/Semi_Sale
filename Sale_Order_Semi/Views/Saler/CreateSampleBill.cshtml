@@ -1,9 +1,15 @@
 ﻿@using Sale_Order_Semi.Models;
 @{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
     SampleBill sb = (SampleBill)ViewData["sb"];
     int step = (int)ViewData["step"];
     string formTitle = step == 0 ? "新建样品单" : "修改样品单";
 }
+<style type="text/css">
+    #order_div input {
+        width: 140px;
+    }
+</style>
 <script type="text/javascript">
     $(function () {
 
@@ -383,10 +389,12 @@
                                 saveForm();
                                 $.messager.progress();
                             } else {
-                                $.messager.confirm('@Html.Lang("confirm")', data.msg, function (r) {
-                                    if (r) {
+                                $.messager.confirm('@Html.Lang("confirm")', data.msg, function (r2) {
+                                    if (r2) {
+                                        console.log("a");
                                         saveForm();
                                         $.messager.progress();
+                                        console.log("b");
                                     }
                                 });
                             }
@@ -404,6 +412,7 @@
     }
    
         function saveForm() {
+            console.log("c");
             $('#order_form').form('submit',{
                 url: '@Url.Content("~/Audit/AuditorSaveSampleBill")',
                 onSubmit: function(param){ 
@@ -418,9 +427,11 @@
                     param.step="@step";
                     param.zz_customer_name=$('#zz_customer_no').combobox('getText');
                     param.plan_firm_name=$('#plan_firm_no').combobox('getText');
-                    param.sea_customer_name=$('#sea_customer_no').combobox('getText');
+                    param.sea_customer_name = $('#sea_customer_no').combobox('getText');
+                    return true;
                 },
                 success: function (data) {
+                    console.log(data);
                     var result = eval('('+ data +')');
                     if(result.suc){
                         $('#okFlag').val('true');
@@ -502,7 +513,7 @@
             <input type="hidden" name="step" value="@ViewData["step"]" />
             <input type="hidden" name="applyId" value="@ViewData["applyId"]" />
             <input type="hidden" name="okFlag" id="okFlag" value="" />
-            <input id="agency_comment" name="agency_comment" style="width: 500px" />&nbsp; 
+            <input class="easyui-textbox" id="agency_comment" name="agency_comment" style="width: 500px" />&nbsp; 
             <a id="OKBt" href="#agency_div" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="okClick()">@Html.Lang("pass")</a>
             <a id="NOBt" href="#agency_div" class="easyui-linkbutton" data-options="iconCls:'icon-no'" onclick="noClick()">@Html.Lang("reject")</a>
             <a id="blockBt" href="#agency_div" class="easyui-linkbutton" data-options="iconCls:'icon-help'" onclick="block()">挂起</a>
@@ -511,39 +522,22 @@
 }
 <div data-options="region:'center'">
 <form id="order_form" method="post">
-<div id="order_div" class="easyui-panel" title="@Html.Lang("create_sample_bill")" style="width: 840px; padding: 10px;
-    background: #fafafa;+position: relative;">
+<div id="order_div" class="easyui-panel" title="@Html.Lang("create_sample_bill")" style="width: 940px; padding: 10px; background: #fafafa;">
     <div>
         @*表头*@
-        <table border="0" cellpadding="0" cellspacing="3" width="800">
-            @*@if (step==4)
-                    {
-                        <tr>
-                            <td>
-                                单据编号:
-                            </td>
-                            <td>
-                                <input type="text" name="bill_no" id="bill_no" style="width:115px" value="@sb.bill_no"/>
-                            </td>
-                            @for (var i = 0; i < 6; i++)
-                            { 
-                                <td>
-                                </td>
-                            }
-                        </tr>
-                    }*@
+        <table border="0" cellpadding="0" cellspacing="3" width="900">
             <tr>
                 <td>
                     下单日期:
                 </td>
                 <td>
-                    <input class="easyui-datebox" id="bill_date" name="bill_date" style="width: 120px" required="true"  editable="false" value="@(((DateTime)sb.bill_date).ToString("yyyy-MM-dd"))"/>
+                    <input class="easyui-datebox" id="bill_date" name="bill_date" required="true"  editable="false" value="@(((DateTime)sb.bill_date).ToString("yyyy-MM-dd"))"/>
                 </td>
                 <td>
                     是否收费:
                 </td>
                 <td>
-                    <input class="easyui-combobox" style="width: 120px" name="is_free" id="is_free" data-options="textField:'value',valueField:'value',panelHeight:'auto', required:true,editable:false,
+                    <input class="easyui-combobox" name="is_free" id="is_free" data-options="textField:'value',valueField:'value',panelHeight:'auto', required:true,editable:false,
                                            data:[
                                            {value:'收费'},{value:'免费'}
                                            ]" />
@@ -552,13 +546,13 @@
                     对应项目组:
                 </td>
                 <td>
-                    <input id="project_team" name="project_team" style="width: 120px" />
+                    <input id="project_team" name="project_team" />
                 </td>
                 <td>
                     系统流水号:
                 </td>
                 <td>
-                    <input type="text" name="sys_no" id="sys_no" style="width:115px" readonly="readonly" value="@sb.sys_no"/>
+                    <input class="easyui-textbox" name="sys_no" id="sys_no" readonly="readonly" value="@sb.sys_no"/>
                 </td>
             </tr>
             <tr>
@@ -567,13 +561,13 @@
                 </td>
                 <td>
                     <input class="easyui-combobox" id="clear_way" name="clear_way" url="@Url.Content("~/Items/getItems?what=clearing_way")"
-                        valuefield="name" textfield="name" style="width: 120px" panelWidth="240" required="true" value="@sb.clear_way" />
+                        valuefield="name" textfield="name" panelWidth="240" required="true" value="@sb.clear_way" />
                 </td>
                 <td>
                     贸易类型:
                 </td>
                 <td>
-                    <input class="easyui-combobox" id="trade_type_no" name="trade_type_no" style="width: 120px"  editable="false"
+                    <input class="easyui-combobox" id="trade_type_no" name="trade_type_no" editable="false"
                     panelHeight="auto" valuefield="no" textfield="name" url="@Url.Content("~/Items/getItems?what=trade_type")" required="true" value="@sb.trade_type_no" />
                 </td>
                 <td>
@@ -581,14 +575,14 @@
                 </td>
                 <td>
                     <input class="easyui-combobox" id="fetch_add_no" name="fetch_add_no" url="@Url.Content("~/Items/getItems?what=delivery_place")" editable="false"
-                        valuefield="no" textfield="name" panelheight="auto" panelwidth="200" style="width: 120px"  required="true" value="@sb.fetch_add_no" />
+                        valuefield="no" textfield="name" panelheight="auto" panelwidth="200" required="true" value="@sb.fetch_add_no" />
                 </td>
                 <td>
                     销售方式:
                 </td>
                 <td>
                     <input class="easyui-combobox" id="sale_type_no" name="sale_type_no" url="@Url.Content("~/Items/getItems?what=sale_type")" panelheight="auto"  editable="false"
-                    valuefield="no" textfield="name" style="width: 120px" value="@sb.sale_type_no" />
+                    valuefield="no" textfield="name" value="@sb.sale_type_no" />
                 </td>
             </tr>
             <tr>
@@ -596,27 +590,27 @@
                     办事处:
                 </td>
                 <td>
-                    <input class="easyui-combobox" id="agency_no" name="agency_no" style="width: 120px" 
+                    <input class="easyui-combobox" id="agency_no" name="agency_no" 
                     panelwidth="140" valuefield="no" textfield="name" url="@Url.Content("~/Items/getItems?what=agency")" required="true" value="@sb.agency_no"/>
                 </td>
                 <td>
                     业务员:
                 </td>
                 <td>
-                    <input id="clerk_no" class="remotebox" name="clerk_no" style="width: 120px" value="@sb.clerk_no" />
+                    <input id="clerk_no" class="remotebox" name="clerk_no" value="@sb.clerk_no" />
                 </td>
                 <td>
                     币别:
                 </td>
                 <td>
                     <input id="currency_no" class="easyui-combobox" name="currency_no" panelHeight="auto" url="@Url.Content("~/Items/getItems?what=currency")" editable="false"
-                        valuefield="no" textfield="name" style="width: 120px"  required="true" value="@sb.currency_no" />
+                        valuefield="no" textfield="name" required="true" value="@sb.currency_no" />
                 </td>
                 <td>
                     汇率:
                 </td>
                 <td>
-                    <input class="easyui-numberbox" name="exchange_rate" id="exchange_rate" style="width: 115px" precision="4" value="@sb.exchange_rate" />
+                    <input class="easyui-numberbox" name="exchange_rate" id="exchange_rate" precision="4" value="@sb.exchange_rate" />
                 </td>
             </tr>
             <tr>
@@ -631,7 +625,7 @@
                                            {value:'MDS/S-MDS'},{value:'S-LCM/H-S-LCM'},{value:'P-LCM/P-S-LCM'},{value:'LCM'},
                                            {value:'H-LCM'},{value:'SIM'},{value:'TNM'},{value:'FIC'},{value:'测试架'}
                                            ]" value="@sb.product_type" />*@
-                    <input class="easyui-combobox" id="product_type" name="product_type" style="width: 120px"
+                    <input class="easyui-combobox" id="product_type" name="product_type"
                                data-options="textField:'name',valueField:'name', required:true,editable:false,"
                                url="@Url.Content("~/Items/getItems?what=product_type")" value="@sb.product_type"
                                 />
@@ -640,7 +634,7 @@
                     产品型号:
                 </td>
                 <td colspan="3">
-                    <input id="product_model" name="product_model" style="width: 300px" value="@sb.product_model" />
+                    <input id="product_model" name="product_model" style="width: 360px" value="@sb.product_model" />
                     <input type="hidden" name="product_number" id="product_number" value="@sb.product_number" />
                     <input type="hidden" name="product_name" id="product_name" value="@sb.product_name"/>
                     <input type="hidden" name="product_unit" id="product_unit" value="@sb.product_unit" />
@@ -649,7 +643,7 @@
                     要求完成日期:
                 </td>
                 <td>
-                    <input class="easyui-datebox" name="demand_finish_date" id="demand_finish_date" style="width: 115px"  editable="false"
+                    <input class="easyui-datebox" name="demand_finish_date" id="demand_finish_date" editable="false"
                         required="true" value="@(sb.demand_finish_date == null ? "" : ((DateTime)sb.demand_finish_date).ToString("yyyy-MM-dd"))"/>
                 </td>
             </tr>
@@ -658,35 +652,35 @@
                     购货单位:
                 </td>
                 <td>
-                    <input id="customer_no" class="customerbox" name="customer_no" style="width: 120px"
+                    <input id="customer_no" class="customerbox" name="customer_no" 
                         panelwidth="240px" value="@sb.customer_no" />
                 </td>
                 <td>
                     方案公司:
                 </td>
                 <td>
-                    <input id="plan_firm_no" class="customerbox" name="plan_firm_no" style="width: 120px"
+                    <input id="plan_firm_no" class="customerbox" name="plan_firm_no"
                         panelwidth="240px" value="@sb.plan_firm_no" />
                 </td>
                 <td>
                     海外客户:
                 </td>
                 <td>
-                    <input id="sea_customer_no" class="customerbox" name="sea_customer_no" style="width: 120px"
+                    <input id="sea_customer_no" class="customerbox" name="sea_customer_no"
                         panelwidth="240px" value="@sb.sea_customer_no" />
                 </td>
                 <td>
                     终端客户:
                 </td>
                 <td>
-                    <input id="zz_customer_no" class="customerbox" name="zz_customer_no" style="width: 120px"
+                    <input id="zz_customer_no" class="customerbox" name="zz_customer_no"
                         panelwidth="240px" value="@sb.zz_customer_no" />
                 </td>
             </tr>
             <tr>
                 <td colspan="2">
                     是否共用现有产品:
-                    <input class="easyui-combobox" style="width: 80px" name="use_existed_product" id="use_existed_product"
+                    <input class="easyui-combobox" style="width: 96px" name="use_existed_product" id="use_existed_product"
                         data-options="textField:'value',valueField:'value',panelHeight:'auto', required:true,editable:false,
                                            data:[
                                            {value:'是'},{value:'否'}
@@ -696,20 +690,19 @@
                     原开模客户:
                 </td>
                 <td>
-                    <input class="easyui-validatebox" name="original_model_customer" id="original_model_customer"
-                        style="width: 115px" value="@sb.original_model_customer" />
+                    <input class="easyui-textbox" name="original_model_customer" id="original_model_customer"  value="@sb.original_model_customer" />
                 </td>
                 <td>
                     图纸编号:
                 </td>
                 <td>
-                    <input id="pic_number" class="easyui-validatebox" name="pic_number" style="width: 115px"  required="true" value="@sb.pic_number" />
+                    <input id="pic_number" class="easyui-textbox" name="pic_number" required="true" value="@sb.pic_number" />
                 </td>
                 <td>
                     图纸版本:
                 </td>
                 <td>
-                    <input id="pic_version" class="easyui-validatebox" name="pic_version" style="width: 115px" required="true" value="@sb.pic_version" />
+                    <input id="pic_version" class="easyui-textbox" name="pic_version" required="true" value="@sb.pic_version" />
                 </td>
             </tr>
             <tr>
@@ -724,20 +717,19 @@
                     报价编号:
                 </td>
                 <td>
-                    <input class="easyui-validatebox" name="quote_num" id="quote_num" style="width: 115px" value="@sb.quote_num" />
+                    <input class="easyui-textbox" name="quote_num" id="quote_num" value="@sb.quote_num" />
                 </td>
                 <td>
                     样品数量:
                 </td>
                 <td>
-                    <input id="sample_qty" class="easyui-numberbox" name="sample_qty" style="width: 115px"
-                        required="true" value="@sb.sample_qty" />
+                    <input id="sample_qty" class="easyui-numberbox" name="sample_qty" required="true" value="@sb.sample_qty" />
                 </td>
                 <td>
                     样品用途:
                 </td>
                 <td>
-                    <input class="easyui-combobox" style="width: 120px" name="sample_use" id="sample_use"
+                    <input class="easyui-combobox" name="sample_use" id="sample_use"
                         data-options="textField:'value',valueField:'value',panelHeight:'auto',multiple:true,required:true,editable:false,
                                         data:[
                                         {value:'可靠性测试'},{value:'功能测试'},{value:'结构测试'}
@@ -747,7 +739,7 @@
                     @Html.Lang("contract_num"):
                 </td>
                 <td>
-                    <input id="contract_po_no" class="easyui-validatebox" name="contract_po_no" style="width: 115px" value="@sb.contract_po_no" />
+                    <input id="contract_po_no" class="easyui-textbox" name="contract_po_no" value="@sb.contract_po_no" />
                 </td>
             </tr>
             <tr>
@@ -755,25 +747,25 @@
                     成本:
                 </td>
                 <td>
-                    <input id="cost" class="easyui-numberbox" name="cost" style="width: 115px" precision="2" required="true" value="@sb.cost" />
+                    <input id="cost" class="easyui-numberbox" name="cost" precision="2" required="true" value="@sb.cost" />
                 </td>
                 <td class="freeHiddenPrice">
                     成交价:
                 </td>
                 <td class="freeHiddenPrice">
-                    <input id="deal_price" class="easyui-numberbox" name="deal_price" style="width: 115px" precision="5" value="@sb.deal_price" />
+                    <input id="deal_price" class="easyui-numberbox" name="deal_price" precision="5" value="@sb.deal_price" />
                 </td>
                 <td class="freeHiddenPrice">
                     合同价:
                 </td>
                 <td class="freeHiddenPrice">
-                    <input id="contract_price" class="easyui-numberbox" name="contract_price" style="width: 115px" precision="5" value="@sb.contract_price" />
+                    <input id="contract_price" class="easyui-numberbox" name="contract_price" precision="5" value="@sb.contract_price" />
                 </td> 
                 <td>
                     制单人:
                 </td>
                 <td>
-                    <input class="easyui-textbox" id="create_user" name="create_user"  value="@sb.User.real_name" readonly="readonly" style="width: 115px" />
+                    <input class="easyui-textbox" id="create_user" name="create_user"  value="@sb.User.real_name" readonly="readonly" />
                 </td>
             </tr>
             <tr>                
@@ -781,7 +773,7 @@
                     主管:
                 </td>
                 <td>
-                    <input id="charger_no" class="remotebox" name="charger_no" style="width: 120px" value="@sb.charger_no" />
+                    <input id="charger_no" class="remotebox" name="charger_no" value="@sb.charger_no" />
                 </td>
             </tr>
             <tr>
@@ -793,7 +785,7 @@
                                            {value:'是'},{value:'否'}
                                            ]" value="@sb.is_special_sample" />
                     免费样品特别需求编号:
-                    <input class="easyui-validatebox" name="oa_special_request_no" id="oa_special_request_no" style="width: 150px" value="@sb.oa_special_request_no" />
+                    <input class="easyui-textbox" name="oa_special_request_no" id="oa_special_request_no" style="width: 150px" value="@sb.oa_special_request_no" />
                 </td>
             </tr>
             <tr>
@@ -805,7 +797,7 @@
                                            {value:'是'},{value:'否'}
                                            ]" value="@sb.is_overtop_qty" />
                     超出规定数量原因:
-                    <input id="overtop_qty_reason" class="easyui-validatebox" name="overtop_qty_reason"
+                    <input id="overtop_qty_reason" class="easyui-textbox" name="overtop_qty_reason"
                         style="width: 312px" value="@sb.overtop_qty_reason" />
                 </td>
             </tr>
@@ -814,7 +806,7 @@
                     第
                     <input id="how_many_time" class="easyui-numberbox" name="how_many_time" style="width: 50px" value="@sb.how_many_time" />
                     次下此客户/此型号的样品单 重复下样品单的原因:
-                    <input id="repeat_sample_reason" class="easyui-validatebox" name="repeat_sample_reason"
+                    <input id="repeat_sample_reason" class="easyui-textbox" name="repeat_sample_reason"
                         style="width: 300px" value="@sb.repeat_sample_reason" />
                     <br />
                     <span style="font-size: small; color: Red">(填“2”要写原因；同时，相同客户/没有改动的相同样品下单不可超过2次)</span>
@@ -829,7 +821,7 @@
                                            {value:'是'},{value:'否'}
                                            ]" value="@sb.is_glass_remake"/>
                     收取重投费用:
-                    <input id="glass_remake_fee" class="easyui-validatebox" name="glass_remake_fee" style="width: 120px" value="@sb.glass_remake_fee" />
+                    <input id="glass_remake_fee" class="easyui-textbox" name="glass_remake_fee" style="width: 120px" value="@sb.glass_remake_fee" />
                 </td>
             </tr>
             <tr>
@@ -851,19 +843,19 @@
                                 1. 新客户机型名称:
                             </td>
                             <td>
-                                <input id="new_project_name" class="easyui-validatebox" name="new_project_name" style="width: 115px" value="@sb.new_project_name" />
+                                <input id="new_project_name" class="easyui-textbox" name="new_project_name" style="width: 115px" value="@sb.new_project_name" />
                             </td>
                             <td>
                                 2. 新客户机型预计订单量:
                             </td>
                             <td>
-                                <input id="new_project_order_qty" class="easyui-validatebox" name="new_project_order_qty" style="width: 100px" value="@sb.new_project_order_qty" />
+                                <input id="new_project_order_qty" class="easyui-textbox" name="new_project_order_qty" style="width: 100px" value="@sb.new_project_order_qty" />
                             </td>
                             <td>
                                 3. 新客户机型的订单计划:
                             </td>
                             <td>
-                                <input id="new_project_order_plan" class="easyui-validatebox" name="new_project_order_plan" style="width: 130px" value="@sb.new_project_order_plan" />
+                                <input id="new_project_order_plan" class="easyui-textbox" name="new_project_order_plan" style="width: 130px" value="@sb.new_project_order_plan" />
                             </td>
                         </tr>
                     </table>
@@ -874,7 +866,7 @@
                     产品行业分类:
                     <input name="product_classification" id="product_classification" style="width: 160px" value="@sb.product_classification" />
                     具体产品用途:
-                    <input id="product_use" class="easyui-validatebox" name="product_use" style="width: 340px"  required="true" value="@sb.product_use" />
+                    <input id="product_use" class="easyui-textbox" name="product_use" style="width: 340px"  required="true" value="@sb.product_use" />
                 </td>
             </tr>
             <tr>
@@ -920,7 +912,7 @@
                     备注:
                 </td>
                 <td colspan="7">
-                    <textarea cols="84" rows="2" name="user_comment" id="user_comment" style="margin: 0;">@sb.user_comment</textarea>
+                    <input class="easyui-textbox" name="user_comment" id="user_comment" multiline="true" style="width:700px;height:40px" value="@sb.user_comment" />
                 </td>
             </tr>
         </table>

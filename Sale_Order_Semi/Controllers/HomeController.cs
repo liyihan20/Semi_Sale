@@ -12,25 +12,22 @@ using Sale_Order_Semi.Utils;
 namespace Sale_Order_Semi.Controllers
 {
     [SessionTimeOutFilter()]
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        SaleDBDataContext db = new SaleDBDataContext();
         SomeUtils utl = new SomeUtils();
 
         public ActionResult Main(string url) {
 
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            User user = db.User.Single(u => u.id == userId);
             var powers = (from a in db.Authority
                       from u in db.Group
                       from ga in a.GroupAndAuth
                       from gu in u.GroupAndUser
-                      where ga.group_id == u.id && gu.user_id == userId
+                          where ga.group_id == u.id && gu.user_id == currentUser.userId
                       select a.sname).ToArray();
             ViewData["url"] = string.IsNullOrEmpty(url) ? "" : utl.MyUrlDecoder(url);
             ViewData["powers"] = powers;
-            ViewData["username"] = user.real_name;
-            ViewData["depName"] = user.Department1.name;
+            ViewData["username"] = currentUser.realName;
+            ViewData["depName"] = currentUser.departmentName;
             return View();
         }
 
@@ -98,9 +95,8 @@ namespace Sale_Order_Semi.Controllers
         //保存错误信息
         public JsonResult WriteDownErrors(string message)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             var err=new SystemErrors();
-            err.user_name=db.User.Single(u=>u.id==userId).username;
+            err.user_name = currentUser.realName;
             err.exception=message;
             err.op_time = DateTime.Now;
             db.SystemErrors.InsertOnSubmit(err);

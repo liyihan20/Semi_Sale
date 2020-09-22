@@ -13,9 +13,8 @@ using Newtonsoft.Json;
 
 namespace Sale_Order_Semi.Controllers
 {
-    public class SalerController : Controller
+    public class SalerController : BaseController
     {
-        SaleDBDataContext db = new SaleDBDataContext();
         SomeUtils utl = new SomeUtils();
         const string SALEORDER = "销售订单";
         const string SALECONTRACT = "销售合同";
@@ -336,19 +335,17 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public ActionResult CreateSaleOrder()
         {            
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            User user = db.User.Single(u => u.id == userId);
             Sale_SO order = new Sale_SO();
             List<Sale_SO_details> details = new List<Sale_SO_details>();
 
-            order.user_name = db.User.Single(u => u.id == userId).real_name;
-            order.user_id = userId;
+            order.user_name = currentUser.realName;
+            order.user_id = currentUser.userId;
             order.sys_no = utl.getSystemNo("SO");
             order.order_date = DateTime.Now;
             order.percent1 = 100;
             order.step_version = 0;
 
-            var dep = db.vwItems.Where(v => v.what == "agency" && v.fname == user.Department1.name).FirstOrDefault();
+            var dep = db.vwItems.Where(v => v.what == "agency" && v.fname == currentUser.departmentName).FirstOrDefault();
             if (dep != null) {
                 order.department_name = dep.fname;
                 order.department_no = dep.fid;
@@ -364,7 +361,6 @@ namespace Sale_Order_Semi.Controllers
         [HttpPost]
         public JsonResult saveSaleOrder(FormCollection col)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             Sale_SO h;
             List<Sale_SO_details> ds;
             try {
@@ -590,7 +586,7 @@ namespace Sale_Order_Semi.Controllers
                 BackupData bd = new BackupData();
                 bd.op_date = DateTime.Now;
                 bd.sys_no = h.sys_no;
-                bd.user_id = userId;
+                bd.user_id = currentUser.userId;
                 bd.main_data = JsonConvert.SerializeObject(existedBills);
                 bd.secondary_data = JsonConvert.SerializeObject(existedDetails);
                 db.BackupData.InsertOnSubmit(bd);
@@ -637,10 +633,9 @@ namespace Sale_Order_Semi.Controllers
 
         public JsonResult CheckOwnSaleOrders(string sysNo, DateTime fromDate, DateTime toDate, int auditResult)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             var result = (from o in db.Sale_SO
                            join e in db.Sale_SO_details on o.id equals e.order_id
-                           where o.user_id == userId
+                          where o.user_id == currentUser.userId
                            && o.order_date >= fromDate
                            && o.order_date <= toDate
                            select new { o, e }).ToList();
@@ -719,7 +714,6 @@ namespace Sale_Order_Semi.Controllers
         public ActionResult BeginApplySo(string sys_no)
         {
             string pre = sys_no.Substring(0, 2);
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             var ord = db.Sale_SO.Single(o => o.sys_no == sys_no);            
             string processType = pre;
 
@@ -734,7 +728,7 @@ namespace Sale_Order_Semi.Controllers
             }
 
             Apply apply = new Apply();
-            apply.user_id = userId;
+            apply.user_id = currentUser.userId;
             apply.sys_no = sys_no;
             apply.start_date = DateTime.Now;
             apply.ip = Request.UserHostAddress;
@@ -752,11 +746,11 @@ namespace Sale_Order_Semi.Controllers
             {
                 if (!testFlag)
                 {
-                    ads = utl.getApplySequence(apply, processType, userId, db.User.Single(u => u.id == userId).Department1.dep_no, ord.produce_dep_id);
+                    ads = utl.getApplySequence(apply, processType, currentUser.userId, db.User.Single(u => u.id == currentUser.userId).Department1.dep_no, ord.produce_dep_id);
                 }
                 else
                 {
-                    ads = utl.getTestApplySequence(apply, processType, userId);
+                    ads = utl.getTestApplySequence(apply, processType, currentUser.userId);
                 }
             }
             catch (Exception ex)
@@ -867,26 +861,23 @@ namespace Sale_Order_Semi.Controllers
 
         //新增开模改模单
         public ActionResult CreateModelContract()
-        {            
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            User user = db.User.Single(u => u.id == userId);            
+        {      
             string sys_no=utl.getSystemNo("CM");
             ViewData["sys_no"] = sys_no;
-            var dep = db.vwItems.Where(v => v.what == "agency" && v.fname == user.Department1.name);
+            var dep = db.vwItems.Where(v => v.what == "agency" && v.fname == currentUser.departmentName);
             if (dep.Count() > 0)
             {
                 ViewData["agency_no"] = dep.First().fid;
             }
-            ViewData["create_user"] = user.real_name;
+            ViewData["create_user"] = currentUser.realName;
             utl.writeEventLog(CREATEMODEL, "新建一张开改模单", sys_no, Request);
             return View();
         }
 
         //营业员保存开改模单
         public JsonResult SalerSaveModelContract(FormCollection col) {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             int stepVersion = 0;
-            string saveResult = utl.saveModelContract(col, stepVersion,userId);
+            string saveResult = utl.saveModelContract(col, stepVersion, currentUser.userId);
             if (string.IsNullOrWhiteSpace(saveResult))
             {
                 return Json(new { suc = true }, "text/html");
@@ -932,9 +923,8 @@ namespace Sale_Order_Semi.Controllers
         //查看开模改模单的方法
         public JsonResult CheckOwnModelContracts(string sysNo, DateTime fromDate, DateTime toDate, int auditResult)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             var result = from v in db.ModelContract
-                         where v.user_id == userId
+                         where v.user_id == currentUser.userId
                          && (v.sys_no.Contains(sysNo) || v.product_model.Contains(sysNo))
                          && v.bill_date >= fromDate
                          && v.bill_date <= toDate
@@ -1019,7 +1009,6 @@ namespace Sale_Order_Semi.Controllers
         public ActionResult BeginApplyCM(string sys_no)
         {
             string pre = sys_no.Substring(0, 2);
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             ModelContract mc = db.ModelContract.Single(m => m.sys_no == sys_no);
             string processType = pre;
 
@@ -1036,7 +1025,7 @@ namespace Sale_Order_Semi.Controllers
             }
 
             Apply apply = new Apply();
-            apply.user_id = userId;
+            apply.user_id = currentUser.userId;
             apply.sys_no = sys_no;
             apply.start_date = DateTime.Now;
             apply.ip = Request.UserHostAddress;
@@ -1055,17 +1044,17 @@ namespace Sale_Order_Semi.Controllers
                 {
                     //获取部门id，事业部id，项目组id，报价员id
                     Dictionary<string, int?> auditorsDic = new Dictionary<string, int?>();
-                    auditorsDic.Add("部门ID", db.User.Single(u => u.id == userId).Department1.dep_no);
+                    auditorsDic.Add("部门ID", db.User.Single(u => u.id == currentUser.userId).Department1.dep_no);
                     auditorsDic.Add("研发项目组ID", db.Department.Single(d => d.name == mc.project_team && d.dep_type == "研发项目组").dep_no);
                     auditorsDic.Add("开模事业部ID", db.Department.Single(d => d.name == mc.bus_dep && d.dep_type == "开模事业部").dep_no);
                     if (mc.quotation_clerk_id != null) {
                         auditorsDic.Add("表单报价员值ID", mc.quotation_clerk_id);
                     }
-                    ads = utl.getApplySequence(apply, processType, userId, auditorsDic);
+                    ads = utl.getApplySequence(apply, processType, currentUser.userId, auditorsDic);
                 }
                 else
                 {
-                    ads = utl.getTestApplySequence(apply, processType, userId);
+                    ads = utl.getTestApplySequence(apply, processType, currentUser.userId);
                 }
             }
             catch (Exception ex)
@@ -1109,17 +1098,15 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public ActionResult CreateSampleBill()
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            User user = db.User.Single(u => u.id == userId);
             string sys_no = utl.getSystemNo("SB");
             SampleBill sb = new SampleBill();
             sb.sys_no = sys_no;
-            var dep = db.vwItems.Where(v => v.what == "agency" && v.fname == user.Department1.name);
+            var dep = db.vwItems.Where(v => v.what == "agency" && v.fname == currentUser.departmentName);
             if (dep.Count() > 0)
             {
                 sb.agency_no = dep.First().fid;
             }
-            sb.User = user;
+            sb.User = db.User.Single(u => u.id == currentUser.userId);
             sb.bill_date = DateTime.Now;
             utl.writeEventLog(SAMPLEBILL, "新建一张样品单", sys_no, Request);
 
@@ -1130,9 +1117,8 @@ namespace Sale_Order_Semi.Controllers
 
         //保存
         public JsonResult SalerSaveSampleBill(FormCollection col) {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             int stepVersion = 0;
-            string saveResult = utl.saveSampleBill(col, stepVersion, userId);
+            string saveResult = utl.saveSampleBill(col, stepVersion, currentUser.userId);
             if (string.IsNullOrWhiteSpace(saveResult))
             {
                 return Json(new { suc = true });
@@ -1146,9 +1132,8 @@ namespace Sale_Order_Semi.Controllers
         //查看
         public JsonResult CheckOwnSampleBills(string sysNo, DateTime fromDate, DateTime toDate, int auditResult)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             var result = from v in db.SampleBill
-                         where v.original_user_id == userId
+                         where v.original_user_id == currentUser.userId
                          && (v.sys_no.Contains(sysNo) || v.product_model.Contains(sysNo))
                          && v.bill_date >= fromDate
                          && v.bill_date <= toDate
@@ -1251,7 +1236,6 @@ namespace Sale_Order_Semi.Controllers
         public ActionResult BeginApplySB(string sys_no)
         {
             string pre = sys_no.Substring(0, 2);
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             SampleBill sb = db.SampleBill.Single(m => m.sys_no == sys_no);
             string processType = pre;
 
@@ -1267,7 +1251,7 @@ namespace Sale_Order_Semi.Controllers
             }
 
             Apply apply = new Apply();
-            apply.user_id = userId;
+            apply.user_id = currentUser.userId;
             apply.sys_no = sys_no;
             apply.start_date = DateTime.Now;
             apply.ip = Request.UserHostAddress;
@@ -1286,16 +1270,16 @@ namespace Sale_Order_Semi.Controllers
                 {
                     //获取部门id，事业部id，项目组id，报价员id
                     Dictionary<string, int?> auditorsDic = new Dictionary<string, int?>();
-                    auditorsDic.Add("部门ID", db.User.Single(u => u.id == userId).Department1.dep_no);
+                    auditorsDic.Add("部门ID", db.User.Single(u => u.id == currentUser.userId).Department1.dep_no);
                     auditorsDic.Add("研发项目组ID", db.Department.Single(d => d.name == sb.project_team && d.dep_type == "研发项目组").dep_no);
                     if (sb.quotation_clerk_id != null) {
                         auditorsDic.Add("表单报价员值ID", sb.quotation_clerk_id);
                     }
-                    ads = utl.getApplySequence(apply, processType, userId, auditorsDic);
+                    ads = utl.getApplySequence(apply, processType, currentUser.userId, auditorsDic);
                 }
                 else
                 {
-                    ads = utl.getTestApplySequence(apply, processType, userId);
+                    ads = utl.getTestApplySequence(apply, processType, currentUser.userId);
                 }
             }
             catch (Exception ex)
@@ -1338,8 +1322,7 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public ActionResult CreateBLBill()
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            User user = db.User.Single(u => u.id == userId);
+            User user = db.User.Single(u => u.id == currentUser.userId);
             string sys_no = utl.getSystemNo("BL");
             var bl = new Sale_BL();
             bl.sys_no = sys_no;
@@ -1355,9 +1338,8 @@ namespace Sale_Order_Semi.Controllers
         //保存
         public JsonResult SalerSaveBLBill(FormCollection col)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             int stepVersion = 0;
-            string saveResult = utl.saveBLBill(col, stepVersion, userId);
+            string saveResult = utl.saveBLBill(col, stepVersion, currentUser.userId);
             if (string.IsNullOrWhiteSpace(saveResult)) {
                 //2017-10-16 增加是否有下挂bom的提示
                 //string busDep = col.Get("bus_dep");
@@ -1378,9 +1360,8 @@ namespace Sale_Order_Semi.Controllers
 
         public JsonResult CheckOwnBLBills(string sysNo, DateTime fromDate, DateTime toDate, int auditResult)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             var result = from v in db.Sale_BL
-                         where v.original_user_id == userId
+                         where v.original_user_id == currentUser.userId
                          && (v.sys_no.Contains(sysNo) || v.product_model.Contains(sysNo))
                          && v.bl_date >= fromDate
                          && v.bl_date <= toDate
@@ -1466,9 +1447,8 @@ namespace Sale_Order_Semi.Controllers
             ViewData["stepName"] = stepName;
             ViewData["blockInfo"] = db.BlockOrder.Where(b => b.sys_no == sys_no).OrderBy(b => b.step).ToList();
             if (stepName.Contains("订料")) {
-                int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-                ViewData["order_id"] = userId;
-                ViewData["order_name"] = db.User.Single(u => u.id == userId).real_name;
+                ViewData["order_id"] = currentUser.userId;
+                ViewData["order_name"] = currentUser.realName;
             }
             return View("CreateBLBill");
         }
@@ -1477,12 +1457,11 @@ namespace Sale_Order_Semi.Controllers
         public ActionResult BeginApplyBL(string sys_no)
         {
             string pre = sys_no.Substring(0, 2);
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             Sale_BL bl = db.Sale_BL.Single(s => s.sys_no == sys_no);
             string processType = pre;
 
             Apply apply = new Apply();
-            apply.user_id = userId;
+            apply.user_id = currentUser.userId;
             apply.sys_no = sys_no;
             apply.start_date = DateTime.Now;
             apply.ip = Request.UserHostAddress;
@@ -1499,12 +1478,12 @@ namespace Sale_Order_Semi.Controllers
                 if (!testFlag) {
                     //获取部门id，事业部id，项目组id，报价员id
                     Dictionary<string, int?> auditorsDic = new Dictionary<string, int?>();
-                    auditorsDic.Add("部门ID", db.User.Single(u => u.id == userId).Department1.dep_no);
+                    auditorsDic.Add("部门ID", db.User.Single(u => u.id == currentUser.userId).Department1.dep_no);
                     auditorsDic.Add("备料事业部ID", db.Department.Single(d => d.name == bl.bus_dep && d.dep_type == "备料事业部").dep_no);
-                    ads = utl.getApplySequence(apply, processType, userId, auditorsDic);
+                    ads = utl.getApplySequence(apply, processType, currentUser.userId, auditorsDic);
                 }
                 else {
-                    ads = utl.getTestApplySequence(apply, processType, userId);
+                    ads = utl.getTestApplySequence(apply, processType, currentUser.userId);
                 }
             }
             catch (Exception ex) {
@@ -1542,9 +1521,8 @@ namespace Sale_Order_Semi.Controllers
         public ActionResult CheckOrderDetail(int id, string billType, bool canCheckBLFile = false)
         {
             string sysNum;
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            var notContractPrice = utl.hasGotPower(userId, Powers.not_contract_price.ToString());
-            var notAllPrice = utl.hasGotPower(userId, Powers.not_all_price.ToString());
+            var notContractPrice = utl.hasGotPower(currentUser.userId, Powers.not_contract_price.ToString());
+            var notAllPrice = utl.hasGotPower(currentUser.userId, Powers.not_all_price.ToString());
             ViewData["hiddenPrice"] = notContractPrice || notAllPrice ? "true" : "false";
             ViewData["hiddenAll"] = notAllPrice ? "true" : "false";
             switch (billType)
@@ -1588,7 +1566,7 @@ namespace Sale_Order_Semi.Controllers
                     Sale_BL bl = db.Sale_BL.Single(m => m.id == id);                    
                     blockInfo = db.BlockOrder.Where(b => b.sys_no == bl.sys_no).OrderBy(b => b.step).ToList();                    
                     utl.writeEventLog(BLBILL, "查看备料", bl.sys_no, Request);
-                    string userDep = db.User.Single(u => u.id == userId).Department1.name;
+                    string userDep = currentUser.departmentName;
                     ViewData["hiddenModel"] = new string[] { "上海", "北京", "深圳", "汕尾", "新加坡", "中国市场部", "香港", "光能", "杭州" }.Where(s => userDep.Contains(s)).Count() > 0 ? "true" : "false";
                     ViewData["bl"] = bl;
                     ViewData["blockInfo"] = blockInfo;

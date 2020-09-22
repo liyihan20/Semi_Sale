@@ -11,14 +11,12 @@ using Sale_Order_Semi.Models.SBDTTableAdapters;
 using Sale_Order_Semi.Models.BLDTTableAdapters;
 using Sale_Order_Semi.Utils;
 using Sale_Order_Semi.Filter;
+using System.Web;
 
 namespace Sale_Order_Semi.Controllers
 {
-    public class FilesController : Controller
-    {
-        //
-        // GET: /Orders/
-        SaleDBDataContext db = new SaleDBDataContext();
+    public class FilesController : BaseController
+    {        
         SomeUtils utl = new SomeUtils();
         string model = "报表导出";
 
@@ -134,8 +132,7 @@ namespace Sale_Order_Semi.Controllers
         }
 
         public ActionResult printTHReport(string sysNo)
-        {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
+        {            
             string crystalFile = "TH_A4_Report.rpt";
 
             if (db.Apply.Where(a => a.sys_no == sysNo && a.success == true).Count() < 1)
@@ -166,8 +163,7 @@ namespace Sale_Order_Semi.Controllers
 
         //秋海打印签收报表
         public ActionResult printTHQSReport(string sysNo)
-        {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
+        {            
             string crystalFile = "THQS_A4_Report.rpt";
 
             if (db.Apply.Where(a => a.sys_no == sysNo && (a.success == true || a.success == null)).Count() < 1)
@@ -209,17 +205,16 @@ namespace Sale_Order_Semi.Controllers
         //打印研发开改模报表
         [SessionTimeOutFilter()]
         public ActionResult printCMYFReport(string sysNo)
-        {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
+        {            
             string crystalFile = "CMYF_A4_Report.rpt";
 
             if ((from a in db.Apply
                  from ad in a.ApplyDetails
                  where a.sys_no == sysNo
-                 && ad.user_id == userId
+                 && ad.user_id == currentUser.userId
                  select ad).Count() < 1)
             {
-                if (!utl.hasGotPower(userId, "chk_pdf_report"))
+                if (!utl.hasGotPower(currentUser.userId, "chk_pdf_report"))
                 {
                     utl.writeEventLog(model, "流水号不存在或没有权限查看", sysNo, Request, -100);
                     ViewBag.tip = "流水号不存在或没有权限查看";
@@ -300,7 +295,6 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public ActionResult printSBYFReport(string sysNo)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             string crystalFile = "SBYF_A4_Report.rpt";
 
             //if ((from a in db.Apply
@@ -386,7 +380,6 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public ActionResult printBLReport(string sysNo)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             string crystalFile = "BL_A4_Report.rpt";
 
             //if ((from a in db.Apply
@@ -452,6 +445,97 @@ namespace Sale_Order_Semi.Controllers
                 return View("Tip");
             }
 
+        }
+
+
+        //使用webuploader上传文件
+        [AcceptVerbs(HttpVerbs.Post)]
+        public JsonResult BeginUpload(HttpPostedFileBase file, string sysNum)
+        {
+            try {
+                string folder = SomeUtils.getOrderPath(sysNum);
+                folder = Path.Combine(folder, sysNum);
+                if (!Directory.Exists(folder)) {
+                    Directory.CreateDirectory(folder);
+                }
+                if (db.Sale_HC_fileInfo.Where(f => f.file_name == file.FileName && f.sys_no == sysNum).Count() > 0) {
+                    return Json(new SimpleResultModel() { suc = false, msg = "上传失败：存在同名文件" });
+                }
+                file.SaveAs(Path.Combine(folder, file.FileName));
+            }
+            catch (Exception ex) {
+                return Json(new SimpleResultModel() { suc = false, msg = ex.Message });
+            }
+
+            //上传成功后，在附件记录表增加记录
+            db.Sale_HC_fileInfo.InsertOnSubmit(new Sale_HC_fileInfo()
+            {
+                file_name = file.FileName,
+                uploader = currentUser.realName,
+                sys_no = sysNum
+            });
+            db.SubmitChanges();
+
+            return Json(new SimpleResultModel() { suc = true });
+        }
+
+        //删除文件
+        public JsonResult RemoveUploadedFile(string sysNum, string fileName)
+        {
+            try {
+                //删除物理文件
+                var uploadFolder = Path.Combine(SomeUtils.getOrderPath(sysNum), sysNum);
+                string fileDirectory = Path.Combine(uploadFolder, fileName);
+                if (System.IO.File.Exists(fileDirectory)) {
+                    System.IO.File.Delete(fileDirectory);
+                }
+                //删除文件记录
+                var file = db.Sale_HC_fileInfo.Where(f => f.sys_no == sysNum && f.file_name == fileName).FirstOrDefault();
+                if (file != null) {
+                    db.Sale_HC_fileInfo.DeleteOnSubmit(file);
+                    db.SubmitChanges();
+                }
+            }
+            catch (Exception ex) {
+                return Json(new SimpleResultModel() { suc = false, msg = ex.Message });
+            }
+            return Json(new SimpleResultModel() { suc = true });
+        }
+
+        //下载附件
+        public FileStreamResult DownLoadFile(string sysNum, string fileName)
+        {
+            try {
+                var uploadFolder = Path.Combine(SomeUtils.getOrderPath(sysNum), sysNum);
+                string fileDirectory = Path.Combine(uploadFolder, fileName);
+                if (System.IO.File.Exists(fileDirectory)) {
+                    return File(new FileStream(fileDirectory, FileMode.Open), "application/octet-stream", Server.UrlEncode(fileName));
+                }
+                else {
+                    return null;
+                }
+            }
+            catch {
+                return null;
+            }
+        }
+
+        //查询已上传附件
+        public JsonResult GetUploadedFiles(string sysNum)
+        {
+            var fileInfo = db.Sale_HC_fileInfo.Where(h => h.sys_no == sysNum).ToList();
+            var fileResult = (from fi in fileInfo
+                              join at in utl.GetAttachmentInfo(sysNum) on fi.file_name equals at.file_name
+                              select new AttachmentModelNew()
+                              {
+                                  file_name = fi.file_name,
+                                  file_id = at.file_id,
+                                  file_size = at.file_size,
+                                  uploader = fi.uploader,
+                                  file_status = "已上传",
+                              }).Distinct().ToList();
+
+            return Json(fileResult);
         }
 
     }

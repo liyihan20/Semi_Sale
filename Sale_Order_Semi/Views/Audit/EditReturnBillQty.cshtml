@@ -5,6 +5,18 @@
     List<ReturnBillDetail> details = (List<ReturnBillDetail>)ViewData["details"];
     var sys_no = bill.sys_no;
 }
+<link rel="stylesheet" href="@Url.Content("~/Scripts/webuploader/webuploader.css")" />
+<script src="@Url.Content("~/Scripts/webuploader/webuploader.withoutimage.js")"></script>
+<script src="@Url.Content("~/Scripts/MyUploader.js")"></script>
+<script>
+    $(function () {
+        $("#file_div").myUploader({
+            sysNum: "@bill.sys_no",
+            uploadUser: "@ViewData["currentAuditor"]",
+            canUpload:true
+        });
+    })
+</script>
 <script type="text/javascript">
     $(function () {
         $("#bill_detail").datagrid({
@@ -76,14 +88,6 @@
 //            }
         });
 
-        $.post("@Url.Content("~/Saler/GetFileInfo")",{sys_no:"@ViewData["sys_no"]"},function(data){
-                        if(data.success){
-                            $("#up_name").html(data.am.file_name);
-                            $("#up_size").html(data.am.file_size);
-                            $("#up_time").html(data.am.upload_time);
-                        }
-                    });
-
         $("#order_div input[type='text'],#comment,#saler_comment,#market_comment").attr("readonly", "readonly");
         $("input[type='radio']").not("input:checked").attr("disabled", "true");
         $("#agency_div").click(function () { endEditing(); });
@@ -138,46 +142,6 @@
                 });
             }
         }
-    //easyui的扩展方法，可以直接编辑datagrid的单元格方法
-//    $.extend($.fn.datagrid.methods, {
-//        editCell: function (jq, param) {
-//            return jq.each(function () {
-//                var opts = $(this).datagrid('options');
-//                var fields = $(this).datagrid('getColumnFields', true).concat($(this).datagrid('getColumnFields'));
-//                for (var i = 0; i < fields.length; i++) {
-//                    var col = $(this).datagrid('getColumnOption', fields[i]);
-//                    col.editor1 = col.editor;
-//                    if (fields[i] != param.field) {
-//                        col.editor = null;
-//                    }
-//                }
-//                $(this).datagrid('beginEdit', param.index);
-//                for (var i = 0; i < fields.length; i++) {
-//                    var col = $(this).datagrid('getColumnOption', fields[i]);
-//                    col.editor = col.editor1;
-//                }
-//            });
-//        }
-//    });
-
-//    var editIndex = undefined;
-//    function endEditing() {
-//        if (editIndex == undefined) { return true }
-//        if ($('#bill_detail').datagrid('validateRow', editIndex)) {
-//            $('#bill_detail').datagrid('endEdit', editIndex);
-//            editIndex = undefined;
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
-//    function onClickCell(index, field) {
-//        if (endEditing()) {
-//            $('#bill_detail').datagrid('selectRow', index)
-//                    .datagrid('editCell', { index: index, field: field });
-//            editIndex = index;
-//        }
-//    }
     
     function okClick(){
         if($.trim($("#up_name").html())==""){
@@ -362,8 +326,9 @@
                     onclick="block()">挂起</a>
                 </form>
             </div>
-            <div data-options="region:'center'" style="+position: relative;">
-               @Html.Partial("_UploadFilePartial")
+            <div data-options="region:'center'">
+                <input type="hidden" id="wu_sysNum" value="@bill.sys_no" />
+                @Html.Partial("_UploadFilePartial_wu")
             </div>
         </div> 
     </div>
@@ -563,6 +528,9 @@
                         </td>*@
                     </tr>
                 </table>
+            </div>
+            <div id="file_div" class="easyui-panel" title="附件清单" style="width: 740px;height:188px;">
+                @*存放附件table*@
             </div>
              <div style="line-height:18px;margin-top:8px;">
                 <div style="color:red">操作说明：</div>

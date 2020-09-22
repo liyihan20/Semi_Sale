@@ -14,11 +14,10 @@ using Sale_Order_Semi.Filter;
 
 namespace Sale_Order_Semi.Controllers
 {
-    public class KSController : Controller
+    public class KSController : BaseController
     {   
         // 香港SO上传与读取保存
         private string orderType = "KS";
-        SaleDBDataContext db = new SaleDBDataContext();
 
         [SessionTimeOutFilter]
         public ActionResult UploadKSData()
@@ -202,8 +201,6 @@ namespace Sale_Order_Semi.Controllers
         public JsonResult SaveExcelData(string data)
         {
             try {
-                int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-                string userName = db.User.Single(u => u.id == userId).real_name;
                 var utl = new SomeUtils();
                 var sos = JsonConvert.DeserializeObject<List<Sale_HK_SO>>(data);
                 var billNoList = sos.Select(s => s.bill_no).ToList();
@@ -215,7 +212,7 @@ namespace Sale_Order_Semi.Controllers
                 foreach (var so in sos) {
                     so.sys_no = utl.getSystemNo(orderType);
                     so.import_time = DateTime.Now;
-                    so.user_name = userName;
+                    so.user_name = currentUser.realName;
                 }
                 db.Sale_HK_SO.InsertAllOnSubmit(sos);
                 db.SubmitChanges();

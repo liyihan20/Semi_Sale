@@ -8,9 +8,8 @@ using System.Web.Mvc;
 
 namespace Sale_Order_Semi.Controllers
 {
-    public class ExcelsController : Controller
+    public class ExcelsController : BaseController
     {
-        SaleDBDataContext db = new SaleDBDataContext();
         SomeUtils utl = new SomeUtils();
         // 营业员导出excel
         public void exportExcel(FormCollection fcl)
@@ -19,7 +18,7 @@ namespace Sale_Order_Semi.Controllers
             string fromDateStr = fcl.Get("fromDate");
             string toDatestr = fcl.Get("toDate");
             string billType = fcl.Get("billType");
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
+            int userId = currentUser.userId;
             DateTime fromDate = DateTime.Parse("1990-1-1");
             DateTime toDate = DateTime.Parse("2099-9-9");
             if (!string.IsNullOrWhiteSpace(fromDateStr))
@@ -394,8 +393,7 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public ActionResult exportCeoExcel(string beginDate, string toDate)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            if (!utl.hasGotPower(userId, Powers.ceo_excel.ToString())) {
+            if (!utl.hasGotPower(currentUser.userId, Powers.ceo_excel.ToString())) {
                 utl.writeEventLog("导出总裁办Excel", "没有权限", "", Request, 1000);
                 ViewBag.tip = "没有权限";
                 return View("tip");
@@ -491,8 +489,7 @@ namespace Sale_Order_Semi.Controllers
         //办事处样品单Excel
         public ActionResult exportAgencyExcel(string beginDate, string toDate)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-            if (!utl.hasGotPower(userId, Powers.agency_sb_excel.ToString())) {
+            if (!utl.hasGotPower(currentUser.userId, Powers.agency_sb_excel.ToString())) {
                 utl.writeEventLog("导出样品单办事处Excel", "没有权限", "", Request, 1000);
                 ViewBag.tip = "没有权限";
                 return View("tip");
@@ -599,9 +596,8 @@ namespace Sale_Order_Semi.Controllers
         [SessionTimeOutFilter()]
         public void exportAuditorSOExcel(string ids)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
             bool canSeePrice = true;
-            if (utl.hasGotPower(userId, Powers.not_all_price.ToString())) {
+            if (utl.hasGotPower(currentUser.userId, Powers.not_all_price.ToString())) {
                 utl.writeEventLog("导出无价格报表Excel", "成功导出记录数:" + ids.Split(',').Count(), "", Request, 0);
                 canSeePrice = false;
             }
@@ -1184,10 +1180,8 @@ namespace Sale_Order_Semi.Controllers
 
         public void BeginExportTHExcel(string customerInfo, DateTime fromDate, DateTime toDate, string stockNo, string model, int auditResult)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-
             var myData = (from v in db.VwReturnBill
-                          where v.user_id == userId
+                          where v.user_id == currentUser.userId
                           && (v.customer_number.Contains(customerInfo) || v.customer_name.Contains(customerInfo))
                           && (v.stock_no.Contains(stockNo) || v.seorder_no.Contains(stockNo))
                           && (v.product_model.Contains(model) || v.sys_no.Contains(model))
@@ -1291,8 +1285,6 @@ namespace Sale_Order_Semi.Controllers
         //物控导出红字退货报表
         public void exportTHExcelByCon(FormCollection fc)
         {
-            int userId = Int32.Parse(Request.Cookies["order_semi_cookie"]["userid"]);
-
             string customerNumber = fc.Get("cust_no");
             string billNo = fc.Get("bill_no");
             string sysNo = fc.Get("sys_no");
@@ -1307,7 +1299,7 @@ namespace Sale_Order_Semi.Controllers
 
             string[] depArr;
             if ("all".Equals(procDep)) {
-                string userCanCheckDeps = db.User.Single(u => u.id == userId).can_check_deps;
+                string userCanCheckDeps = db.User.Single(u => u.id == currentUser.userId).can_check_deps;
                 if (userCanCheckDeps.Equals("*")) {
                     depArr = db.Department.Where(d => d.dep_type == "退货事业部").Select(d => d.name).ToArray();
                 }

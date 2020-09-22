@@ -1,5 +1,6 @@
 ﻿@using Sale_Order_Semi.Models;
 @{
+    Layout = "~/Views/Shared/_LayoutNew.cshtml";
     ModelContract mc = (ModelContract)ViewData["mc"];
     ModelContractExtra ex = (ModelContractExtra)ViewData["ex"];
     if (ex == null)
@@ -9,7 +10,11 @@
     int step = (int)ViewData["step"];
     ViewData["sys_no"] = mc.sys_no; //用于上传文件partial
     }
-
+<style type="text/css">
+    #order_div input {
+        width: 140px;
+    }
+</style>
 <script type="text/javascript">
     $(function () {
 
@@ -615,14 +620,13 @@
 
 @if (step > 0)
 {
-<div data-options="region:'south',collapsed:false" style="height: 50px; background: #fafafa;
-        padding: 8px 10px;">
+<div data-options="region:'south',collapsed:false" style="height: 50px; background: #fafafa; padding: 8px 10px;">
         <form id="audit_fm" method="post" action="">
             @Html.Lang("audit_opinion"):
             <input type="hidden" name="step" value="@ViewData["step"]" />
             <input type="hidden" name="applyId" value="@ViewData["applyId"]" />
             <input type="hidden" name="okFlag" id="okFlag" value="" />
-            <input id="agency_comment" name="agency_comment" style="width: 500px" />&nbsp; 
+            <input class="easyui-textbox" id="agency_comment" name="agency_comment" style="width: 500px" />&nbsp; 
             <a id="OKBt" href="#agency_div" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="okClick()">@Html.Lang("pass")</a>
             <a id="NOBt" href="#agency_div" class="easyui-linkbutton" data-options="iconCls:'icon-no'" onclick="noClick()">@Html.Lang("reject")</a>
             <a id="blockBt" href="#agency_div" class="easyui-linkbutton" data-options="iconCls:'icon-help'" onclick="block()">挂起</a>
@@ -632,11 +636,10 @@
 <div data-options="region:'center'">
 
 <form id="order_form" method="post">
-<div id="order_div" class="easyui-panel" title="@Html.Lang("modify_order")" style="width: 840px; padding: 10px;
-    background: #fafafa;+position: relative;">
+<div id="order_div" class="easyui-panel" title="@Html.Lang("modify_order")" style="width: 940px; padding: 10px; background: #fafafa;">
     <div>
         @*表头*@
-        <table border="0" cellpadding="0" cellspacing="3px" width="800px">
+        <table border="0" cellpadding="0" cellspacing="3" width="900">
             @if (step == 4)
             { 
                 <tr>
@@ -644,7 +647,7 @@
                         @Html.Lang("order_no"):
                     </td>
                     <td>
-                        <input type="text" name="old_bill_no" id="old_bill_no" style="width:115px" value="@mc.old_bill_no"/>
+                        <input class="easyui-textbox" name="old_bill_no" id="old_bill_no" style="width:115px" value="@mc.old_bill_no"/>
                     </td>
                     @for (var i = 0; i < 6; i++)
                     { 
@@ -657,13 +660,13 @@
                     @Html.Lang("order_date"):
                 </td>
                 <td>
-                    <input class="easyui-datebox" id="bill_date" name="bill_date" style="width: 120px" required="true"  editable="false" value="@(((DateTime)mc.bill_date).ToString("yyyy-MM-dd"))" />
+                    <input class="easyui-datebox" id="bill_date" name="bill_date"  required="true"  editable="false" value="@(((DateTime)mc.bill_date).ToString("yyyy-MM-dd"))" />
                 </td>
                 <td>
                     @Html.Lang("pro_type"):
                 </td>
                 <td>
-                    @*<input class="easyui-combobox" id="product_type" name="product_type"  style="width: 120px" 
+                    @*<input class="easyui-combobox" id="product_type" name="product_type"   
                         data-options="textField:'value',valueField:'value',panelHeight:'auto', required:true,editable:false,
                                            data:[
                                            {value:'PANEL'},{value:'OLED'},{value:'COG'},{value:'H-COG'},{value:'P-COG'},{value:'S-MDS'},
@@ -671,7 +674,7 @@
                                            {value:'H-LCM'},{value:'P-LCM'},{value:'SIM'},{value:'TNM'},{value:'FIC'}
                                            ]" value="@mc.product_type" />*@
 
-                    <input class="easyui-combobox" id="product_type" name="product_type" style="width: 120px"
+                    <input class="easyui-combobox" id="product_type" name="product_type" 
                                data-options="textField:'name',valueField:'name', required:true,editable:false,"
                                url="@Url.Content("~/Items/getItems?what=product_type")" value="@mc.product_type"
                                 />
@@ -681,7 +684,7 @@
                     @Html.Lang("model_type"):
                 </td>
                 <td>
-                    <input class="easyui-combobox" style="width: 120px" name="model_type" id="model_type"
+                    <input class="easyui-combobox"  name="model_type" id="model_type"
                         data-options="textField:'value',valueField:'value',panelHeight:'auto', required:true,editable:false,
                                            data:[
                                            {value:'开模'},{value:'改模'}
@@ -691,7 +694,7 @@
                     @Html.Lang("sys_num"):
                 </td>
                 <td>
-                    <input type="text" name="sys_no" id="sys_no" style="width:115px" readonly="readonly" value="@mc.sys_no"/>
+                    <input class="easyui-textbox" name="sys_no" id="sys_no" readonly="readonly" value="@mc.sys_no"/>
                 </td>
             </tr>
             <tr>
@@ -699,26 +702,26 @@
                     @Html.Lang("agency"):
                 </td>
                 <td>
-                    <input class="easyui-combobox" id="agency_no" name="agency_no" style="width: 120px" panelwidth="140" editable="false"
+                    <input class="easyui-combobox" id="agency_no" name="agency_no"  panelwidth="140" editable="false"
                      valuefield="no" textfield="name" url="@Url.Content("~/Items/getItems?what=agency")" required="true" value="@mc.agency_no"/>
                 </td>
                 <td>
                     @Html.Lang("clerk"):
                 </td>
                 <td>
-                    <input id="clerk_no" class="remotebox" name="clerk_no" style="width: 120px" value="@mc.clerk_no" />
+                    <input id="clerk_no" class="remotebox" name="clerk_no"  value="@mc.clerk_no" />
                 </td>
                 <td>
                     @Html.Lang("tel_num"):
                 </td>
                 <td>
-                    <input class="easyui-validatebox" name="telephone" id="telephone" style="width: 115px"  required="true" value="@mc.telephone" />
+                    <input class="easyui-textbox" name="telephone" id="telephone"   required="true" value="@mc.telephone" />
                 </td>
                 <td>
                     EMAIL:
                 </td>
                 <td>
-                    <input class="easyui-validatebox" name="email" id="email" style="width: 115px" data-options="validType:'email',required:true" value="@mc.email" />
+                    <input class="easyui-textbox" name="email" id="email"  data-options="validType:'email',required:true" value="@mc.email" />
                 </td>
             </tr>
             <tr>
@@ -726,13 +729,13 @@
                     @Html.Lang("delivery_date"):
                 </td>
                 <td>
-                    <input id="fetch_date" class="easyui-datebox" name="fetch_date" style="width: 120px"  required="true"  editable="false" value="@(mc.fetch_date==null?"":((DateTime)mc.fetch_date).ToString("yyyy-MM-dd"))" />
+                    <input id="fetch_date" class="easyui-datebox" name="fetch_date"   required="true"  editable="false" value="@(mc.fetch_date==null?"":((DateTime)mc.fetch_date).ToString("yyyy-MM-dd"))" />
                 </td>
                 <td>
                     @Html.Lang("bus_dep"):
                 </td>
                 <td>
-                    <input class="easyui-combobox" style="width: 120px" name="bus_dep" id="bus_dep"
+                    <input class="easyui-combobox"  name="bus_dep" id="bus_dep"
                         data-options="textField:'name',valueField:'name',panelHeight:'auto', required:true,editable:false,
                                            url:'@Url.Content("~/Items/getRelateDeps?dep_type=开模事业部")'" value="@mc.bus_dep" />
                 </td>
@@ -740,13 +743,13 @@
                     @Html.Lang("project_team"):
                 </td>
                 <td>
-                    <input id="project_team" name="project_team" style="width: 120px" />
+                    <input id="project_team" name="project_team"  />
                 </td>
                 @*<td>
                     @Html.Lang("quotation_clerk"):
                 </td>
                 <td>
-                    <input class="easyui-combobox" id="quotation_clerk_id" name="quotation_clerk_id" style="width: 120px" editable="false"
+                    <input class="easyui-combobox" id="quotation_clerk_id" name="quotation_clerk_id"  editable="false"
                      valuefield="value" textfield="text" url="@Url.Content("~/Items/GetGroupMembers?group_name=报价员组")" value="@mc.quotation_clerk_id" />
                 </td>*@
             </tr>
@@ -757,7 +760,7 @@
                     @Html.Lang("pro_model"):
                 </td>
                 <td>
-                    <input id="product_model" name="product_model" style="width: 120px" value="@mc.product_model" />
+                    <input id="product_model" name="product_model"  value="@mc.product_model" />
                     <input type="hidden" name="product_unit" id="product_unit" value="@mc.product_unit" />
                     <input type="hidden" name="product_number" id="product_number" value="@mc.product_number" />
                     <input type="hidden" name="product_name" id="product_name" value="@mc.product_name" />
@@ -769,7 +772,7 @@
                     @Html.Lang("pro_model"):
                 </td>
                 <td>
-                    <input  class="easyui-validatebox" name="product_model" style="width: 115px" required="true" value="@mc.product_model" />
+                    <input  class="easyui-textbox" name="product_model"  required="true" value="@mc.product_model" />
                     <input type="hidden" name="product_unit" value="@mc.product_unit" />
                     <input type="hidden" name="product_number" value="@mc.product_number" />
                     <input type="hidden" name="product_name" value="@mc.product_name" />
@@ -778,13 +781,13 @@
                 <td>@Html.Lang("classification"):
                 </td>
                 <td>
-                    <input name="classification" id="classification" style="width: 120px" value="@mc.classification" />
+                    <input name="classification" id="classification"  value="@mc.classification" />
                 </td>
                 <td>
                     @Html.Lang("trade_type"):
                 </td>
                 <td>
-                    <input class="easyui-combobox" id="trade_type_no" name="trade_type_no" style="width: 120px" editable="false"
+                    <input class="easyui-combobox" id="trade_type_no" name="trade_type_no"  editable="false"
                      panelHeight="100" valuefield="no" textfield="name" url="@Url.Content("~/Items/getItems?what=trade_type")" required="true" value="@mc.trade_type_no" />
                 </td>
                 <td>
@@ -792,7 +795,7 @@
                 </td>
                 <td>
                     <input class="easyui-combobox" id="clear_way" name="clear_way" url="@Url.Content("~/Items/getItems?what=clearing_way")" 
-                        valuefield="name" textfield="name" style="width: 120px" panelWidth="240" required="true" value="@mc.clear_way" />
+                        valuefield="name" textfield="name"  panelWidth="240" required="true" value="@mc.clear_way" />
                 </td>
             </tr>
             <tr>
@@ -800,25 +803,25 @@
                     @Html.Lang("customer_name"):
                 </td>
                 <td>
-                    <input id="customer_no" class="customerbox" name="customer_no" style="width: 120px" panelwidth="240px" value="@mc.customer_no" />
+                    <input id="customer_no" class="customerbox" name="customer_no"  panelwidth="240px" value="@mc.customer_no" />
                 </td>
                 <td>
                     @Html.Lang("plan_firm"):
                 </td>
                 <td>
-                    <input id="plan_firm_name" class="remotebox2" name="plan_firm_name" style="width: 120px" panelwidth="240px" value="@mc.plan_firm_name" />
+                    <input id="plan_firm_name" class="remotebox2" name="plan_firm_name"  panelwidth="240px" value="@mc.plan_firm_name" />
                 </td>
                 <td>
                     @Html.Lang("end_customer"):
                 </td>
                 <td>
-                    <input id="zz_customer_name" class="remotebox2" name="zz_customer_name" style="width: 120px" panelwidth="240px" value="@mc.zz_customer_name" />
+                    <input id="zz_customer_name" class="remotebox2" name="zz_customer_name"  panelwidth="240px" value="@mc.zz_customer_name" />
                 </td>
                 <td>
                     海外客户:
                 </td>
                 <td>
-                    <input id="oversea_customer_no" class="customerbox" name="oversea_customer_no" style="width: 120px" panelwidth="240px" value="@mc.oversea_customer_no" />
+                    <input id="oversea_customer_no" class="customerbox" name="oversea_customer_no"  panelwidth="240px" value="@mc.oversea_customer_no" />
                 </td>
             </tr>
             <tr>
@@ -827,25 +830,25 @@
                 </td>
                 <td>
                     <input id="currency_no" class="easyui-combobox" name="currency_no" panelHeight="150" url="@Url.Content("~/Items/getItems?what=currency")" editable="false"
-                        valuefield="no" textfield="name" style="width: 120px"  required="true" value="@mc.currency_no" />
+                        valuefield="no" textfield="name"   required="true" value="@mc.currency_no" />
                 </td>
                 <td>
                     @Html.Lang("qty"):
                 </td>
                 <td>
-                    <input id="qty" class="easyui-numberbox" name="qty" style="width: 115px" required="true" value="@mc.qty" />
+                    <input id="qty" class="easyui-numberbox" name="qty"  required="true" value="@mc.qty" />
                 </td>
                 <td>
                     @Html.Lang("price"):
                 </td>
                 <td>
-                    <input id="price" class="easyui-numberbox" name="price" style="width: 115px" precision="2" required="true" value="@mc.price" />
+                    <input id="price" class="easyui-numberbox" name="price"  precision="2" required="true" value="@mc.price" />
                 </td>
                 <td>
                     @Html.Lang("pro_use"):
                 </td>
                 <td>
-                    <input class="easyui-validatebox" name="pro_use" id="pro_use" style="width: 115px" required="true" value="@mc.pro_use" />
+                    <input class="easyui-textbox" name="pro_use" id="pro_use"  required="true" value="@mc.pro_use" />
                 </td>
             </tr>
             <tr>
@@ -853,25 +856,25 @@
                     @Html.Lang("customer_model"):
                 </td>
                 <td>
-                    <input id="project_number" class="easyui-textbox" name="project_number" style="width: 115px" value="@mc.project_number" />
+                    <input id="project_number" class="easyui-textbox" name="project_number"  value="@mc.project_number" />
                 </td>
                 <td>
                     @Html.Lang("pic_number"):
                 </td>
                 <td>
-                    <input id="pic_number" class="easyui-textbox" name="pic_number" style="width: 115px" value="@mc.pic_number" />
+                    <input id="pic_number" class="easyui-textbox" name="pic_number"  value="@mc.pic_number" />
                 </td>
                 <td>
                     @Html.Lang("pic_version"):
                 </td>
                 <td>
-                    <input id="pic_version" class="easyui-validatebox" name="pic_version" style="width: 115px" required="true" value="@mc.pic_version" />
+                    <input id="pic_version" class="easyui-textbox" name="pic_version"  required="true" value="@mc.pic_version" />
                 </td>    
                 <td>
                     @Html.Lang("contract_num"):
                 </td>
                 <td>
-                    <input id="contract_po_no" class="easyui-validatebox" name="contract_po_no" style="width: 115px" value="@mc.contract_po_no" />
+                    <input id="contract_po_no" class="easyui-textbox" name="contract_po_no"  value="@mc.contract_po_no" />
                 </td>    
             </tr>
             <tr>                
@@ -879,7 +882,7 @@
                     @Html.Lang("biller"):
                 </td>
                 <td>
-                    <input class="easyui-textbox" id="create_user" name="create_user"  readonly="readonly" style="width: 115px" value="@mc.User.real_name" />
+                    <input class="easyui-textbox" id="create_user" name="create_user"  readonly="readonly"  value="@mc.User.real_name" />
                 </td>
             </tr>
             <tr>
@@ -894,20 +897,20 @@
                     <input id="free" class="easyui-numberbox" name="free" style="width: 100px" precision="2" required="true" value="@mc.free" />
                     @if (!string.IsNullOrWhiteSpace(mc.count_in_bus_dep))
                     { 
-                        <input type="checkbox" name="count_in_bus_dep" value="计入事业部" checked="checked" /><span>计入事业部</span>
+                        <input type="checkbox" name="count_in_bus_dep" value="计入事业部" checked="checked" style="width:20px;" /><span>计入事业部</span>
                     }
                     else
                     {
-                        <input type="checkbox" name="count_in_bus_dep" value="计入事业部" /><span>计入事业部</span>
+                        <input type="checkbox" name="count_in_bus_dep" value="计入事业部" style="width:20px;" /><span>计入事业部</span>
                     }
                     &nbsp;
                     @if (!string.IsNullOrWhiteSpace(mc.special_model))
                     { 
-                        <input type="checkbox" name="special_model" value="特殊开模单"  checked="checked" /><span>特殊开模单</span>
+                        <input type="checkbox" name="special_model" value="特殊开模单"  checked="checked" style="width:20px;" /><span>特殊开模单</span>
                     }
                     else
                     {
-                        <input type="checkbox" name="special_model" value="特殊开模单" /><span>特殊开模单</span>
+                        <input type="checkbox" name="special_model" value="特殊开模单" style="width:20px;" /><span>特殊开模单</span>
                     }
                 </td>
             </tr>            
@@ -916,7 +919,7 @@
                         @Html.Lang("comment"):
                     </td>
                     <td colspan="7">
-                        <textarea cols="84" rows="2" name="comment" id="comment" style="margin: 0;">@mc.comment</textarea>
+                        <input class="easyui-textbox" name="comment" id="comment" multiline="true" style="width:700px;height:40px" value="@mc.comment" />
                     </td>
                 </tr>
             <tr>
@@ -925,13 +928,13 @@
                 </td>
                 <td>
                     <input class="easyui-combobox" id="fetch_add_no" name="fetch_add_no" url="@Url.Content("~/Items/getItems?what=delivery_place")" editable="false"
-                        valuefield="no" textfield="name" panelheight="130" panelwidth="200" style="width: 120px"  required="true" value="@mc.fetch_add_no" />
+                        valuefield="no" textfield="name" panelheight="130" panelwidth="200"   required="true" value="@mc.fetch_add_no" />
                 </td>
                 <td>
                     @Html.Lang("quote_num"):
                 </td>
                 <td>
-                    <input class="easyui-validatebox" name="quote_num" id="quote_num" style="width: 115px" required="true" value="@mc.quote_num" />
+                    <input class="easyui-textbox" name="quote_num" id="quote_num"  required="true" value="@mc.quote_num" />
                 </td>
                 <td>
                 </td>
@@ -1091,7 +1094,7 @@
                     @Html.Lang("engineer_content"):
                 </td>
                 <td colspan="7">
-                    <textarea cols="90" rows="2" name="engineer_content" id="engineer_content" style="margin: 0;">@mc.engineer_content</textarea>
+                    <input class="easyui-textbox" name="engineer_content" id="engineer_content" multiline="true" style="width:700px;height:40px" value="@mc.engineer_content" />
                 </td>
             </tr>
             <tr>
@@ -1106,9 +1109,9 @@
                                            ]" />
                     <span id="small_batch_production_span">
                     @Html.Lang("start_time"):
-                    <input class="easyui-datebox" name="small_batch_start_time" id="small_batch_start_time" style="width: 115px"  editable="false" value="@(mc.small_batch_start_time == null ? "" : ((DateTime)mc.small_batch_start_time).ToString("yyyy-MM-dd"))" />
+                    <input class="easyui-datebox" name="small_batch_start_time" id="small_batch_start_time"   editable="false" value="@(mc.small_batch_start_time == null ? "" : ((DateTime)mc.small_batch_start_time).ToString("yyyy-MM-dd"))" />
                     @Html.Lang("qty"):
-                    <input class="easyui-numberbox" id="small_batch_qty" name="small_batch_qty" style="width: 115px" value="@mc.small_batch_qty"/>
+                    <input class="easyui-numberbox" id="small_batch_qty" name="small_batch_qty"  value="@mc.small_batch_qty"/>
                     </span>
                 </td>
             </tr>
@@ -1123,7 +1126,7 @@
                     @Html.Lang("end_time"):
                 </td>
                 <td>
-                    <input class="easyui-datebox" name="plan_finish_date" id="plan_finish_date" style="width: 115px"  required="true"  editable="false" value="@(mc.plan_finish_date == null ? "" : ((DateTime)mc.plan_finish_date).ToString("yyyy-MM-dd"))"/>
+                    <input class="easyui-datebox" name="plan_finish_date" id="plan_finish_date"   required="true"  editable="false" value="@(mc.plan_finish_date == null ? "" : ((DateTime)mc.plan_finish_date).ToString("yyyy-MM-dd"))"/>
                 </td>
                 <td>
                     @Html.Lang("estimated_quantity"):
@@ -1142,17 +1145,17 @@
                     @Html.Lang("competitor"):
                 </td>
                 <td>
-                    <input class="easyui-validatebox" id="competitor" name="competitor" style="width: 115px" required="true" value="@mc.competitor" />
+                    <input class="easyui-textbox" id="competitor" name="competitor"  required="true" value="@mc.competitor" />
                 </td>
                 <td>
                     @Html.Lang("competitor_price"):
                 </td>
                 <td>
-                    <input class="easyui-numberbox" id="competitor_price" name="competitor_price" style="width: 120px" precision="2" required="true" value="@mc.competitor_price" />
+                    <input class="easyui-numberbox" id="competitor_price" name="competitor_price"  precision="2" required="true" value="@mc.competitor_price" />
                 </td>
                 <td colspan="4">
                     @Html.Lang("competitor_configuration"):
-                    <input class="easyui-validatebox" id="competitor_configuration" name="competitor_configuration" style="width: 115px"  required="true" value="@mc.competitor_configuration" />
+                    <input class="easyui-textbox" id="competitor_configuration" name="competitor_configuration"   required="true" value="@mc.competitor_configuration" />
                 </td>
             </tr>
             <tr id="modify_model_tr">
@@ -1160,13 +1163,13 @@
                     @Html.Lang("has_bill"):
                 </td>
                 <td colspan="7">
-                    <input class="easyui-combobox" style="width: 120px" name="modify_model_has_bill" id="modify_model_has_bill"
+                    <input class="easyui-combobox"  name="modify_model_has_bill" id="modify_model_has_bill"
                             data-options="textField:'value',valueField:'value',panelHeight:'auto',editable:false,
                                            data:[
                                            {value:'生产订单'},{value:'备料单'},{value:'皆无'}
                                            ]" value="@mc.modify_model_has_bill" />
                     @Html.Lang("deal_with_bill"):
-                    <input class="easyui-textbox" id="modify_model_has_bill_deal_way" name="modify_model_has_bill_deal_way" style="width: 115px" value="@mc.modify_model_has_bill_deal_way" />
+                    <input class="easyui-textbox" id="modify_model_has_bill_deal_way" name="modify_model_has_bill_deal_way"  value="@mc.modify_model_has_bill_deal_way" />
                 </td>
             </tr>
         </table>
@@ -1177,7 +1180,7 @@
                         @Html.Lang("product_level"):
                     </td>
                     <td>
-                        <input class="easyui-combobox" style="width: 120px" name="product_level" id="product_level"
+                        <input class="easyui-combobox"  name="product_level" id="product_level"
                             data-options="textField:'value',valueField:'value',panelHeight:'auto',editable:false,
                                            data:[
                                            {value:'高档'},{value:'中档'},{value:'低档'}
@@ -1187,7 +1190,7 @@
                         @Html.Lang("Quality_desire"):
                     </td>
                     <td>
-                        <input class="easyui-combobox" style="width: 120px" name="quality_demand" id="quality_demand"
+                        <input class="easyui-combobox"  name="quality_demand" id="quality_demand"
                             data-options="textField:'value',valueField:'value',panelHeight:'auto',editable:false,
                                            data:[
                                            {value:'A级'},{value:'A-级'},{value:'B级'},{value:'C级'}
@@ -1197,7 +1200,7 @@
                         @Html.Lang("LCD_type"):
                     </td>
                     <td>
-                        <input class="easyui-combobox" style="width: 120px" name="LCD_type" id="LCD_type"
+                        <input class="easyui-combobox"  name="LCD_type" id="LCD_type"
                             data-options="textField:'value',valueField:'value',panelHeight:'auto',editable:false,
                                data:[
                                {value:'TBN'},{value:'TN'},{value:'HTN'},{value:'ETN'},{value:'STN'},
@@ -1210,7 +1213,7 @@
                         @Html.Lang("up_polarizer"):
                     </td>
                     <td colspan="3">
-                        <input class="easyui-combobox" style="width: 120px" name="up_polarizer" id="up_polarizer"
+                        <input class="easyui-combobox"  name="up_polarizer" id="up_polarizer"
                             data-options="textField:'value',valueField:'value',panelHeight:'auto',editable:false,
                                            data:[
                                            {value:'普通'},{value:'磨砂（防眩光）'},{value:'太阳眼镜'},{value:'Hard Coating'},{value:'抗反射'}
@@ -1239,7 +1242,7 @@
                         @Html.Lang("under_polarizer"):
                     </td>
                     <td>                        
-                        <input class="easyui-combobox" style="width: 120px" name="down_polarizer" id="down_polarizer"
+                        <input class="easyui-combobox"  name="down_polarizer" id="down_polarizer"
                             data-options="textField:'value',valueField:'value',panelHeight:'auto',editable:false,
                                            data:[
                                            {value:'透射型'},{value:'半投射型'},{value:'反射型'}
@@ -1249,7 +1252,7 @@
                         @Html.Lang("bl_type"):
                     </td>
                     <td>
-                        <input class="easyui-combobox" style="width: 120px" name="BL_type" id="BL_type" 
+                        <input class="easyui-combobox"  name="BL_type" id="BL_type" 
                             data-options="textField:'value',valueField:'value',panelHeight:'auto',editable:false,
                                            data:[
                                            {value:'无'},{value:'EL'},{value:'LED'},{value:'CCFL'},{value:'其他'}
@@ -1259,7 +1262,7 @@
                         @Html.Lang("bls_color"):
                     </td>
                     <td>
-                        <input class="easyui-combobox" style="width: 120px" name="BL_color" id="BL_color"
+                        <input class="easyui-combobox"  name="BL_color" id="BL_color"
                             data-options="textField:'value',valueField:'value',panelHeight:'auto',editable:false,
                                            data:[
                                            {value:'黄绿色'},{value:'红色'},{value:'白色'},{value:'绿色'},{value:'橙色'},{value:'兰色'},{value:'其它'}
@@ -1271,7 +1274,7 @@
                         @Html.Lang("temperature_character"):
                     </td>
                     <td colspan="5">
-                        <input class="easyui-combobox" style="width: 120px" name="temperature_character"
+                        <input class="easyui-combobox"  name="temperature_character"
                             id="temperature_character" data-options="textField:'value',valueField:'value',panelHeight:'auto',editable:false,
                                            data:[
                                            {value:'见图纸'},{value:'特注'}
@@ -1289,10 +1292,10 @@
         @if (step == 0)
         {
             <br />
-            @Html.Partial("_UploadFilePartial")
+            <input type="hidden" value="@mc.sys_no" id="wu_sysNum" />
+            @Html.Partial("_UploadFilePartial_wu")
         }
-        else
-        {
+        else {
             <div id="downloadPanel">
                 <div class="easyui-panel" style="background: #fafafa; padding: 10px; width: 800px;"
                     title="@Html.Lang("download_file")" href="@Url.Content("~/Items/downLoadFile?sys_no=" + mc.sys_no)">

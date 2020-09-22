@@ -6,7 +6,7 @@
                 var datas = $("#combo").combobox("getData");
                 for (var i = 0; i < datas.length; i++) {
                     if (datas[i].name == newValue) {
-                        $("#sys_no").val(newValue);
+                        $("#wu_sysNum").val(newValue);
                         return;
                     }
                 }
@@ -17,13 +17,13 @@
 </script>
 
 <div id="login" class="easyui-panel" title="上传/覆盖品质报告" style="width:820px;padding:5px 10px">
-<input type="hidden" id="sys_no" name="sys_no" />
 <br />
 客退编号:
 <input class="easyui-combobox" id="combo" name="combo" style="width: 120px" valuefield="name" textfield="name" url="@Url.Content("~/Items/getUnfinishedSysNo")"/>
 <br /><br />
 <div data-options="region:'center'" style="+position: relative;">
-               @Html.Partial("_UploadFilePartial")
+    <input type="hidden" id="wu_sysNum" />
+    @Html.Partial("_UploadFilePartial_wu")
 </div>
 <br />
 </div>
