@@ -594,6 +594,16 @@
                     <td>
                         <input id="project_team" name="project_team" />
                     </td>
+                    <td>
+                        是否PANEL:
+                    </td>
+                    <td>
+                        <input class="easyui-combobox" name="is_panel" id="is_panel"
+                    data-options="textField:'value',valueField:'value',panelHeight:'auto', required:true,editable:false,
+                                        data:[
+                                        {value:'是'},{value:'否'}
+                                        ]" />
+                    </td>
                     @*<td>
                         @Html.Lang("quotation_clerk"):
                     </td>
@@ -678,13 +688,19 @@
                     <input id="price" class="easyui-numberbox" name="price" precision="2" required="true" />
                 </td>
                 <td>
+                    模费成本:
+                </td>
+                <td>
+                    <input id="price" class="easyui-numberbox" name="cost" precision="2" required="true" />
+                </td>
+            </tr>
+            <tr>
+                <td>
                     @Html.Lang("pro_use"):
                 </td>
                 <td>
                     <input class="easyui-textbox" name="pro_use" id="pro_use" required="true" />
                 </td>
-            </tr>
-            <tr>
                 <td>
                     @Html.Lang("customer_model"):
                 </td>
@@ -702,15 +718,15 @@
                 </td>
                 <td>
                     <input id="pic_version" class="easyui-textbox" name="pic_version" required="true" />
-                </td>
+                </td>       
+            </tr>
+            <tr>
                 <td>
                     @Html.Lang("contract_num"):
                 </td>
                 <td>
                     <input id="contract_po_no" class="easyui-textbox" name="contract_po_no" />
-                </td>                
-            </tr>
-            <tr>
+                </td>         
                 <td>
                     @Html.Lang("biller"):
                 </td>

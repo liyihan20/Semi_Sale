@@ -409,11 +409,9 @@ namespace Sale_Order_Semi.Controllers
 
                 //2020-9-14 物流需保存运输费用和责任方
                 string expressFee = fc.Get("express_fee");
-                string whoToBlame = fc.Get("who_to_blame");
                 if (!string.IsNullOrEmpty(expressFee)) {
                     var returnBill = db.ReturnBill.Single(r => r.sys_no == ap.sys_no);
                     returnBill.express_fee = decimal.Parse(expressFee);
-                    returnBill.who_to_blame = whoToBlame;
                 }
             }
             #endregion

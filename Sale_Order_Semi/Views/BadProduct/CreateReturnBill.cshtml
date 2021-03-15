@@ -25,12 +25,12 @@
             fitColumns: true,
             rownumbers: true,
             singleSelect: true,
-            columns: [[ 
+            columns: [[
                         { field: 'stock_interid', title: 'interid', hidden: true },
-                        { field: 'stock_entryid', title: 'entryid', hidden: true },                                        
+                        { field: 'stock_entryid', title: 'entryid', hidden: true },
     					{ field: 'product_number', title: '产品编码', width: 120 },
     					{ field: 'product_name', title: '产品名称', width: 120 },
-                        { field: 'product_model', title: '规格型号', width: 150 },                        
+                        { field: 'product_model', title: '规格型号', width: 150 },
     					{ field: 'qty', title: '退货数量', width: 70, align: 'right' , editor: { type: 'numberbox', options: { precision: 4}}},
                         { field: 'aux_qty', title: '已发数量', width: 70, align: 'right' },
                         { field: 'can_apply_qty', title: '可退数量', width: 70, align: 'right' },
@@ -39,8 +39,8 @@
 //                        { field: 'qc_bad_qty', title: 'QC复检后不良品数量', width: 120, align: 'right' },
 //                        { field: 'qc_comment', title: '驻点QC复检情况', width: 300 }
                         { field: 'seorder_no', title: '销售订单编号', width: 100 },
-                        { field: 'stock_no', title: '销售出库单号', width: 100 }     
-    				]],
+                        { field: 'stock_no', title: '销售出库单号', width: 100 }
+            ]],
             toolbar: [{
                 text:"新增条目",
                 iconCls: 'icon-add',
@@ -51,26 +51,26 @@
                     $("#dlg_add").dialog("open");
                 }},
                 {
-                text: "@Html.Lang("del_item")",
-                iconCls: 'icon-remove',
-                handler: function () {
-                    var row = $('#bill_detail').datagrid('getSelected');
-                    if (row) {
-                        $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("are_you_sure")?', function (r) {
-                            if (r) {
-                                var index = $('#bill_detail').datagrid('getRowIndex', row);
-                                $('#bill_detail').datagrid('deleteRow', index);
-                            }
-                        });
+                    text: "@Html.Lang("del_item")",
+                    iconCls: 'icon-remove',
+                    handler: function () {
+                        var row = $('#bill_detail').datagrid('getSelected');
+                        if (row) {
+                            $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("are_you_sure")?', function (r) {
+                                if (r) {
+                                    var index = $('#bill_detail').datagrid('getRowIndex', row);
+                                    $('#bill_detail').datagrid('deleteRow', index);
+                                }
+                            });
+                        }
                     }
-                }
-            }],
+                }],
             //onClickCell: onClickCell,
             onClickRow:function(index,row){
                 onClickCell(index,"qty");
                 $(".datagrid-editable-input").focus();
             }
-        });       
+        });
 
         $("#orderList").datagrid({
             fit: true,
@@ -81,24 +81,24 @@
                         { field: 'FInterID', title: 'FInterID', width: 10, hidden: true },
                         { field: 'FEntryID', title: 'FEntryID', width: 10, hidden: true },
                         { field: 'FDate', title: '出库日期', width: 60 ,
-                        formatter: function(value,row,index){ 
-                            var date = eval('new ' + eval(value).source);
-                            return date.getFullYear()+'-'+(date.getMonth() + 1)+'-'+date.getDate();
-                        }},  
+                            formatter: function(value,row,index){
+                                var date = eval('new ' + eval(value).source);
+                                return date.getFullYear()+'-'+(date.getMonth() + 1)+'-'+date.getDate();
+                            }},
                         { field: 'FBillNo', title: '出库订单号', width: 80 },
     					{ field: 'FOrderBillNo', title: '订单号', width: 80 },
                         { field: 'FProductName', title: '产品名称', width: 100 },
     					{ field: 'FProductModel', title: '产品型号', width: 120 },
                         { field: 'Fauxqty', title: '实发数量', width: 70, align: 'right' },
                         { field: 'FcanApplyQty', title: '可申请数量', width: 70, align: 'right' }
-    				]],
+            ]],
             toolbar: [{
                 text: "确定",
                 iconCls: 'icon-add',
                 handler: function(){
                     var nowRows=$("#bill_detail").datagrid("getRows");
                     var toAddeds=$("#orderList").datagrid("getChecked");
-                    
+
                     for(var i=0;i<toAddeds.length;i++){
                         //判断是否在列表中已存在
                         for(var j=0;j<nowRows.length;j++){
@@ -109,11 +109,11 @@
                                 });
                                 return;
                             }
-                        }                        
+                        }
                         //2017-05-23 取消以下限制
                         //判断当月与以往月出库单是否混合
                         @*var firstDayInCurrentMonth=new Date(new Date().getFullYear(),new Date().getMonth(),1);
-                        var StockItemDate=eval('new ' + eval(toAddeds[i].FDate).source);            
+                        var StockItemDate=eval('new ' + eval(toAddeds[i].FDate).source);
                         if(nowRows.length>0){
                             if(isCurrentMonth=="1" && StockItemDate<firstDayInCurrentMonth){
                                 $.messager.show({
@@ -158,7 +158,7 @@
             $.messager.progress();
             $("#search_form").form("submit", {
                 url: "../BadProduct/SelectMoreStockBill",
-                onSubmit: function(param){  
+                onSubmit: function(param){
                     param.customer_no='@bill.customer_number';
                     param.hook_status='@bill.has_invoice';
                 },
@@ -172,37 +172,37 @@
                             msg: result.msg
                         });
                     }
-                    $.messager.progress("close"); 
+                    $.messager.progress("close");
                 }
             });
         });
 
-//        $("#qty").numberbox({
-//            onChange:function(newValue, oldValue){
-//                if(newValue!=""){
-//                    $("#qc_bad_qty").numberbox("setValue",newValue);                            
-//                }
-//            }
-//        }); 
-//        $("#customer_back_qty").numberbox({
-//            onChange:function(newValue, oldValue){
-//                if(newValue!=""){
-//                    var bad_qty=$("#qc_bad_qty").numberbox("getValue");
-//                    if(bad_qty=="") bad_qty=0;
-//                    $("#qc_good_qty").numberbox("setValue",newValue-bad_qty);                            
-//                }
-//            }
-//        }); 
+        //        $("#qty").numberbox({
+        //            onChange:function(newValue, oldValue){
+        //                if(newValue!=""){
+        //                    $("#qc_bad_qty").numberbox("setValue",newValue);
+        //                }
+        //            }
+        //        });
+        //        $("#customer_back_qty").numberbox({
+        //            onChange:function(newValue, oldValue){
+        //                if(newValue!=""){
+        //                    var bad_qty=$("#qc_bad_qty").numberbox("getValue");
+        //                    if(bad_qty=="") bad_qty=0;
+        //                    $("#qc_good_qty").numberbox("setValue",newValue-bad_qty);
+        //                }
+        //            }
+        //        });
 
-//        $("#return_dep").combobox({
-//            onSelect: function (record) {
-//                $.post("@Url.Content("~/Items/getPMCAuditors")", {dep_id:record.id,step_name:'PMC' },
-//                        function (data) {
-//                            $('#pmc').combobox("loadData",data);
-//                        }, "json"
-//                    );
-//            }
-//        });
+        //        $("#return_dep").combobox({
+        //            onSelect: function (record) {
+        //                $.post("@Url.Content("~/Items/getPMCAuditors")", {dep_id:record.id,step_name:'PMC' },
+        //                        function (data) {
+        //                            $('#pmc').combobox("loadData",data);
+        //                        }, "json"
+        //                    );
+        //            }
+        //        });
 
         //保存订单
         $("#saveAllBut").click(function(){
@@ -225,14 +225,19 @@
             if(!$('#bill_form').form('validate')){
                 return;
             }
+            var fileInfo = $("#file_div").GetMyFileInfo("@bill.sys_no", "@ViewData["userName"]");
+            if (fileInfo.length < 1) {
+                tip("必须上传附件才能保存");
+                return;
+            }
             handling();
 
             //表体字段：
             var details=$("#bill_detail").datagrid("getRows");
             var seorder_no=new Array();
-            var stock_no=new Array(); 
+            var stock_no=new Array();
             var stock_interid=new Array();
-            var stock_entryid=new Array();           
+            var stock_entryid=new Array();
             var product_number=new Array();
             var product_name=new Array();
             var product_model=new Array();
@@ -248,7 +253,7 @@
                     alert("第"+(i+1)+"行的退货数量不能为空");
                     hasHandled();
                     return;
-                }                
+                }
                 if(parseFloat(details[i].qty) - parseFloat(details[i].can_apply_qty) > 0.000001){
                     alert("第"+(i+1)+"行的退货数量不能大于可退数量");
                     hasHandled();
@@ -271,7 +276,7 @@
             }
             $('#bill_form').form('submit',{
                 url: '@Url.Content("~/BadProduct/saveReturnBill")',
-                onSubmit: function(param){  
+                onSubmit: function(param){
                     param.seorder_no=seorder_no;
                     param.stock_no=stock_no;
                     param.stock_interid=stock_interid;
@@ -282,12 +287,12 @@
                     param.aux_qty=aux_qty;
                     param.qty=qty;
                     param.can_apply_qty=can_apply_qty;
-//                    param.customer_back_qty=customer_back_qty;
-//                    param.qc_good_qty=qc_good_qty;
-//                    param.qc_bad_qty=qc_bad_qty;
-//                    param.qc_comment=qc_comment;
+                    //                    param.customer_back_qty=customer_back_qty;
+                    //                    param.qc_good_qty=qc_good_qty;
+                    //                    param.qc_bad_qty=qc_bad_qty;
+                    //                    param.qc_comment=qc_comment;
                 },
-                success: function (data) { 
+                success: function (data) {
                     var result = eval('('+ data +')');
                     if(result.suc){
                         $("#status").html("已保存,未提交");
@@ -326,7 +331,7 @@
         $("#order_div").click(function () { endEditing(); });
 
     });
-    
+
 
     //easyui的扩展方法，可以直接编辑datagrid的单元格方法
     $.extend($.fn.datagrid.methods, {
@@ -369,68 +374,68 @@
         }
     }
 
-    function handling(){        
-        $.messager.progress(); 
+    function handling(){
+        $.messager.progress();
         $('#saveAllBut').linkbutton('disable');
         $('#submitApply').linkbutton('disable');
     }
 
     function hasHandled(){
-        $.messager.progress("close"); 
+        $.messager.progress("close");
         $('#saveAllBut').linkbutton('enable');
         $('#submitApply').linkbutton('enable');
     }
 
     //以下是订单明细的增删改
-//    var detailIndex=-1;
+    //    var detailIndex=-1;
 
-//    function updateDetail(){
-//        var row = $('#bill_detail').datagrid('getSelected');
-//        if (row) {
-//            detailIndex = $('#bill_detail').datagrid('getRowIndex', row);
-//            $("#fm").form("load",row);
-//            $("#dlg_details").dialog("open").dialog("setTitle","@Html.Lang("edit_item")");
-//        }
-//    }
-//    function saveDetails(){
-//        if(!$("#fm").form("validate")){
-//            return;
-//        }
-//        var aux_qty=$('#aux_qty').val();
-//        var qty=$('#qty').numberbox('getValue');
-//        var customer_back_qty=$('#customer_back_qty').numberbox('getValue');
-//        if(qty-aux_qty>0){
-//            alert("退货数量不能大于已发数量");
-//            return;
-//        }
-//        if(customer_back_qty!="" && qty-customer_back_qty>0){
-//            alert("退货数量不能大于客户退货数量");
-//            return;
-//        }
-//        var theRow = {
-//            stock_interid:$("#stock_interid").val(),
-//            stock_entryid:$("#stock_entryid").val(),
-//            seorder_no:$("#seorder_no").val(),
-//            stock_no:$("#stock_no").val(),
-//            product_number: $('#product_number').val(),
-//            product_name: $('#product_name').val(),
-//            product_model: $('#product_model').val(),
-//            aux_qty:$('#aux_qty').val(),
-//            qty: qty,
-//            customer_back_qty: customer_back_qty,
-//            qc_good_qty: $('#qc_good_qty').numberbox('getValue'),
-//            qc_bad_qty: $('#qc_bad_qty').numberbox('getValue'),
-//            qc_comment: $('#qc_comment').val()
-//        };
-//        if(detailIndex==-1){
-//            $('#bill_detail').datagrid('appendRow', theRow);
-//        }else{
-//            $('#bill_detail').datagrid('updateRow', {index:detailIndex,
-//                row: theRow
-//            });
-//        }
-//        $('#dlg_details').dialog('close');
-//    }
+    //    function updateDetail(){
+    //        var row = $('#bill_detail').datagrid('getSelected');
+    //        if (row) {
+    //            detailIndex = $('#bill_detail').datagrid('getRowIndex', row);
+    //            $("#fm").form("load",row);
+    //            $("#dlg_details").dialog("open").dialog("setTitle","@Html.Lang("edit_item")");
+    //        }
+    //    }
+    //    function saveDetails(){
+    //        if(!$("#fm").form("validate")){
+    //            return;
+    //        }
+    //        var aux_qty=$('#aux_qty').val();
+    //        var qty=$('#qty').numberbox('getValue');
+    //        var customer_back_qty=$('#customer_back_qty').numberbox('getValue');
+    //        if(qty-aux_qty>0){
+    //            alert("退货数量不能大于已发数量");
+    //            return;
+    //        }
+    //        if(customer_back_qty!="" && qty-customer_back_qty>0){
+    //            alert("退货数量不能大于客户退货数量");
+    //            return;
+    //        }
+    //        var theRow = {
+    //            stock_interid:$("#stock_interid").val(),
+    //            stock_entryid:$("#stock_entryid").val(),
+    //            seorder_no:$("#seorder_no").val(),
+    //            stock_no:$("#stock_no").val(),
+    //            product_number: $('#product_number').val(),
+    //            product_name: $('#product_name').val(),
+    //            product_model: $('#product_model').val(),
+    //            aux_qty:$('#aux_qty').val(),
+    //            qty: qty,
+    //            customer_back_qty: customer_back_qty,
+    //            qc_good_qty: $('#qc_good_qty').numberbox('getValue'),
+    //            qc_bad_qty: $('#qc_bad_qty').numberbox('getValue'),
+    //            qc_comment: $('#qc_comment').val()
+    //        };
+    //        if(detailIndex==-1){
+    //            $('#bill_detail').datagrid('appendRow', theRow);
+    //        }else{
+    //            $('#bill_detail').datagrid('updateRow', {index:detailIndex,
+    //                row: theRow
+    //            });
+    //        }
+    //        $('#dlg_details').dialog('close');
+    //    }
 </script>
 <form id="bill_form" method="post" action="">
 <input type="hidden" id="sys_no" name="sys_no" value="@bill.sys_no" />
@@ -552,7 +557,26 @@
                 <td>
                     <input class="easyui-textbox" name="old_sys_no" id="old_sys_no" style="width: 115px" value="@bill.old_sys_no" />
                 </td>
-                <td></td><td></td><td></td><td></td>
+                <td>
+                    责任方:
+                </td>
+                <td>
+                    <input class="easyui-combobox" style="width: 120px" name="who_to_blame" id="who_to_blame"
+                            data-options="textField:'value',valueField:'value',panelHeight:'auto', required:true,editable:false,
+                                    data:[
+                                    {value:'客户'},{value:'货运公司'},{value:'物流中心'},{value:'事业部品质'},{value:'营业员'}
+                                    ]" value="@bill.who_to_blame" />
+                </td>
+                <td>
+                    退货属性:
+                </td>
+                <td>
+                    <input class="easyui-combobox" style="width: 120px" name="return_type" id="return_type"
+                            data-options="textField:'value',valueField:'value',panelHeight:'auto', required:true,editable:false,
+                                    data:[
+                                    {value:'品质问题'},{value:'非品质问题'}
+                                    ]" value="@bill.return_type" />
+                </td>
             </tr>
         </table>
     </div>

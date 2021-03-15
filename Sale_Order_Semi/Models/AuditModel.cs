@@ -23,6 +23,7 @@ namespace Sale_Order_Semi.Models
         public string encryptNo { get; set; }
         public string orderType { get; set; }
         public string model { get; set; }
+        public bool flag { get; set; } //2021-03-06 临时筛选用
     }
 
     //审核人查看自己待审核或审核过的变更单据列表
@@ -72,6 +73,11 @@ namespace Sale_Order_Semi.Models
         public string text { get; set; }
     }
 
+    public class SResultModel
+    {
+        public bool suc { get; set; }
+        public string msg { get; set; }
+    }
     public class CeoAuditListModel
     {
         public int? step { get; set; }
@@ -85,5 +91,12 @@ namespace Sale_Order_Semi.Models
         public string applyTimeStr { get; set; }
         public string orderType { get; set; }
         public string model { get; set; }
+    }
+
+    public class AuditResultModel
+    {
+        public bool canAudit { get; set; }
+        public string auditResult { get; set; }
+        public string comment { get; set; }
     }
 }

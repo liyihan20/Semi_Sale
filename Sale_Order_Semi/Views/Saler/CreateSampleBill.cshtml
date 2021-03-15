@@ -122,7 +122,7 @@
 
         $("#currency_no").combobox({
             onSelect: function (record) {
-                $.post("@Url.Content("~/Items/getExchangeRate")", { currencyId: record.id },
+                $.post("@Url.Content("~/Items/getExchangeRate")", { currencyNo: record.no, currencyName: record.name },
                     function (data) {
                         $('#exchange_rate').numberbox('setValue', data);
                     }, "json"

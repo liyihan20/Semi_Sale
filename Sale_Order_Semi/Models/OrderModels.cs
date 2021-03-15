@@ -45,4 +45,24 @@ namespace Sale_Order_Semi.Models
         public string zt { get; set; }
         public float percent { get; set; }
     }
+
+    public class SOModel
+    {
+        public Sale_SO head { get; set; }
+        public List<Sale_SO_details> entrys { get; set; }
+    }
+
+    public class CMModel
+    {
+        public ModelContract mc { get; set; }
+        public ModelContractExtra extra { get; set; }
+    }
+
+    public class CHModel
+    {
+        public CH_bill head { get; set; }
+        public List<CH_bill_detail> entrys { get; set; }
+        public List<CH_package> packages { get; set; }
+    }
+
 }

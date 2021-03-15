@@ -31,36 +31,36 @@
                 $('#mm').menu('show', {
                     left:e.pageX,
                     top:e.pageY
-                }); 
+                });
             },
-            columns: [[                        
+            columns: [[
     					//{ field: 'product_number', title: '产品编码', width: 120 },
                         { field: 'entry_no',title:'行号',width:50 , align: 'center'},
     					{ field: 'product_name', title: '产品名称', width: 120 },
                         { field: 'product_model', title: '规格型号', width: 150 },
                         { field: 'aux_qty', title: '已发数量', width: 70, align: 'right' },
-    					{ field: 'qty', title: '退货数量', width: 70, align: 'right' },                        
-                        { field: 'real_qty', title: '实退数量', width: 70, align: 'right', editor: { type: 'numberbox', options: { precision: 4}} },    
+    					{ field: 'qty', title: '退货数量', width: 70, align: 'right' },
+                        { field: 'real_qty', title: '实退数量', width: 70, align: 'right', editor: { type: 'numberbox', options: { precision: 4}} },
                         { field: 'is_online', title: '是否已上线',width: 70, align: 'center', editor:{ type: 'checkbox', options: { on:'已上线',off:'未上线'}},
-                        styler: function(value,row,index){
-				            if (value == '已上线'){
-					            return 'color:green;';
-				            }else{
-                                return 'color:red;';
-                            }
-			            } },
-                        { field: 'ch_dep_name', title: '出货组', width: 100, 
-                        editor: { type: 'combobox', 
-                            options: 
-                                {
-                                    valueField:'text',
-                                    textField:'text',
-                                    url:'@Url.Content("~/Items/getAllCHZAuditors")',
-                                    panelheight:'120px',
-                                    editable:false,
-                                    required:true
+                            styler: function(value,row,index){
+                                if (value == '已上线'){
+                                    return 'color:green;';
+                                }else{
+                                    return 'color:red;';
                                 }
-                            } 
+                            } },
+                        { field: 'ch_dep_name', title: '出货组', width: 100,
+                            editor: { type: 'combobox',
+                                options:
+                                    {
+                                        valueField:'text',
+                                        textField:'text',
+                                        url:'@Url.Content("~/Items/getAllCHZAuditors")',
+                                        panelheight:'120px',
+                                        editable:false,
+                                        required:true
+                                    }
+                            }
                         },
 //                        { field: 'has_replace_qty', title: '已换货数量', width: 100, align: 'right' },
 //                        { field: 'has_red_qty', title: '已退红字数量', width: 100, align: 'right' },
@@ -70,7 +70,7 @@
                         { field: 'seorder_no', title: '销售订单编号', width: 100 },
                         { field: 'stock_no', title: '销售出库单号', width: 100 }
 //                        { field: 'qc_comment', title: '驻点QC复检情况', width: 300 }
-    				]],
+            ]],
             toolbar: [{
                 text: "复制行",
                 iconCls: 'icon-add',
@@ -82,10 +82,10 @@
             }],
             //onClickCell: onClickCell,
             onClickRow: onClickRow
-//            function(index,row){
-//                onClickCell(index,"real_qty");
-//                $(".datagrid-editable-input").focus();
-//            }
+            //            function(index,row){
+            //                onClickCell(index,"real_qty");
+            //                $(".datagrid-editable-input").focus();
+            //            }
         });
 
         $("#order_div input[type='text'],#comment,#saler_comment,#market_comment").attr("readonly", "readonly");
@@ -93,48 +93,48 @@
         $("#agency_div").click(function () { endEditing(); });
     });
 
-     var editIndex = undefined;
-        function endEditing(){
-            if (editIndex == undefined){return true}
-            if ($('#bill_detail').datagrid('validateRow', editIndex)){                
-                $('#bill_detail').datagrid('endEdit', editIndex);
-                editIndex = undefined;
-                return true;
+    var editIndex = undefined;
+    function endEditing(){
+        if (editIndex == undefined){return true}
+        if ($('#bill_detail').datagrid('validateRow', editIndex)){
+            $('#bill_detail').datagrid('endEdit', editIndex);
+            editIndex = undefined;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function onClickRow(index){
+        if (editIndex != index){
+            if (endEditing()){
+                $('#bill_detail').datagrid('selectRow', index)
+                        .datagrid('beginEdit', index);
+                editIndex = index;
             } else {
-                return false;
+                $('#bill_detail').datagrid('selectRow', editIndex);
             }
         }
-        function onClickRow(index){
-            if (editIndex != index){
-                if (endEditing()){
-                    $('#bill_detail').datagrid('selectRow', index)
-                            .datagrid('beginEdit', index);
-                    editIndex = index;
-                } else {
-                    $('#bill_detail').datagrid('selectRow', editIndex);
-                }
-            }
-        }
+    }
 
-        function addRow() {
-            var row = $('#bill_detail').datagrid('getSelected');                    
-            if (row) {
-                if(endEditing()){
-                    var rowIndex=$('#bill_detail').datagrid('getRowIndex',row) + 1;
-                    var newRow=jQuery.extend(true,{}, row);
-                    newRow.real_qty='';
-                    newRow.is_online='未上线';
-                    $('#bill_detail').datagrid('insertRow',{index:rowIndex,row:newRow});
-                }
-            }else{
-                alert("请先选择某一行再复制");
+    function addRow() {
+        var row = $('#bill_detail').datagrid('getSelected');
+        if (row) {
+            if(endEditing()){
+                var rowIndex=$('#bill_detail').datagrid('getRowIndex',row) + 1;
+                var newRow=jQuery.extend(true,{}, row);
+                newRow.real_qty='';
+                newRow.is_online='未上线';
+                $('#bill_detail').datagrid('insertRow',{index:rowIndex,row:newRow});
             }
+        }else{
+            alert("请先选择某一行再复制");
         }
+    }
 
-        function removeRow() {
-            var row = $('#bill_detail').datagrid('getSelected');
-            if (row) {
-                $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("are_you_sure")?', function (r) {
+    function removeRow() {
+        var row = $('#bill_detail').datagrid('getSelected');
+        if (row) {
+            $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("are_you_sure")?', function (r) {
                     if (r) {
                         var index = $('#bill_detail').datagrid('getRowIndex', row);
                         $('#bill_detail').datagrid('deleteRow', index);
@@ -142,9 +142,10 @@
                 });
             }
         }
-    
+
     function okClick(){
-        if($.trim($("#up_name").html())==""){
+        var fileInfo = $("#file_div").GetMyFileInfo("@bill.sys_no", "@ViewData["currentAuditor"]");
+        if (fileInfo.length < 1) {
             alert("客服部审核必须上传品质报告！");
             return;
         }
@@ -156,31 +157,31 @@
                 isSame=false;
                 break;
             }
-        }        
-        $("#okFlag").val("true");        
+        }
+        $("#okFlag").val("true");
         $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("confirm_pass")?', function(r){
-	        if (r){
+            if (r){
                 if(!isSame){
                     $.messager.confirm('@Html.Lang("confirm")', '退货数量与实退数量不一致，确定提交吗?', function(r2){
-	                    if (r2){
+                        if (r2){
                             submitForm();
-	                    }
-                    });             
+                        }
+                    });
                 } else {
                     submitForm();
                 }
-	        }
-        });             
+            }
+        });
     }
 
     function noClick(){
-        $("#okFlag").val("false");        
+        $("#okFlag").val("false");
         if(parseInt("@ViewData["step"]")>1){
             //可以退回下单者或者上一审批人
             $("#dlg_No").dialog("open");
         }else{
             $.messager.confirm('@Html.Lang("confirm")', '@Html.Lang("confirm_reject")?', function(r){
-	            if (r){                    
+                if (r){
                     submitForm();
                 }
             });
@@ -203,27 +204,27 @@
         var reason=$("#agency_comment").val();
         if($.trim(reason)==""){
             $.messager.show({
-                    title: '@Html.Lang("tip")',
-                    msg: "挂起操作必须写明原因，提交失败"
-                });   
+                title: '@Html.Lang("tip")',
+                msg: "挂起操作必须写明原因，提交失败"
+            });
         }else{
-             $.messager.confirm('@Html.Lang("confirm")', '确定要将订单挂起吗?', function(r){
-	         if (r){
-                 $.messager.progress();
-                 $("#audit_fm").form("submit",{
-                    url:"@Url.Content("~/Audit/BlockOrder")",
-                    success:function(data){
-                        $.messager.progress('close');
-                        var result=eval("("+data+")"); 
-                        $.messager.show({
-                            title: '@Html.Lang("tip")',
-                            msg: result.msg + ",正在跳转..."
-                        });
-                        setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';",1500);
-                    }
-                });
-            }
-            });  
+            $.messager.confirm('@Html.Lang("confirm")', '确定要将订单挂起吗?', function(r){
+                if (r){
+                    $.messager.progress();
+                    $("#audit_fm").form("submit",{
+                        url:"@Url.Content("~/Audit/BlockOrder")",
+                        success:function(data){
+                            $.messager.progress('close');
+                            var result=eval("("+data+")");
+                            $.messager.show({
+                                title: '@Html.Lang("tip")',
+                                msg: result.msg + ",正在跳转..."
+                            });
+                            setTimeout("window.location.href='@Url.Content("~/Audit/CheckAuditList")';",1500);
+                        }
+                    });
+                }
+            });
         }
     }
 
@@ -254,8 +255,8 @@
                 param.FChDepName = FChDepName;
             },
             success:function(data){
-            $.messager.progress('close');
-                var result=eval("("+data+")"); 
+                $.messager.progress('close');
+                var result=eval("("+data+")");
                 $.messager.show({
                     title: '@Html.Lang("tip")',
                     msg: result.msg + ",正在跳转..."
@@ -288,16 +289,16 @@
                 return false;
             }
             //如果复制出一行，则上线状态应该不一致。
-//            if(details[i].entry_no == tmpEntryNo && details[i].is_online == tmpOnlineStatus){
-//                $.messager.show({
-//                    title: '@Html.Lang("tip")',
-//                    msg: "行号都为"+tmpEntryNo+"的上线状态不能相同，必须是一行已上线一行未上线"
-//                });
-//                return false;
-//            }else{
-//                tmpEntryNo=details[i].entry_no;
-//                tmpOnlineStatus=details[i].is_online;
-//            }
+            //            if(details[i].entry_no == tmpEntryNo && details[i].is_online == tmpOnlineStatus){
+            //                $.messager.show({
+            //                    title: '@Html.Lang("tip")',
+            //                    msg: "行号都为"+tmpEntryNo+"的上线状态不能相同，必须是一行已上线一行未上线"
+            //                });
+            //                return false;
+            //            }else{
+            //                tmpEntryNo=details[i].entry_no;
+            //                tmpOnlineStatus=details[i].is_online;
+            //            }
         }
         return true;
     }
@@ -307,10 +308,9 @@
     @*挂起信息*@
     @Html.Partial("_BlockInfoPartial")
 
-    <div data-options="region:'south',collapsed:false" style="height: 145px; background: #fafafa;">
-        <div class="easyui-layout" data-options="fit:true" id="audit_div">
-            <div data-options="region:'south',collapsed:false" style="height: 50px; background: #fafafa;
-        padding: 8px 10px;">
+    <div data-options="region:'south',collapsed:false" style="height: 50px; background: #fafafa;padding: 8px 10px;">
+        @*<div class="easyui-layout" data-options="fit:true" id="audit_div">
+            <div data-options="region:'south',collapsed:false" style="height: 50px; background: #fafafa;padding: 8px 10px;">*@
                 <form id="audit_fm" method="post" action="">
                 @Html.Lang("audit_opinion"):
                 <input type="hidden" name="step" value="@ViewData["step"]" />
@@ -318,19 +318,17 @@
                 <input type="hidden" name="okFlag" id="okFlag" value="" />
                 <input type="hidden" name="sys_no" id="sys_no" value="@ViewData["sys_no"]" />
                 <input type="hidden" name="backToPrevious" id="backToPrevious" value="0" />                
-                <input id="agency_comment" name="agency_comment" style="width: 450px" />&nbsp; <a
-                    id="OKBt" href="#agency_div" class="easyui-linkbutton" data-options="iconCls:'icon-ok'"
-                    onclick="okClick()">@Html.Lang("pass")</a> <a id="NOBt" href="#agency_div" class="easyui-linkbutton"
-                        data-options="iconCls:'icon-no'" onclick="noClick()">@Html.Lang("reject")</a>
-                <a id="blockBt" href="#agency_div" class="easyui-linkbutton" data-options="iconCls:'icon-help'"
-                    onclick="block()">挂起</a>
+                <input id="agency_comment" name="agency_comment" style="width: 450px" />&nbsp; 
+                <a id="OKBt" href="#agency_div" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="okClick()">@Html.Lang("pass")</a> 
+                <a id="NOBt" href="#agency_div" class="easyui-linkbutton" data-options="iconCls:'icon-no'" onclick="noClick()">@Html.Lang("reject")</a>
+                <a id="blockBt" href="#agency_div" class="easyui-linkbutton" data-options="iconCls:'icon-help'" onclick="block()">挂起</a>
                 </form>
-            </div>
-            <div data-options="region:'center'">
+            @*</div>*@
+            @*<div data-options="region:'center'">
                 <input type="hidden" id="wu_sysNum" value="@bill.sys_no" />
                 @Html.Partial("_UploadFilePartial_wu")
-            </div>
-        </div> 
+            </div>*@
+        @*</div>*@ 
     </div>
     <div data-options="region:'center'">
     
@@ -430,7 +428,14 @@
                         <td>
                             @bill.old_sys_no
                         </td>
-                        <td></td><td></td><td></td><td></td>
+                        <td>
+                            责任方:
+                        </td>
+                        <td>
+                            @bill.who_to_blame
+                        </td>
+                        <td>退货属性:</td>
+                        <td>@bill.return_type</td>
                     </tr>
                 </table>
             </div>

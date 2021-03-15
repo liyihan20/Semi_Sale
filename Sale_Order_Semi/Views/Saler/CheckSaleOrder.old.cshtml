@@ -111,7 +111,12 @@
                         { field: 'customer_item_model', title: '@Html.Lang("customer_item_model")', width: 120 },
                         { field: 'project_name', title: '@Html.Lang("project_name")', width: 120 },
                         { field: 'comment', title: '@Html.Lang("pro_size")', width: 200 }
-    				]]
+    ]],
+    rowStyler: function(index,row){
+        if(row.item_no.startsWith("1")){
+            return "color:red";
+        }
+    }
         });
 
         $("#order_div input[type='text']").attr("readonly", "readonly");

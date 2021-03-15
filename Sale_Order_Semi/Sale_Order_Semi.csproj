@@ -164,16 +164,19 @@
     <Compile Include="Controllers\FilesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ItemsController.cs" />
-    <Compile Include="Controllers\K3AuditController.cs" />
-    <Compile Include="Controllers\K3SalerController.cs" />
     <Compile Include="Controllers\KSController.cs" />
     <Compile Include="Controllers\LocalizationHelpers.cs" />
     <Compile Include="Controllers\MyHelpers.cs" />
+    <Compile Include="Controllers\NAuditController.cs" />
+    <Compile Include="Controllers\NExtraController.cs" />
+    <Compile Include="Controllers\NFileController.cs" />
+    <Compile Include="Controllers\NSalerController.cs" />
     <Compile Include="Controllers\SalerController.cs" />
     <Compile Include="Filter\SessionFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IFinishEmail.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\AuditModel.cs" />
     <Compile Include="Models\BLDT.Designer.cs">
@@ -192,6 +195,7 @@
     </Compile>
     <Compile Include="Models\CommonModels.cs" />
     <Compile Include="Models\Enums.cs" />
+    <Compile Include="Models\K3Items.cs" />
     <Compile Include="Models\ManagementModels.cs" />
     <Compile Include="Models\OrderModels.cs" />
     <Compile Include="Models\ProcModel.cs" />
@@ -270,6 +274,15 @@
       <SubType>Component</SubType>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="Services\ApplySv.cs" />
+    <Compile Include="Services\BaseSv.cs" />
+    <Compile Include="Services\BillSv.cs" />
+    <Compile Include="Services\CHSv.cs" />
+    <Compile Include="Services\CMSv.cs" />
+    <Compile Include="Services\K3ItemSv.cs" />
+    <Compile Include="Services\SOSv.cs" />
+    <Compile Include="Utils\BillUtils.cs" />
+    <Compile Include="Utils\EmailUtil.cs" />
     <Compile Include="Utils\MyEmail.cs" />
     <Compile Include="Utils\Utils.cs" />
   </ItemGroup>
@@ -615,7 +628,6 @@
     <Content Include="Views\Shared\Tip.cshtml" />
     <Content Include="Views\Audit\CheckAuditList.cshtml" />
     <Content Include="Views\Audit\MarketAudit.cshtml" />
-    <Content Include="Views\Audit\SaleOrdrEdit.cshtml" />
     <Content Include="Views\Authority\AgencyAndMarketAuditor.cshtml" />
     <Content Include="Views\Authority\CheckBillsBackground.cshtml" />
     <Content Include="Views\Authority\Currency.cshtml" />
@@ -628,41 +640,11 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Items\downLoadFile.cshtml" />
-    <Content Include="Views\K3Audit\AgencyAuditUpdate.cshtml" />
-    <Content Include="Views\K3Audit\BeginAuditCancel.cshtml" />
-    <Content Include="Views\K3Audit\CheckOwnUpdateApply.cshtml" />
-    <Content Include="Views\K3Audit\MarketAuditUpdate.cshtml" />
-    <Content Include="Views\K3Audit\MarketEditChargeSample.cshtml" />
-    <Content Include="Views\K3Audit\MarketEditContract.cshtml" />
-    <Content Include="Views\K3Audit\MarketEditFreeSample.cshtml" />
-    <Content Include="Views\K3Audit\MarketEditModel.cshtml" />
-    <Content Include="Views\K3Audit\MarketEditUpdate.cshtml" />
-    <Content Include="Views\K3Saler\CancelK3Bill.cshtml" />
-    <Content Include="Views\K3Saler\CheckK3ChargeSample.cshtml" />
-    <Content Include="Views\K3Saler\CheckK3Contract.cshtml" />
-    <Content Include="Views\K3Saler\CheckK3FreeSample.cshtml" />
-    <Content Include="Views\K3Saler\CheckK3Model.cshtml" />
-    <Content Include="Views\K3Saler\CheckK3SaleOrder.cshtml" />
-    <Content Include="Views\K3Saler\CheckUpdateOrders.cshtml" />
-    <Content Include="Views\K3Saler\GetCancelOrderDetails.cshtml" />
-    <Content Include="Views\K3Saler\GetUpdateOrderDetails.cshtml" />
-    <Content Include="Views\K3Saler\ModifyK3ChargeSample.cshtml" />
-    <Content Include="Views\K3Saler\ModifyK3Contract.cshtml" />
-    <Content Include="Views\K3Saler\ModifyK3FreeSample.cshtml" />
-    <Content Include="Views\K3Saler\ModifyK3Model.cshtml" />
-    <Content Include="Views\K3Saler\ModifyK3SaleOrder.cshtml" />
-    <Content Include="Views\K3Saler\SearchK3ChargeSamples.cshtml" />
-    <Content Include="Views\K3Saler\SearchK3Contracts.cshtml" />
-    <Content Include="Views\K3Saler\SearchK3FreeSamples.cshtml" />
-    <Content Include="Views\K3Saler\SearchK3Models.cshtml" />
-    <Content Include="Views\K3Saler\SearchK3SaleOrders.cshtml" />
     <Content Include="Views\Orders\Index.cshtml" />
     <Content Include="Views\Orders\newReport.cshtml" />
     <Content Include="Views\Saler\CheckAllOrders.cshtml" />
     <Content Include="Views\Saler\CheckModelContract.cshtml" />
-    <Content Include="Views\Saler\CheckSaleOrder.old.cshtml" />
     <Content Include="Views\Saler\CreateModelContract.cshtml" />
-    <Content Include="Views\Saler\CreateSaleOrder.old.cshtml" />
     <Content Include="Views\Shared\_DownloadCeoExcelPartial.cshtml" />
     <Content Include="Views\Authority\ProcExcuteTime.cshtml" />
     <None Include="Models\SBDT.xsc">
@@ -740,6 +722,14 @@
     <Content Include="Views\KS\UploadKSData.cshtml" />
     <Content Include="Views\KS\CheckHKSO.cshtml" />
     <Content Include="Views\Audit\LogEditReturnBill.cshtml" />
+    <Content Include="Views\NAudit\BeginNAudit.cshtml" />
+    <Content Include="Views\NAudit\CheckNAuditList.cshtml" />
+    <Content Include="Views\NSaler\CheckNBillList.cshtml" />
+    <Content Include="Views\NSaler\CreateNSO.cshtml" />
+    <Content Include="Views\NSaler\CheckNSO.cshtml" />
+    <Content Include="Views\NSaler\CreateNCM.cshtml" />
+    <Content Include="Views\NSaler\CheckNCM.cshtml" />
+    <Content Include="Views\NExtra\ClerkAndCustomer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Models\SaleDB.dbml.layout">

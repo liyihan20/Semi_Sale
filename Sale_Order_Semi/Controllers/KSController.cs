@@ -53,9 +53,9 @@ namespace Sale_Order_Semi.Controllers
         {
             var result = new List<Sale_HK_SO>();
             var dt = new DataSet();
-            using (var stream = System.IO.File.Open(GetKSExcelPath(fileName), FileMode.Open, FileAccess.Read)) {                
-                using (var reader = ExcelReaderFactory.CreateReader(stream)) {                    
-                    dt = reader.AsDataSet();                    
+            using (var stream = System.IO.File.Open(GetKSExcelPath(fileName), FileMode.Open, FileAccess.Read)) {
+                using (var reader = ExcelReaderFactory.CreateReader(stream)) {
+                    dt = reader.AsDataSet();
                 }
             }
             var tb = dt.Tables[0];
@@ -181,6 +181,15 @@ namespace Sale_Order_Semi.Controllers
                 so.customer_pn = Convert.ToString(r[13]);
                 //15. 产品用途
                 so.product_usage = Convert.ToString(r[14]);
+                //16. 成本
+                if (decimal.TryParse(Convert.ToString(r[15]), out tempDc)) {
+                    so.cost = tempDc;
+                }
+                else {
+                    so.warn_info += "成本不合法";
+                }
+                //17. 生产部门
+                so.produce_dep = Convert.ToString(r[16]);
 
                 result.Add(so);
             }

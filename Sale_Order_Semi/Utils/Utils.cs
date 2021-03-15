@@ -58,7 +58,7 @@ namespace Sale_Order_Semi.Utils
         //获得退货流水号
         public string getReturnSystemNo(string area)
         {
-            string billType = area + "TH";
+            string billType = "TH" + area;
             string result = billType;
             DateTime dt = DateTime.Now;
             string date_str = dt.ToString("yyMMdd");
@@ -527,7 +527,7 @@ namespace Sale_Order_Semi.Utils
                                              where v.step_name == "BL_事业部接单员"
                                              && v.department_name == order.bus_dep
                                              select u).ToList());
-                        prAuditors.Add(db.User.Single(u => u.real_name == "林莲杏"));
+                        //prAuditors.Add(db.User.Single(u => u.real_name == "林莲杏"));
                     }
                 }
                 if (app.order_type.Equals("TH")) {

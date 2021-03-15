@@ -41,5 +41,25 @@ namespace Sale_Order_Semi.Controllers
             }
         }
 
+        public string GetIPAddr()
+        {
+            return Request.UserHostAddress;
+        }
+
+        public void Wlog(string tag, string log, string sysNo = "", int unusual = 0)
+        {
+            db.EventLog.InsertOnSubmit(new EventLog()
+            {
+                sysNum = sysNo,
+                username = currentUser.realName,
+                model = tag,
+                ip = GetIPAddr(),
+                @event = log,
+                op_time = DateTime.Now,
+                unusual = unusual
+            });
+            db.SubmitChanges();
+        }
+
     }
 }

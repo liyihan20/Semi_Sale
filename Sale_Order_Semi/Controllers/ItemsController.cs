@@ -5,6 +5,7 @@ using Sale_Order_Semi.Models;
 using Sale_Order_Semi.Filter;
 using Sale_Order_Semi.Utils;
 using System.Collections.Generic;
+using Sale_Order_Semi.Services;
 
 namespace Sale_Order_Semi.Controllers
 {
@@ -15,158 +16,139 @@ namespace Sale_Order_Semi.Controllers
         //获取各个字段的选择列表
         public JsonResult getItems(string what)
         {
-            var result = from it in db.vwItems
-                         where it.what.Equals(what)
-                         orderby it.fname
-                         select new
-                         {
-                             id = it.interid,
-                             no = it.fid,
-                             name = it.fname
-                         };
+            var result = new K3ItemSv().GetK3Items(what)
+                .Select(k => new { no = k.fid, name = k.fname })
+                .ToList();
             return Json(result);
         }
 
         //获取汇率
-        public JsonResult getExchangeRate(int currencyId)
-        {
-            double? result = 0;
-            db.getExchangeRate(currencyId, ref result);
-            return Json(result);
+        public JsonResult getExchangeRate(string currencyNo, string currencyName)
+        {            
+            return Json(new K3ItemSv().GetK3ExchangeRate(currencyNo,currencyName));
         }
         
         //获取业务员
         public JsonResult getClerks(string q) {
-            var result = db.getClerk(q,0);
-            return Json(result);
+            return Json(new K3ItemSv().GetK3Emp(q).Select(e => new { number = e.emp_card_number, name = e.emp_name }));
         }
 
-        //验证业务员
-        public JsonResult verifyClerk(string q)
-        {
-            var result = db.getClerk(q, 1).ToList();
-            if (result.Count() > 0)
-            {
-                return Json(new { success = true, itemId = result.First().id });
-            }
-            else
-            {
-                return Json(new { success = false });
-            }
-        }
+        ////验证业务员
+        //public JsonResult verifyClerk(string q)
+        //{
+        //    var result = db.getClerk(q, 1).ToList();
+        //    if (result.Count() > 0)
+        //    {
+        //        return Json(new { success = true, itemId = result.First().id });
+        //    }
+        //    else
+        //    {
+        //        return Json(new { success = false });
+        //    }
+        //}
 
         //获取营业员
-        public JsonResult getSalers(string q)
-        {
-            var result = db.getSaler(q,0);
-            return Json(result);
-        }
+        //public JsonResult getSalers(string q)
+        //{
+        //    var result = db.getSaler(q,0);
+        //    return Json(result);
+        //}
 
         //验证营业员
-        public JsonResult verifySaler(string q)
-        {
-            var result = db.getSaler(q,1).ToList();
-            if (result.Count() > 0)
-            {
-                return Json(new { success = true, itemId = result.First().id });
-            }
-            else
-            {
-                return Json(new { success = false });
-            }
-        }
+        //public JsonResult verifySaler(string q)
+        //{
+        //    var result = db.getSaler(q,1).ToList();
+        //    if (result.Count() > 0)
+        //    {
+        //        return Json(new { success = true, itemId = result.First().id });
+        //    }
+        //    else
+        //    {
+        //        return Json(new { success = false });
+        //    }
+        //}
 
         //获取K3用户表，用于制单人
-        public JsonResult getK3User() {
-            var result = from ku in db.vwK3User
-                         select new
-                         {
-                             id = ku.id,
-                             name = ku.name
-                         };
-            return Json(result);
-        }
+        //public JsonResult getK3User() {
+        //    var result = from ku in db.vwK3User
+        //                 select new
+        //                 {
+        //                     id = ku.id,
+        //                     name = ku.name
+        //                 };
+        //    return Json(result);
+        //}
 
         //获取客户
         public JsonResult getCostomers(string q) {
-            var result = db.getCostomer(q,0);
-            return Json(result);
+            return Json(new K3ItemSv().GetK3Customer(q).Select(e => new { number = e.customer_number, name = e.customer_name }));
         }
           
         //验证客户
-        public JsonResult verifyCostomer(string q)
-        {
-            var result = db.getCostomer(q, 1).ToList();
-            if (result.Count() > 0)
-            {
-                return Json(new { success = true, itemId = result.First().id });
-            }
-            else
-            {
-                return Json(new { success = false });
-            }
-        }
+        //public JsonResult verifyCostomer(string q)
+        //{
+        //    var result = db.getCostomer(q, 1).ToList();
+        //    if (result.Count() > 0)
+        //    {
+        //        return Json(new { success = true, itemId = result.First().id });
+        //    }
+        //    else
+        //    {
+        //        return Json(new { success = false });
+        //    }
+        //}
         
-        //带币别验证客户
-        public JsonResult verifyCostomer2(string q, int currency, string customer_id)
-        {
-            //首先从id入手
-            if (!string.IsNullOrWhiteSpace(customer_id)) {
-                int id;
-                if (Int32.TryParse(customer_id, out id)) {
-                    var customer = db.getCostomerById(id).First();
-                    if (customer.name.Equals(q)) {
-                        return Json(new { success = true, itemId = id });
-                    }
-                }
-            }
-            //没有id再从名称入手，比如不是通过搜索，而是通过复制
-            var result = db.getCostomer(q, 1).ToList();
-            if (result.Count() > 0)
-            {
-                if (result.Count() > 1)
-                {
-                    if (currency == 1 && result.Where(r => r.number.StartsWith("01")).Count()>0)
-                    {
-                        return Json(new { success = true, itemId = result.Where(r => r.number.StartsWith("01")).First().id });
-                    }
-                    else if (currency != 1 && result.Where(r => r.number.StartsWith("05")).Count() > 0)
-                    {
-                        return Json(new { success = true, itemId = result.Where(r => r.number.StartsWith("05")).First().id });
-                    }
-                    else {
-                        return Json(new { success = true, itemId = result.First().id });
-                    }
-                }
-                else
-                {
-                    return Json(new { success = true, itemId = result.First().id });
-                }
-            }
+        ////带币别验证客户
+        //public JsonResult verifyCostomer2(string q, int currency, string customer_id)
+        //{
+        //    //首先从id入手
+        //    if (!string.IsNullOrWhiteSpace(customer_id)) {
+        //        int id;
+        //        if (Int32.TryParse(customer_id, out id)) {
+        //            var customer = db.getCostomerById(id).First();
+        //            if (customer.name.Equals(q)) {
+        //                return Json(new { success = true, itemId = id });
+        //            }
+        //        }
+        //    }
+        //    //没有id再从名称入手，比如不是通过搜索，而是通过复制
+        //    var result = db.getCostomer(q, 1).ToList();
+        //    if (result.Count() > 0)
+        //    {
+        //        if (result.Count() > 1)
+        //        {
+        //            if (currency == 1 && result.Where(r => r.number.StartsWith("01")).Count()>0)
+        //            {
+        //                return Json(new { success = true, itemId = result.Where(r => r.number.StartsWith("01")).First().id });
+        //            }
+        //            else if (currency != 1 && result.Where(r => r.number.StartsWith("05")).Count() > 0)
+        //            {
+        //                return Json(new { success = true, itemId = result.Where(r => r.number.StartsWith("05")).First().id });
+        //            }
+        //            else {
+        //                return Json(new { success = true, itemId = result.First().id });
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return Json(new { success = true, itemId = result.First().id });
+        //        }
+        //    }
 
-            return Json(new { success = false });
-        }
+        //    return Json(new { success = false });
+        //}
 
         //获取产品信息
         public JsonResult getProductInfo(string q) {
-            var result = (from vp in db.vwProductInfo
-                          where vp.item_no.StartsWith(q)
-                          || vp.item_name.Contains(q)
-                          || vp.item_model.Contains(q)
-                          select new
-                          {
-                              id = vp.item_id,
-                              name = vp.item_name,
-                              model = vp.item_model,
-                              number = vp.item_no,
-                              qtyPrecision = vp.qty_decimal,
-                              taxRate = vp.tax_rate,
-                              pricePrecision = vp.price_decimal,
-                              unit_id = vp.unit_id,
-                              unit_name = vp.unit_name,
-                              unit_number = vp.unit_number
-                          }).Take(50).ToList();
-            return Json(result);
+            return Json(new K3ItemSv().GetK3ProductByInfo(q).Select(k => new
+            {
+                number = k.item_no,
+                name = k.item_name,
+                model = k.item_model,
+                unit_name = k.unit_name,
+                id = k.item_id,
+                unit_number = k.unit_number
+            }).ToList());
         }
 
         //获取系统用户
@@ -531,9 +513,11 @@ namespace Sale_Order_Semi.Controllers
         public JsonResult getUnfinishedSysNo()
         {
             var result = (from ad in db.ApplyDetails
+                          join a in db.Apply on ad.apply_id equals a.id
                           where ad.user_id == currentUser.userId
-                          && ad.Apply.success == null
                           && ad.pass == true
+                          && a.order_type == "TH"
+                          && a.success == null
                           select new { name = ad.Apply.sys_no }).Distinct().ToList();
             return Json(result);                        
         }
@@ -649,6 +633,12 @@ namespace Sale_Order_Semi.Controllers
                 }
             }
             return Json(new { suc = true });
+        }
+
+        //生产部门与产品类别存在对应关系，健林提供关系，2021-1-4
+        public JsonResult GetDepAndProductType()
+        {
+            return Json(db.Sale_dep_product_type.ToList());
         }
 
     }

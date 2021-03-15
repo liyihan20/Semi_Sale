@@ -11,8 +11,8 @@
             $("#status_table tbody").empty();
             $("#status_table tbody").append(tr1);
         }
-        $.post("@Url.Content("~/Audit/CheckApplyStatusSO")",{sys_no: sys_no},function(data){
-            if(data.success){
+        $.post("@Url.Content("~/NAudit/CheckAuditStatus")",{sysNo: sys_no},function(data){
+            if(data.suc){
                 $("#nextStepName").html(data.nextStepName);
                 $("#nextAuditors").html(data.nextAuditors);
                 var list=data.result;                           
@@ -26,11 +26,11 @@
         
     }
 </script>
-<div id="dlg_st" class="easyui-dialog" style="width: 800px; height: 380px; padding: 10px 5px;" closed="true" openAnimation="fade" title="@Html.Lang("check_status")">
+<div id="dlg_st" class="easyui-dialog" style="width: 800px; height: 380px; padding: 10px 5px;font-size:12px;" closed="true" openAnimation="fade" title="@Html.Lang("check_status")">
     <div style="margin-left: 10px; margin-top: 5px; font-weight: bold">
         下一审核步骤名称:<span id="nextStepName" style="color: red; margin-right: 20px;"></span>步骤审核人:<span
             id="nextAuditors" style="color: red"></span></div>
-    <table id="status_table" style="width: 97%; margin: 16px 0 0 10px" border="0" cellspacing="0">
+    <table id="status_table" style="width: 97%; margin: 16px 0 0 10px" border="0" cellspacing="4">
         <tbody>
             <tr>
                 <th style="width: 15%">

@@ -1574,13 +1574,13 @@ namespace Sale_Order_Semi.Controllers
                     return View("CheckBLBill");
                 case "6":
                 case "TH":
-                    return RedirectToAction("CheckReturnBill", "BadProduct", new { id = id });
+                    return RedirectToAction("CheckReturnBill", "BadProduct", new { returnId = id });
             }
             return View("error");
         }
 
         [SessionTimeOutFilter()]
-        public ActionResult CheckOrderDetailByApplyId(int applyId)
+        public ActionResult CheckOrderDetailByApplyId(int applyId, bool canCheckBLFile = false)
         {
             var ap = db.Apply.Single(a => a.id == applyId);
             int id = 0;
@@ -1606,7 +1606,7 @@ namespace Sale_Order_Semi.Controllers
                 ViewBag.tip = "找不到此单据";
                 return View("Error");
             }
-            return CheckOrderDetail(id, ap.order_type);
+            return CheckOrderDetail(id, ap.order_type, canCheckBLFile);
         }
 
 

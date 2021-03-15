@@ -516,6 +516,10 @@ namespace Sale_Order_Semi.Models {
             
             private global::System.Data.DataColumn columnspecial_model;
             
+            private global::System.Data.DataColumn columnis_panel;
+            
+            private global::System.Data.DataColumn columncost;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public Sale_model_contractDataTable() {
@@ -1191,6 +1195,22 @@ namespace Sale_Order_Semi.Models {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn is_panelColumn {
+                get {
+                    return this.columnis_panel;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn costColumn {
+                get {
+                    return this.columncost;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -1305,7 +1325,9 @@ namespace Sale_Order_Semi.Models {
                         int quotation_clerk_id, 
                         string quotation_clerk_name, 
                         string count_in_bus_dep, 
-                        string special_model) {
+                        string special_model, 
+                        string is_panel, 
+                        decimal cost) {
                 Sale_model_contractRow rowSale_model_contractRow = ((Sale_model_contractRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         null,
@@ -1387,7 +1409,9 @@ namespace Sale_Order_Semi.Models {
                         quotation_clerk_id,
                         quotation_clerk_name,
                         count_in_bus_dep,
-                        special_model};
+                        special_model,
+                        is_panel,
+                        cost};
                 rowSale_model_contractRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowSale_model_contractRow);
                 return rowSale_model_contractRow;
@@ -1497,6 +1521,8 @@ namespace Sale_Order_Semi.Models {
                 this.columnquotation_clerk_name = base.Columns["quotation_clerk_name"];
                 this.columncount_in_bus_dep = base.Columns["count_in_bus_dep"];
                 this.columnspecial_model = base.Columns["special_model"];
+                this.columnis_panel = base.Columns["is_panel"];
+                this.columncost = base.Columns["cost"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1662,6 +1688,10 @@ namespace Sale_Order_Semi.Models {
                 base.Columns.Add(this.columncount_in_bus_dep);
                 this.columnspecial_model = new global::System.Data.DataColumn("special_model", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnspecial_model);
+                this.columnis_panel = new global::System.Data.DataColumn("is_panel", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnis_panel);
+                this.columncost = new global::System.Data.DataColumn("cost", typeof(decimal), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncost);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnid}, true));
                 this.columnid.AutoIncrement = true;
@@ -1735,6 +1765,7 @@ namespace Sale_Order_Semi.Models {
                 this.columncount_in_bus_dep.MaxLength = 50;
                 this.columnspecial_model.ReadOnly = true;
                 this.columnspecial_model.MaxLength = 50;
+                this.columnis_panel.MaxLength = 10;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3968,6 +3999,38 @@ namespace Sale_Order_Semi.Models {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string is_panel {
+                get {
+                    try {
+                        return ((string)(this[this.tableSale_model_contract.is_panelColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“Sale_model_contract”中列“is_panel”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableSale_model_contract.is_panelColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public decimal cost {
+                get {
+                    try {
+                        return ((decimal)(this[this.tableSale_model_contract.costColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("表“Sale_model_contract”中列“cost”的值为 DBNull。", e);
+                    }
+                }
+                set {
+                    this[this.tableSale_model_contract.costColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool Issys_noNull() {
                 return this.IsNull(this.tableSale_model_contract.sys_noColumn);
             }
@@ -4912,6 +4975,30 @@ namespace Sale_Order_Semi.Models {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void Setspecial_modelNull() {
                 this[this.tableSale_model_contract.special_modelColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool Isis_panelNull() {
+                return this.IsNull(this.tableSale_model_contract.is_panelColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void Setis_panelNull() {
+                this[this.tableSale_model_contract.is_panelColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscostNull() {
+                return this.IsNull(this.tableSale_model_contract.costColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcostNull() {
+                this[this.tableSale_model_contract.costColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -5901,6 +5988,8 @@ namespace Sale_Order_Semi.Models.CMDTTableAdapters {
             tableMapping.ColumnMappings.Add("quotation_clerk_name", "quotation_clerk_name");
             tableMapping.ColumnMappings.Add("count_in_bus_dep", "count_in_bus_dep");
             tableMapping.ColumnMappings.Add("special_model", "special_model");
+            tableMapping.ColumnMappings.Add("is_panel", "is_panel");
+            tableMapping.ColumnMappings.Add("cost", "cost");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
@@ -5926,24 +6015,24 @@ namespace Sale_Order_Semi.Models.CMDTTableAdapters {
                 "[plan_finish_date], [estimated_quantity], [competitor], [competitor_price], [com" +
                 "petitor_configuration], [modify_model_has_bill], [modify_model_has_bill_deal_way" +
                 "], [product_unit], [customer_sample_theory], [customer_sample_structure], [has_c" +
-                "ustomer_disadvantage], [quotation_clerk_id], [quotation_clerk_name]) VALUES (@sy" +
-                "s_no, @product_type, @model_type, @clear_way, @old_bill_no, @bill_date, @fetch_d" +
-                "ate, @agency_no, @agency_name, @clerk_no, @clerk_name, @currency_no, @currency_n" +
-                "ame, @customer_no, @customer_name, @zz_customer_name, @plan_firm_name, @product_" +
-                "number, @product_name, @product_model, @qty, @price, @charge, @free, @fetch_add_" +
-                "no, @fetch_add_name, @explanation, @count_in_bus_dep, @special_model, @comment, " +
-                "@user_id, @step_version, @telephone, @email, @pro_use, @bus_dep, @project_team, " +
-                "@classification, @trade_type_no, @trade_type_name, @project_number, @pic_number," +
-                " @pic_version, @quote_num, @has_customer_sample, @customer_sample_num, @has_samp" +
-                "le_refer, @same_with_customer_sample, @change_cutomer_software, @has_video_funct" +
-                "ion, @video_model, @video_reason, @has_touch_panel, @touch_panel_model, @touch_p" +
-                "anel_reason, @dustproof_demand, @sample_use, @uv_test, @mechanical_shock_test, @" +
-                "env_demand, @env_special, @engineer_content, @small_batch_production, @small_bat" +
-                "ch_start_time, @small_batch_qty, @plan_start_date, @plan_finish_date, @estimated" +
-                "_quantity, @competitor, @competitor_price, @competitor_configuration, @modify_mo" +
-                "del_has_bill, @modify_model_has_bill_deal_way, @product_unit, @customer_sample_t" +
-                "heory, @customer_sample_structure, @has_customer_disadvantage, @quotation_clerk_" +
-                "id, @quotation_clerk_name)";
+                "ustomer_disadvantage], [quotation_clerk_id], [quotation_clerk_name], [is_panel]," +
+                " [cost]) VALUES (@sys_no, @product_type, @model_type, @clear_way, @old_bill_no, " +
+                "@bill_date, @fetch_date, @agency_no, @agency_name, @clerk_no, @clerk_name, @curr" +
+                "ency_no, @currency_name, @customer_no, @customer_name, @zz_customer_name, @plan_" +
+                "firm_name, @product_number, @product_name, @product_model, @qty, @price, @charge" +
+                ", @free, @fetch_add_no, @fetch_add_name, @explanation, @count_in_bus_dep, @speci" +
+                "al_model, @comment, @user_id, @step_version, @telephone, @email, @pro_use, @bus_" +
+                "dep, @project_team, @classification, @trade_type_no, @trade_type_name, @project_" +
+                "number, @pic_number, @pic_version, @quote_num, @has_customer_sample, @customer_s" +
+                "ample_num, @has_sample_refer, @same_with_customer_sample, @change_cutomer_softwa" +
+                "re, @has_video_function, @video_model, @video_reason, @has_touch_panel, @touch_p" +
+                "anel_model, @touch_panel_reason, @dustproof_demand, @sample_use, @uv_test, @mech" +
+                "anical_shock_test, @env_demand, @env_special, @engineer_content, @small_batch_pr" +
+                "oduction, @small_batch_start_time, @small_batch_qty, @plan_start_date, @plan_fin" +
+                "ish_date, @estimated_quantity, @competitor, @competitor_price, @competitor_confi" +
+                "guration, @modify_model_has_bill, @modify_model_has_bill_deal_way, @product_unit" +
+                ", @customer_sample_theory, @customer_sample_structure, @has_customer_disadvantag" +
+                "e, @quotation_clerk_id, @quotation_clerk_name, @is_panel, @cost)";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@sys_no", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "sys_no", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@product_type", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "product_type", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
@@ -6024,6 +6113,8 @@ namespace Sale_Order_Semi.Models.CMDTTableAdapters {
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@has_customer_disadvantage", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "has_customer_disadvantage", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@quotation_clerk_id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "quotation_clerk_id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@quotation_clerk_name", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "quotation_clerk_name", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@is_panel", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "is_panel", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@cost", global::System.Data.SqlDbType.Decimal, 0, global::System.Data.ParameterDirection.Input, 12, 2, "cost", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
             this._adapter.UpdateCommand.CommandText = "UPDATE [dbo].[Sale_model_contract] SET [sys_no] = @sys_no, [product_type] = @prod" +
@@ -6061,7 +6152,8 @@ namespace Sale_Order_Semi.Models.CMDTTableAdapters {
                 "tomer_sample_theory] = @customer_sample_theory, [customer_sample_structure] = @c" +
                 "ustomer_sample_structure, [has_customer_disadvantage] = @has_customer_disadvanta" +
                 "ge, [quotation_clerk_id] = @quotation_clerk_id, [quotation_clerk_name] = @quotat" +
-                "ion_clerk_name WHERE (([id] = @Original_id))";
+                "ion_clerk_name, [is_panel] = @is_panel, [cost] = @cost WHERE (([id] = @Original_" +
+                "id))";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@sys_no", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "sys_no", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@product_type", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "product_type", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
@@ -6142,6 +6234,8 @@ namespace Sale_Order_Semi.Models.CMDTTableAdapters {
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@has_customer_disadvantage", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "has_customer_disadvantage", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@quotation_clerk_id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "quotation_clerk_id", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@quotation_clerk_name", global::System.Data.SqlDbType.VarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "quotation_clerk_name", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@is_panel", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "is_panel", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@cost", global::System.Data.SqlDbType.Decimal, 0, global::System.Data.ParameterDirection.Input, 12, 2, "cost", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_id", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "id", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
         }
         
@@ -6158,7 +6252,7 @@ namespace Sale_Order_Semi.Models.CMDTTableAdapters {
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[1];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = @"SELECT id, sys_no, product_type, model_type, clear_way, old_bill_no, bill_date, fetch_date, agency_no, agency_name, clerk_no, clerk_name, currency_no, currency_name, customer_no, customer_name, zz_customer_name, plan_firm_name, product_number, product_name, product_model, qty, price, charge, free, fetch_add_no, fetch_add_name, explanation, count_in_bus_dep,  special_model, comment, user_id, step_version, telephone, email, pro_use, bus_dep, project_team, classification, trade_type_no, trade_type_name, project_number, pic_number, pic_version, quote_num, has_customer_sample, customer_sample_num, has_sample_refer, same_with_customer_sample, change_cutomer_software, has_video_function, video_model, video_reason, has_touch_panel, touch_panel_model, touch_panel_reason, dustproof_demand, sample_use, uv_test, mechanical_shock_test, env_demand, env_special, engineer_content, small_batch_production, small_batch_start_time, small_batch_qty, plan_start_date, plan_finish_date, estimated_quantity, competitor, competitor_price, competitor_configuration, modify_model_has_bill, modify_model_has_bill_deal_way, product_unit, customer_sample_theory, customer_sample_structure, has_customer_disadvantage, quotation_clerk_id, quotation_clerk_name FROM dbo.Sale_model_contract where sys_no = @sys_no";
+            this._commandCollection[0].CommandText = @"SELECT id, sys_no, product_type, model_type, clear_way, old_bill_no, bill_date, fetch_date, agency_no, agency_name, clerk_no, clerk_name, currency_no, currency_name, customer_no, customer_name, zz_customer_name, plan_firm_name, product_number, product_name, product_model, qty, price, charge, free, fetch_add_no, fetch_add_name, explanation, count_in_bus_dep,  special_model, comment, user_id, step_version, telephone, email, pro_use, bus_dep, project_team, classification, trade_type_no, trade_type_name, project_number, pic_number, pic_version, quote_num, has_customer_sample, customer_sample_num, has_sample_refer, same_with_customer_sample, change_cutomer_software, has_video_function, video_model, video_reason, has_touch_panel, touch_panel_model, touch_panel_reason, dustproof_demand, sample_use, uv_test, mechanical_shock_test, env_demand, env_special, engineer_content, small_batch_production, small_batch_start_time, small_batch_qty, plan_start_date, plan_finish_date, estimated_quantity, competitor, competitor_price, competitor_configuration, modify_model_has_bill, modify_model_has_bill_deal_way, product_unit, customer_sample_theory, customer_sample_structure, has_customer_disadvantage, quotation_clerk_id, quotation_clerk_name,is_panel,cost FROM dbo.Sale_model_contract where sys_no = @sys_no";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[0].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@sys_no", global::System.Data.SqlDbType.VarChar, 15, global::System.Data.ParameterDirection.Input, 0, 0, "sys_no", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
         }
@@ -6333,7 +6427,9 @@ namespace Sale_Order_Semi.Models.CMDTTableAdapters {
                     string customer_sample_structure, 
                     string has_customer_disadvantage, 
                     global::System.Nullable<int> quotation_clerk_id, 
-                    string quotation_clerk_name) {
+                    string quotation_clerk_name, 
+                    string is_panel, 
+                    global::System.Nullable<decimal> cost) {
             if ((sys_no == null)) {
                 this.Adapter.InsertCommand.Parameters[0].Value = global::System.DBNull.Value;
             }
@@ -6808,6 +6904,18 @@ namespace Sale_Order_Semi.Models.CMDTTableAdapters {
             else {
                 this.Adapter.InsertCommand.Parameters[78].Value = ((string)(quotation_clerk_name));
             }
+            if ((is_panel == null)) {
+                this.Adapter.InsertCommand.Parameters[79].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[79].Value = ((string)(is_panel));
+            }
+            if ((cost.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[80].Value = ((decimal)(cost.Value));
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[80].Value = global::System.DBNull.Value;
+            }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -6908,6 +7016,8 @@ namespace Sale_Order_Semi.Models.CMDTTableAdapters {
                     string has_customer_disadvantage, 
                     global::System.Nullable<int> quotation_clerk_id, 
                     string quotation_clerk_name, 
+                    string is_panel, 
+                    global::System.Nullable<decimal> cost, 
                     int Original_id) {
             if ((sys_no == null)) {
                 this.Adapter.UpdateCommand.Parameters[0].Value = global::System.DBNull.Value;
@@ -7383,7 +7493,19 @@ namespace Sale_Order_Semi.Models.CMDTTableAdapters {
             else {
                 this.Adapter.UpdateCommand.Parameters[78].Value = ((string)(quotation_clerk_name));
             }
-            this.Adapter.UpdateCommand.Parameters[79].Value = ((int)(Original_id));
+            if ((is_panel == null)) {
+                this.Adapter.UpdateCommand.Parameters[79].Value = global::System.DBNull.Value;
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[79].Value = ((string)(is_panel));
+            }
+            if ((cost.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[80].Value = ((decimal)(cost.Value));
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[80].Value = global::System.DBNull.Value;
+            }
+            this.Adapter.UpdateCommand.Parameters[81].Value = ((int)(Original_id));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {

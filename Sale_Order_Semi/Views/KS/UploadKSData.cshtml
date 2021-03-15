@@ -34,7 +34,9 @@
                 { field: 'taxed_price', title: '含税单价', width: 100 },
                 { field: 'qty', title: '数量', width: 80 },
                 { field: 'customer_pn', title: '客户型号', width: 100 },
-                { field: 'product_usage', title: '产品用途', width: 100 }
+                { field: 'product_usage', title: '产品用途', width: 100 },
+                { field: 'cost', title: '成本', width: 80 },
+                { field: 'produce_dep', title: '生产部门', width: 100 }
             ]],
             //rowStyler: function(index,row){
             //    if (row.error_info != "") {
@@ -145,7 +147,7 @@
         <div>1. 系统只读取上传的excel的第一个sheet表，如果有多个sheet表，其他的会忽略</div>
         <div>2. 系统从第二行开始读取，有效数据行请最好保持在400行以内，否则可能会因为处理时间太长而引起超时，导致读取数据失败</div>
         <div>3. 系统读取A列到O列的数据，内容顺序依次为：A销售单号、B交货日期&结束交货日期、C海外客户、D交货地点、E产品类别、F组别一、G营业员一、
-            H规格型号、I客户PO、J币别、K成交价、L含税单价、M数量、N客户型号、O产品用途
+            H规格型号、I客户PO、J币别、K成交价、L含税单价、M数量、N客户型号、O产品用途、P成本、Q生产部门
         </div>
         <div>
             4. 成功导入后，系统会逐行逐个字段分析数据有效性；如果规格型号不存在或者存在多个，会在错误信息中提示，虽然可以继续保存，但是不能导入K3；

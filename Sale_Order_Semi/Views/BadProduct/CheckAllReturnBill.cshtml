@@ -161,7 +161,7 @@
     function CheckDetail(){
          var row = $("#orderList").datagrid("getSelected");
          if (row) {
-             window.location.href = "@Url.Content("~/BadProduct/CheckReturnBill")" +"?id="+row.FBillID;
+             window.location.href = "@Url.Content("~/BadProduct/CheckReturnBill")" + "?returnId=" + row.FBillID;
          }
     }
 

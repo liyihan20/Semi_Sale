@@ -62,7 +62,7 @@
                             @Html.Lang("sys_num"):
                         </td>
                         <td>
-                            <input class="easyui-textbox" name="sys_no" id="sys_no" style="width:120px" value="@mc.sys_no"/>
+                            <input class="easyui-textbox" name="sys_no" id="sys_no" value="@mc.sys_no"/>
                         </td>
                     </tr>
                     <tr>
@@ -110,11 +110,17 @@
                         <td>
                             <input class="easyui-textbox" name="project_team" id="project_team"  value="@mc.project_team" />
                         </td>
-                        <td>
+                        @*<td>
                             @Html.Lang("quotation_clerk"):
                         </td>
                         <td>
                             <input class="easyui-textbox" name="quotation_clerk_name" id="quotation_clerk_name"  value="@mc.quotation_clerk_name" />
+                        </td>*@
+                        <td>
+                            是否PANEL:
+                        </td>
+                        <td>
+                            <input class="easyui-textbox"  value="@mc.is_panel" />
                         </td>
                     </tr>
                     <tr>
@@ -200,13 +206,19 @@
                             <input class="easyui-textbox" id="price" name="price"  value="@mc.price" />
                         </td>
                         <td>
+                            模费成本:
+                        </td>
+                        <td>
+                            <input class="easyui-textbox"  value="@mc.cost" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             @Html.Lang("pro_use"):
                         </td>
                         <td>
                             <input class="easyui-textbox" name="pro_use" id="pro_use"   value="@mc.pro_use" />
                         </td>
-                    </tr>
-                    <tr>
                         <td>
                             @Html.Lang("customer_model"):
                         </td>
@@ -225,14 +237,14 @@
                         <td>
                             <input class="easyui-textbox" id="pic_version" name="pic_version"  value="@mc.pic_version" />
                         </td>
+                    </tr>
+                    <tr>     
                         <td>
                             @Html.Lang("contract_num"):
                         </td>
                         <td>
                             <input class="easyui-textbox" value="@mc.contract_po_no" />
-                        </td>
-                    </tr>
-                    <tr>                        
+                        </td>                   
                         <td>
                             @Html.Lang("biller"):
                         </td>
