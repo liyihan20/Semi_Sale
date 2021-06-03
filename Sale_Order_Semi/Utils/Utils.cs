@@ -1790,15 +1790,15 @@ namespace Sale_Order_Semi.Utils
                 {
                     return "订单号在下单系统已存在，保存失败。";
                 }
-                else
-                {
-                    bool? isExistedInK3 = null;
-                    db.isDublicatedBillNo(mc.old_bill_no, "CM", ref isExistedInK3);
-                    if (isExistedInK3 == true)
-                    {
-                        return "订单编号在K3已经存在，保存失败。";
-                    }
-                }
+                //else
+                //{
+                //    bool? isExistedInK3 = null;
+                //    db.isDublicatedBillNo(mc.old_bill_no, "CM", ref isExistedInK3);
+                //    if (isExistedInK3 == true)
+                //    {
+                //        return "订单编号在K3已经存在，保存失败。";
+                //    }
+                //}
                 //合法性检查
                 //检查物料编码
                 if (string.IsNullOrEmpty(mc.product_number))

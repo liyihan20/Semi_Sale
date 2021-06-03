@@ -461,7 +461,6 @@ namespace Sale_Order_Semi.Controllers
             }
             #endregion
 
-
             #region 验证营业员比例的合法性,并保存营业员比例
             string salerPercent = h.salePs.Trim();
             string[] salers = salerPercent.Split(new char[] { ';', '；' });
@@ -527,7 +526,13 @@ namespace Sale_Order_Semi.Controllers
 
             #region 表体验证
             int taxRate = 13;
-            List<int> projectNos = db.VwProjectNumber.Where(v => v.client_number == h.buy_unit_no || v.client_number == h.oversea_client_no || v.id == 467).Select(v => v.id).ToList();
+            List<int> projectNos = new List<int> { 467 };
+            try {
+                projectNos = db.VwProjectNumber.Where(v => v.client_number == h.buy_unit_no || v.client_number == h.oversea_client_no || v.id == 467).Select(v => v.id).ToList();
+            }
+            catch {
+
+            }
             int currentIndex = 0;
             foreach (var d in ds) {
                 currentIndex++;

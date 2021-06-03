@@ -133,6 +133,11 @@ namespace Sale_Order_Semi.Services
         public abstract void DoWhenBeforeApply();
 
         /// <summary>
+        /// 提交之后需要做的操作
+        /// </summary>
+        public abstract void DoWhenAfterApply();
+
+        /// <summary>
         /// 开始审核之前需要做的事情
         /// </summary>
         /// <param name="step">步骤</param>
@@ -195,7 +200,7 @@ namespace Sale_Order_Semi.Services
                 result += string.Format("{0:D3}", firstRecord.max_num);
             }
             db.SubmitChanges();
-            return result;
+            return result + "S";//半导体以S结尾
         }
 
         /// <summary>

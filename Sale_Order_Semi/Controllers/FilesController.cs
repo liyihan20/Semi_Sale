@@ -297,17 +297,6 @@ namespace Sale_Order_Semi.Controllers
         {
             string crystalFile = "SBYF_A4_Report.rpt";
 
-            //if ((from a in db.Apply
-            //     from ad in a.ApplyDetails
-            //     where a.sys_no == sysNo
-            //     && ad.user_id == userId
-            //     select ad).Count() < 1)
-            //{
-            //    utl.writeEventLog(model, "流水号不存在或没有权限查看", sysNo, Request, -100);
-            //    ViewBag.tip = "流水号不存在或没有权限查看";
-            //    return View("Tip");
-            //}
-
             utl.writeEventLog(model, "导出样品单报表", sysNo, Request, 0);
 
             try
@@ -322,7 +311,8 @@ namespace Sale_Order_Semi.Controllers
                             cmTa.Fill(sbDt.Sale_sample_bill, sysNo);
                         }
                         //设置办事处1、总裁办3，市场部2审核人名字
-                        string agencyAuditor = "", ceoAuditor = "", marketAuditor = "", yfAdmin = "", yfManager = "", yfTopLevel = "", quotationAuditor = "", marketManager = "";
+                        string agencyAuditor = "", ceoAuditor = "", marketAuditor = "", yfAdmin = "", yfManager = "",
+                            yfTopLevel = "", quotationAuditor = "", marketManager = "";
                         var ad = db.Apply.Where(a => a.sys_no == sysNo).First().ApplyDetails.ToList();
                         if (ad.Where(a => a.step == 1 && a.step_name.Contains("办事处") && a.pass == true).Count() > 0)
                         {
@@ -537,7 +527,7 @@ namespace Sale_Order_Semi.Controllers
 
             return Json(fileResult);
         }
-
+        
     }
 }
 

@@ -1,4 +1,4 @@
-﻿<script type="text/javascript">   
+﻿<script type="text/javascript">
 
     document.onkeydown = function (event) {
         var e = event || window.event || arguments.callee.caller.arguments[0];
@@ -6,7 +6,7 @@
             $("#checkBt").click();
         }
     };
-    $(function () {        
+    $(function () {
         $("#AuditList").datagrid({
             fit: true,
             fitColumns: true,
@@ -20,13 +20,13 @@
                 $('#mm').menu('show', {
                     left:e.pageX,
                     top:e.pageY
-                }); 
+                });
             },
             columns: [[
                         { field: 'encryptNo', title: 'encryptNo', width: 10, hidden: true },
                         { field: 'applyId', title: 'ID', width: 10, hidden: true },
                         { field: 'applyDetailId', title: 'DetailID', width: 10, hidden: true },
-                        { field: 'previousStepTime', title: '@Html.Lang("order_date")', width: 120 },  
+                        { field: 'previousStepTime', title: '@Html.Lang("order_date")', width: 120 },
                         { field: 'orderType', title: '@Html.Lang("bill_type")', width: 100 },
                         { field: 'sysNum', title: '@Html.Lang("sys_num")', width: 100 },
                         { field: 'model', title: '@Html.Lang("pro_model")', width: 160 },
@@ -36,51 +36,51 @@
                         { field: 'stepName', title: '@Html.Lang("audit_step")', width: 100 },
                         { field: 'status', title: '@Html.Lang("audit_result")', width: 80, align: 'center',
                             styler: function(value,row,index){
-				                if (value == '审核失败'){
-					                return 'color:red;';
-				                }else if(value == '审核成功'){
-					                return 'color:green;';
-				                } else if (value == '挂起中') {
-				                    return 'color:#CC0000;';
-				                }
-			                } 
+                                if (value == '审核失败'){
+                                    return 'color:red;';
+                                }else if(value == '审核成功'){
+                                    return 'color:green;';
+                                } else if (value == '挂起中') {
+                                    return 'color:#CC0000;';
+                                }
+                            }
                         },
                         { field: 'finalStatus', title: '@Html.Lang("final_status")', width: 80, align: 'center',
                             styler: function(value,row,index){
-				                if (value == 'NG'){
-					                return 'color:red;';
-				                }else if(value == 'PASS'){
-					                return 'color:green;';
-				                }
-			                } 
+                                if (value == 'NG'){
+                                    return 'color:red;';
+                                }else if(value == 'PASS'){
+                                    return 'color:green;';
+                                }
+                            }
                         },
                         { field: 'hasImportK3', title: '已导进K3', width: 80 , align: 'center',
                             styler: function(value,row,index){
-				                if (value == 'N'){
-					                return 'color:red;';
-				                }else if(value == 'Y'){
-					                return 'color:green;';
-				                }
-			                }
+                                if (value == 'N'){
+                                    return 'color:red;';
+                                }else if(value == 'Y'){
+                                    return 'color:green;';
+                                }
+                            }
                         }
             ]],
             toolbar: '#audit_tb',
             rowStyler: function(index,row){
                 if (row.orderType == '退换货') {
-                    return 'color:blue;'; 
+                    return 'color:blue;';
                 }
             },
             onDblClickRow:EditOrder
         });
 
         $("#checkBt").click(function () {
-            $.messager.progress(); 
+            $.messager.progress();
             $("#fm").form("submit", {
                 url: "@Url.Content("~/Audit/SearchAuditList")",
                 success: function (data) {
                     var result = eval("(" + data + ")");
                     $("#AuditList").datagrid("loadData", result);
-                    $.messager.progress("close"); 
+                    $.messager.progress("close");
                 }
             });
         });
@@ -91,9 +91,14 @@
     function EditOrder(){
         var row = $("#AuditList").datagrid("getSelected");
         if (row) {
-            window.location.href="@Url.Content("~/Audit/BeginAudit")"+"?step="+row.step+"&applyId="+row.applyId;            
+            if (row.sysNum.indexOf("CH") == 0) {
+                //出货单特殊设置一下
+                window.location.href = "@Url.Content("~/NAudit/BeginNAudit")" + "?step=" + row.step + "&applyId=" + row.applyId;
+            } else {
+                window.location.href = "@Url.Content("~/Audit/BeginAudit")" + "?step=" + row.step + "&applyId=" + row.applyId;
+            }
         }
-    }       
+    }
 
     function AuditorCheckStatus() {
         var row = $("#AuditList").datagrid("getSelected");
@@ -102,7 +107,7 @@
         }
     }
 
-   function CheckReport(){
+    function CheckReport(){
         var row = $("#AuditList").datagrid("getSelected");
         if (row) {
             if(row.sysNum.substring(0,2)=="SO"){
@@ -119,13 +124,13 @@
                 $.messager.show({
                     title: '@Html.Lang("tip")',
                     msg: "不能导出报表。"
-                }); 
+                });
             }
         }
     }
-    
+
     function PrintTHQS(){
-        var row = $("#AuditList").datagrid("getSelected");        
+        var row = $("#AuditList").datagrid("getSelected");
         if (row) {
             if(row.orderType=="退换货"){
                 window.open("@Url.Content("~/Files/printTHQSReport")"+"?sysNo="+row.sysNum);
@@ -134,7 +139,7 @@
                 $.messager.show({
                     title: '@Html.Lang("tip")',
                     msg: "不能导出报表。"
-                }); 
+                });
             }
         }
     }

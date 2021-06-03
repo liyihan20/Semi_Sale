@@ -182,7 +182,7 @@ namespace Sale_Order_Semi.Services
             bill.product_model = null;
             bill.bill_date = DateTime.Now;
 
-            return bill;
+            return new CMModel() { mc = bill, extra = bill.ModelContractExtra.FirstOrDefault() };
         }
 
         public override string GetProcessNo()
@@ -232,6 +232,11 @@ namespace Sale_Order_Semi.Services
                     throw new Exception("存在已提交的重复的开模规格型号，提交失败");
                 }
             }
+        }
+
+        public override void DoWhenAfterApply()
+        {
+            
         }
 
         public override void DoWhenBeforeAudit(int step, string stepName, bool isPass, int userId)

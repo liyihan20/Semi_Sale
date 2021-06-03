@@ -27,7 +27,7 @@ namespace Sale_Order_Semi.Utils
         //取得单据实体，返回空对象
         public object GetBillSvInstance(string billType)
         {
-            string ty = billType.Length >= 2 ? billType.Substring(0, 2) : "";
+            string ty = GetBillEnType(billType);
             if (!string.IsNullOrEmpty(ty)) {
                 Type t = Type.GetType(string.Format("Sale_Order_Semi.Services.{0}Sv", ty));
                 if (t != null && t.IsClass) {

@@ -1,6 +1,7 @@
 ﻿@using Sale_Order_Semi.Models;
 @{
     string[] powers = (string[])ViewData["powers"];
+    string depName = ViewData["depName"] as string;
 }
 <script type="text/javascript">
     //    $(function () {
@@ -20,8 +21,8 @@
                     <span>@Html.Lang("sale_order")</span>
                     <ul>
                         @if (Array.IndexOf(powers, Powers.new_order.ToString()) != -1) {
-                            <li id="~/NSaler/CreateBill?billType=SO"><span>@Html.Lang("new_sale_order")</span> </li>
-                            <li id="~/NSaler/CheckBillList?billType=SO"><span>@Html.Lang("check_add_apply")</span> </li>
+                            <li id="~/Saler/CreateSaleOrder"><span>@Html.Lang("new_sale_order")</span> </li>
+                            <li id="~/Saler/CheckAllOrders?bill_type=1"><span>@Html.Lang("check_add_apply")</span> </li>
                         }
                         @if (Array.IndexOf(powers, Powers.ceo_excel.ToString()) != -1) {
                             <li id="downCeoExcel"><span>@Html.Lang("ceo_excel")</span> </li>
@@ -38,8 +39,8 @@
                     <ul>
                         @if (Array.IndexOf(powers, Powers.new_model.ToString()) != -1) {
                             <li id="~/Authority/FetchModualNumber"><span>获取开模序号</span></li>
-                            <li id="~/NSaler/CreateBill?billType=CM"><span>@Html.Lang("new_create_model_contract")</span> </li>
-                            <li id="~/NSaler/CheckBillList?billType=CM"><span>@Html.Lang("check_add_apply")</span> </li>
+                            <li id="~/Saler/CreateModelContract"><span>@Html.Lang("new_create_model_contract")</span> </li>
+                            <li id="~/Saler/CheckAllOrders?bill_type=3"><span>@Html.Lang("check_add_apply")</span> </li>
                         }
                     </ul>
                 </li>
@@ -56,33 +57,27 @@
                     </ul>
                 </li>
             }
-            @if (Array.IndexOf(powers, Powers.new_BL.ToString()) != -1) {
+            @if (Array.IndexOf(powers, Powers.new_BL.ToString()) != -1 || Array.IndexOf(powers, Powers.bus_check_bl.ToString()) != -1) {
                 <li>
                     <span>备料单</span>
                     <ul>
-                        <li id="~/Saler/CreateBLBill"><span>新建备料单</span></li>
-                        <li id="~/Saler/CheckAllOrders?bill_type=5"><span>@Html.Lang("check_add_apply")</span> </li>
+                        @if (Array.IndexOf(powers, Powers.new_BL.ToString()) != -1) { 
+                            <li id="~/Saler/CreateBLBill"><span>新建备料单</span></li>
+                            <li id="~/Saler/CheckAllOrders?bill_type=5"><span>@Html.Lang("check_add_apply")</span> </li>
+                        }
+                        @if (Array.IndexOf(powers, Powers.bus_check_bl.ToString()) != -1) {
+                            <li id="~/NExtra/CheckBusBLs"><span>接单员查看列表</span></li>
+                        }
                     </ul>
                 </li>
             }
-            @if ((Array.IndexOf(powers, Powers.new_TH.ToString()) != -1) || (Array.IndexOf(powers, Powers.chk_red.ToString()) != -1) || (Array.IndexOf(powers, Powers.new_HH.ToString()) != -1) || (Array.IndexOf(powers, Powers.TH_manage.ToString()) != -1) || (Array.IndexOf(powers, Powers.uploadQualityReport.ToString()) != -1)) {
+            @if ((Array.IndexOf(powers, Powers.new_TH.ToString()) != -1) || (Array.IndexOf(powers, Powers.TH_manage.ToString()) != -1) || (Array.IndexOf(powers, Powers.uploadQualityReport.ToString()) != -1)) {
                 <li>
                     <span>退换货管理</span>
                     <ul>
                         @if (Array.IndexOf(powers, Powers.new_TH.ToString()) != -1) {
                             <li id="~/BadProduct/SelectStockBill"><span>新增退换货申请</span></li>
                             <li id="~/BadProduct/CheckAllReturnBill"><span>查看退换货申请</span></li>
-                        }
-                        @if (Array.IndexOf(powers, Powers.chk_red.ToString()) != -1) {
-                            <li id="~/BadProduct/RedBillsToK3"><span>退红字单据</span></li>
-                        }
-                        @if (Array.IndexOf(powers, Powers.new_HH.ToString()) != -1) {
-                            <li id="~/BadProduct/ResendBills"><span>需换货单据</span></li>
-                            <li id="~/BadProduct/CheckAllResendBill"><span>查看换货申请</span></li>
-                        }
-                        @if (Array.IndexOf(powers, Powers.new_CH.ToString()) != -1) {
-                            <li id="~/BadProduct/SelectForSendOut"><span>营业申请出货</span></li>
-                            <li id="~/BadProduct/CheckAllFetchBill"><span>查看营业出货申请</span></li>
                         }
                         @if (Array.IndexOf(powers, Powers.TH_manage.ToString()) != -1) {
                             <li id="~/Authority/CheckReturnBillsBackground"><span>退换货申请管理</span></li>
@@ -96,13 +91,24 @@
                     </ul>
                 </li>
             }
-            
-            <li>
+            @if (Array.IndexOf(powers, Powers.new_CH.ToString()) != -1 || Array.IndexOf(powers, Powers.delivery_bill.ToString()) != -1 || Array.IndexOf(powers, Powers.sign_delivery_bill.ToString()) != -1 ) { 
+            @*<li>
                 <span>出货申请单</span>
                 <ul>
+                    @if (Array.IndexOf(powers, Powers.new_CH.ToString()) != -1) { 
                     <li id="~/NSaler/CreateBill?billType=CH">新增出货申请</li>
+                    <li id="~/NSaler/CheckBillList?billType=CH">查看新增申请</li>   
+                    <li id="~/NExtra/CheckCHSOList"><span>K3订单出货记录</span> </li>
+                    }
+                    @if (Array.IndexOf(powers, Powers.delivery_bill.ToString()) != -1) { 
+                    <li id="~/NExtra/CheckCHList4Log">维护送货单</li>
+                    }
+                    @if (Array.IndexOf(powers, Powers.sign_delivery_bill.ToString()) != -1) {
+                    <li id="~/NExtra/CheckCHSignList">送货单回签</li>
+                    }
                 </ul>
-            </li>
+            </li>*@
+            }
             @if (Array.IndexOf(powers, Powers.new_hk_so.ToString()) != -1) {
                 <li>                
                     <span>香港SO管理</span>
@@ -113,56 +119,10 @@
                 </li>
             }
             <li id="~/Audit/CheckAuditList"><span>@Html.Lang("audit_add_apply")</span> </li>
+            @*<li id="~/NAudit/CheckNAuditList"><span>审批出货申请</span> </li>*@
             @if (Array.IndexOf(powers, Powers.ceo_batch_audit.ToString()) != -1) {
                 <li id="~/Authority/CeoBatchAudit"><span>总裁办批量审批</span></li>
-            }
-            @*<li><span>@Html.Lang("modify/cancel_order")</span>
-                    <ul>
-                        @if (Array.IndexOf(powers, Powers.edit_order.ToString()) != -1)
-                        {
-                            <li id="~/K3Saler/SearchK3SaleOrders"><span>@Html.Lang("sale_order")</span> </li>
-                        }
-                        @if (Array.IndexOf(powers, Powers.edit_fix.ToString()) != -1)
-                        {
-                            <li id="~/K3Saler/SearchK3Contracts"><span>@Html.Lang("repair_order")</span> </li>
-                        }
-                        @if (Array.IndexOf(powers, Powers.edit_model.ToString()) != -1)
-                        {
-                            <li id="~/K3Saler/SearchK3Models"><span>@Html.Lang("create_model_invoice")</span> </li>
-                        }
-                        @if (Array.IndexOf(powers, Powers.edit_sample.ToString()) != -1)
-                        {
-                            <li id="~/K3Saler/SearchK3FreeSamples"><span>@Html.Lang("free_sample")</span> </li>
-                            <li id="~/K3Saler/SearchK3ChargeSamples"><span>@Html.Lang("charge_sample")</span> </li>
-                        }
-                        <li id="~/K3Saler/CheckUpdateOrders"><span>@Html.Lang("check_modify/cancel_application")</span> </li>
-                        <li id="~/K3Audit/CheckOwnUpdateApply"><span>@Html.Lang("audit_modify/cancel_application")</span> </li>
-                    </ul>
-                </li> *@
-            @*@if (Array.IndexOf(powers, Powers.cancel_order.ToString()) != -1 || Array.IndexOf(powers, Powers.cancel_fix.ToString()) != -1
-                        || Array.IndexOf(powers, Powers.cancel_model.ToString()) != -1 || Array.IndexOf(powers, Powers.cancel_sample.ToString()) != -1)
-                {
-                    <li><span>@Html.Lang("Cancel_order")</span>
-                        <ul>
-                            @if (Array.IndexOf(powers, Powers.cancel_order.ToString()) != -1)
-                            {
-                                <li><span>@Html.Lang("sale_order")</span> </li>
-                            }
-                            @if (Array.IndexOf(powers, Powers.cancel_fix.ToString()) != -1)
-                            {
-                                <li><span>@Html.Lang("repair_order")</span> </li>
-                            }
-                            @if (Array.IndexOf(powers, Powers.cancel_model.ToString()) != -1)
-                            {
-                                <li><span>@Html.Lang("create_model_invoice")</span> </li>
-                            }
-                            @if (Array.IndexOf(powers, Powers.cancel_sample.ToString()) != -1)
-                            {
-                                <li><span>@Html.Lang("sample_invoice")</span> </li>
-                            }
-                        </ul>
-                    </li>
-                }*@
+            }            
         </ul>
     </li>
     @if (Array.IndexOf(powers, Powers.dep_manage.ToString()) != -1 || Array.IndexOf(powers, Powers.user_manage.ToString()) != -1
@@ -193,8 +153,7 @@
             </ul>
         </li>
     }
-    @if (Array.IndexOf(powers, Powers.cur_manage.ToString()) != -1 || Array.IndexOf(powers, Powers.bak_bill.ToString()) != -1
-        || Array.IndexOf(powers, Powers.reset_password.ToString()) != -1 || Array.IndexOf(powers, Powers.chk_process.ToString()) != -1 || Array.IndexOf(powers, Powers.modify_bill_no.ToString()) != -1) {
+    @if (depName.Contains("市场") || depName.Contains("办事处") || depName.Contains("本部") || depName.Contains("中心")) { 
         <li>
             <span>@Html.Lang("mat_manage")</span>
             <ul>
@@ -217,7 +176,10 @@
                 @if (Array.IndexOf(powers, Powers.modify_bill_no.ToString()) != -1) {
                     <li id="~/Authority/ModifyBillNo"><span>单号修改</span> </li>
                 }
-                <li id="~/NExtra/ClerkAndCustomer"><span>营业与客户</span></li>
+                @if (Array.IndexOf(powers, Powers.clerk_customer.ToString()) != -1) {
+                @*<li id="~/NExtra/ClerkAndCustomer"><span>营业与客户</span></li>*@
+                }
+                <li id="~/NExtra/ItemModelAndCustomer"><span>产品/客户/部门关系</span></li>
             </ul>
         </li>
     }

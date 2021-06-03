@@ -99,4 +99,11 @@ namespace Sale_Order_Semi.Models
         public string auditResult { get; set; }
         public string comment { get; set; }
     }
+
+    public class AuditInfoModel
+    {
+        public string editType { get; set; }
+        public string sysNo { get; set; }
+        public string stepName { get; set; }
+    }
 }

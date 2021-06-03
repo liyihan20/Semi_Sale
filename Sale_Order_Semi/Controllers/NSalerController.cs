@@ -48,6 +48,7 @@ namespace Sale_Order_Semi.Controllers
             SetBillByType(billType);
 
             ViewData["bill"] = bill.GetNewBill(currentUser);
+            ViewData["stepName"] = "申请人";
 
             return View(bill.CreateViewName);
         }
@@ -116,13 +117,14 @@ namespace Sale_Order_Semi.Controllers
         }
 
         [SessionTimeOutFilter]
-        public ActionResult ModifyBill(string sysNo, int stepVersion)
+        public ActionResult ModifyBill(string sysNo, int stepVersion,string stepName="申请人")
         {
             Wlog("进入单据修改视图", sysNo + ":" + stepVersion);
 
             SetBillBySysNo(sysNo);
             ViewData["bill"] = bill.GetBill(stepVersion,currentUser.userId);
             ViewData["step"] = stepVersion;
+            ViewData["stepName"] = stepName;
             if (new ApplySv().ApplyHasBegan(sysNo)) {
                 ViewData["blockInfo"] = new ApplySv(sysNo).GetBlockInfo();
             }
@@ -135,7 +137,7 @@ namespace Sale_Order_Semi.Controllers
             Wlog("进入单据查看视图", sysNo);
 
             SetBillBySysNo(sysNo);
-            ViewData["bill"] = bill.GetBill(0,currentUser.userId);
+            ViewData["bill"] = bill.GetBill(-1, currentUser.userId); //2021-04-06 查看界面的stepVersion由0改为-1，用于区分营业申请时的0
             var hasSubmited = new ApplySv().ApplyHasBegan(sysNo);
             if (hasSubmited) {
                 ViewData["blockInfo"] = new ApplySv(sysNo).GetBlockInfo();

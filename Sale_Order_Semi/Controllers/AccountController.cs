@@ -32,102 +32,34 @@ namespace Sale_Order_Semi.Controllers
                 Session.Clear();
             }
             return RedirectToAction("Login");
-        }     
-        //
-        // GET: /Account/ChangePassword
-
-        //public ActionResult ChangePassword()
-        //{
-        //    return View();
-        //}
-
-        ////
-        //// POST: /Account/ChangePassword
-
-        //[HttpPost]
-        //public ActionResult ChangePassword(ChangePasswordModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-
-        //        // ChangePassword will throw an exception rather
-        //        // than return false in certain failure scenarios.
-        //        bool changePasswordSucceeded;
-        //        try
-        //        {
-        //            MembershipUser currentUser = Membership.GetUser(User.Identity.Name, userIsOnline: true);
-        //            changePasswordSucceeded = currentUser.ChangePassword(model.OldPassword, model.NewPassword);
-        //        }
-        //        catch (Exception)
-        //        {
-        //            changePasswordSucceeded = false;
-        //        }
-
-        //        if (changePasswordSucceeded)
-        //        {
-        //            return RedirectToAction("ChangePasswordSuccess");
-        //        }
-        //        else
-        //        {
-        //            ModelState.AddModelError("", "The current password is incorrect or the new password is invalid.");
-        //        }
-        //    }
-
-        //    // If we got this far, something failed, redisplay form
-        //    return View(model);
-        //}
-
-        ////
-        //// GET: /Account/ChangePasswordSuccess
-
-        //public ActionResult ChangePasswordSuccess()
-        //{
-        //    return View();
-        //}
-
-        private IEnumerable<string> GetErrorsFromModelState()
-        {
-            return ModelState.SelectMany(x => x.Value.Errors.Select(error => error.ErrorMessage));
         }
 
-        #region Status Codes
-        private static string ErrorCodeToString(MembershipCreateStatus createStatus)
+        //从电子CRM跳转过来的url
+        public ActionResult DirectFromEle(string userName, string code, string url)
         {
-            // See http://go.microsoft.com/fwlink/?LinkID=177550 for
-            // a full list of status codes.
-            switch (createStatus)
-            {
-                case MembershipCreateStatus.DuplicateUserName:
-                    return "User name already exists. Please enter a different user name.";
-
-                case MembershipCreateStatus.DuplicateEmail:
-                    return "A user name for that e-mail address already exists. Please enter a different e-mail address.";
-
-                case MembershipCreateStatus.InvalidPassword:
-                    return "The password provided is invalid. Please enter a valid password value.";
-
-                case MembershipCreateStatus.InvalidEmail:
-                    return "The e-mail address provided is invalid. Please check the value and try again.";
-
-                case MembershipCreateStatus.InvalidAnswer:
-                    return "The password retrieval answer provided is invalid. Please check the value and try again.";
-
-                case MembershipCreateStatus.InvalidQuestion:
-                    return "The password retrieval question provided is invalid. Please check the value and try again.";
-
-                case MembershipCreateStatus.InvalidUserName:
-                    return "The user name provided is invalid. Please check the value and try again.";
-
-                case MembershipCreateStatus.ProviderError:
-                    return "The authentication provider returned an error. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
-
-                case MembershipCreateStatus.UserRejected:
-                    return "The user creation request has been canceled. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
-
-                default:
-                    return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
+            if (!code.Equals(utl.getMD5(userName))) {
+                ViewBag.tip = "redirect error";
+                return View("TIP");
             }
+
+            var user = db.User.Where(u => u.job == userName || u.username == userName).FirstOrDefault();
+            if (user == null) {
+                ViewBag.tip = "你在半导体CRM没有用户，请先联系市场管理部注册用户";
+                return View("TIP");
+            }
+
+            //构造cookie
+            Session.Clear();
+            var cookie = new HttpCookie("order_semi_cookie");
+            cookie.Expires = DateTime.Now.AddHours(12);
+            cookie.Values.Add("userid", user.id.ToString());
+            cookie.Values.Add("code", utl.getMD5(user.id.ToString()));
+            cookie.Values.Add("username", utl.EncodeToUTF8(user.username));//用于记录日志
+            cookie.Values.Add("cop", "semi");
+            Response.AppendCookie(cookie);
+
+            return Redirect(url);
         }
-        #endregion
+        
     }
 }

@@ -581,7 +581,7 @@ namespace Sale_Order_Semi.Controllers
                          {
                              id = p.id,
                              order_type = p.bill_type,
-                             order_type_name = utl.getBillType(p.bill_type),
+                             order_type_name = new BillUtils().GetBillType(p.bill_type),
                              modify_time = DateTime.Parse(p.modify_time.ToString()).ToString("yyyy-MM-dd HH:mm"),
                              is_finish = p.is_finish == true ? "已启用" : "未启用",
                              begin_time = DateTime.Parse(p.begin_time.ToString()).ToString("yyyy-MM-dd"),

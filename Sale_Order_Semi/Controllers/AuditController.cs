@@ -104,22 +104,24 @@ namespace Sale_Order_Semi.Controllers
             int maxRecordNum = 200;
             int recordNum = 0;
             var details = from ad in db.ApplyDetails
+                          join a in db.Apply on ad.apply_id equals a.id
                           where ad.user_id == currentUser.userId
-                          && ad.Apply.sys_no.Contains(sysNo)
+                          && a.sys_no.Contains(sysNo)
                           //&& ad.Apply.User.real_name.Contains(saler)
-                          && ad.Apply.start_date >= fromDate
-                          && ad.Apply.start_date <= toDate
-                          && ad.Apply.p_model.Contains(proModel)
+                          && a.start_date >= fromDate
+                          && a.start_date <= toDate
+                          && a.p_model.Contains(proModel)
+                          && !a.sys_no.StartsWith("CH") //出货的不能查出来
                           && (
                           (isFinish == 10
-                          || ad.Apply.success == true && isFinish == 1)
-                          || (ad.Apply.success == null && isFinish == 0)
-                          || (ad.Apply.success == false && isFinish == -1)
+                          || a.success == true && isFinish == 1)
+                          || (a.success == null && isFinish == 0)
+                          || (a.success == false && isFinish == -1)
                           )
                           && (auditResult == 10
-                          || ((ad.pass == true || ((ad.countersign == null || ad.countersign == false) && ad.Apply.ApplyDetails.Where(ads => ads.step == ad.step && ads.pass == true).Count() > 0)) && auditResult == 1)
-                          || ((ad.pass == false || ((ad.countersign == null || ad.countersign == false) && ad.Apply.ApplyDetails.Where(ads => ads.step == ad.step && ads.pass == false).Count() > 0)) && auditResult == -1)
-                          || (((ad.countersign == true && ad.pass == null) || ((ad.countersign == null || ad.countersign == false) && ad.Apply.ApplyDetails.Where(ads => ads.step == ad.step && ads.pass != null).Count() == 0)) && auditResult == 0)
+                          || ((ad.pass == true || ((ad.countersign == null || ad.countersign == false) && a.ApplyDetails.Where(ads => ads.step == ad.step && ads.pass == true).Count() > 0)) && auditResult == 1)
+                          || ((ad.pass == false || ((ad.countersign == null || ad.countersign == false) && a.ApplyDetails.Where(ads => ads.step == ad.step && ads.pass == false).Count() > 0)) && auditResult == -1)
+                          || (((ad.countersign == true && ad.pass == null) || ((ad.countersign == null || ad.countersign == false) && a.ApplyDetails.Where(ads => ads.step == ad.step && ads.pass != null).Count() == 0)) && auditResult == 0)
                           )
                           select ad;
             var billTypes = db.Sale_BillTypeName.ToList();
