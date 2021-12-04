@@ -15,7 +15,7 @@ namespace Sale_Order_Semi.Services
         public List<K3Emp> GetK3Emp(string empInfo)
         {
             string sql = "select top 50 FName as emp_name,FshortNumber as emp_card_number,Fnote as emp_dep ";
-            sql += string.Format("from {0}.dbo.t_emp where FName like '%{1}%' or FshortNumber like '%{1}%'", dbName, empInfo);
+            sql += string.Format("from {0}.dbo.t_emp where (FName like '%{1}%' or FshortNumber like '%{1}%') and FDeleted = 0", dbName, empInfo);
             return db.ExecuteQuery<K3Emp>(sql).ToList();
 
             //return db.VwEmp.Where(v => v.name.Contains(empInfo) || v.cardId.Contains(empInfo)).Take(50)
@@ -26,7 +26,7 @@ namespace Sale_Order_Semi.Services
         public List<K3Customer> GetK3Customer(string customerInfo)
         {
             string sql = "select top 50 FName as customer_name,FNumber as customer_number ";
-            sql += string.Format("from {0}.dbo.t_Organization where FName like '%{1}%' or FNumber like '{1}%'", dbName, customerInfo);
+            sql += string.Format("from {0}.dbo.t_Organization where (FName like '%{1}%' or FNumber like '{1}%') and FDeleted = 0", dbName, customerInfo);
 
             return db.ExecuteQuery<K3Customer>(sql).ToList();
 
@@ -66,17 +66,18 @@ namespace Sale_Order_Semi.Services
         {
             return db.vwItems.Where(v => v.what == what).ToList()
                 .Select(v => new K3Items() { fid = v.fid, fname = v.fname, what = v.what })
+                .OrderBy(v => v.fname)
                 .ToList();
         }
         public decimal GetK3ExchangeRate(string currencyNo, string currencyName)
         {
             return db.ExecuteQuery<decimal>("exec dbo.getK3ExchangeRate @currencyNo={0},@currencyName={1}", currencyNo, currencyName).First();
         }
-        public double? GetK3CommissionRate(string proType, double MU)
+        public double? GetK3CommissionRate(string proType, double MU, string depName="")
         {
             double? result = 0;
-            db.getCommissionRate(proType, MU, ref result);
-            return result;
+            db.getCommissionRate(proType, MU, depName, ref result);
+            return result ?? 0;
         }
 
         //客户名和客户编码是否对应

@@ -436,11 +436,11 @@ namespace Sale_Order_Semi.Utils
         }
 
         //获取佣金率
-        public double? GetCommissionRate(string proType, double? MU)
+        public double? GetCommissionRate(string proType, double? MU,string depName="")
         {
             double? result = 0;
-            db.getCommissionRate(proType, MU, ref result);
-            return result;
+            db.getCommissionRate(proType, MU, depName, ref result);
+            return result ?? 0;
         }
 
 

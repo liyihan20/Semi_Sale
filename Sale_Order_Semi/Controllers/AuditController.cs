@@ -1002,10 +1002,9 @@ namespace Sale_Order_Semi.Controllers
         }
 
         //获取佣金率
-        public JsonResult GetCommissionRate(string proType, double? MU)
+        public JsonResult GetCommissionRate(string proType, double? MU,string depName="")
         {
-            double? result = 0;
-            db.getCommissionRate(proType, MU, ref result);
+            var result = (decimal)utl.GetCommissionRate(proType, MU, depName);
             return Json(result, "text/html");
         }
              

@@ -442,6 +442,9 @@ namespace Sale_Order_Semi.Controllers
                 else if (!c2.name.Equals(h.clerk2_name)) {
                     return Json(new SimpleResultModel(false, "业务员2请输入后按回车键搜索后在列表中选择"));
                 }
+                if (string.IsNullOrEmpty(h.agency2_no)) {
+                    return Json(new SimpleResultModel(false, "比例2大于0时，办事处2不能为空"));
+                }
             }
             if (h.percent3 != null && h.percent3 > 0) {
                 var c3 = db.getClerk(h.clerk3_no, 1).FirstOrDefault();
@@ -450,6 +453,9 @@ namespace Sale_Order_Semi.Controllers
                 }
                 else if (!c3.name.Equals(h.clerk3_name)) {
                     return Json(new SimpleResultModel(false, "业务员3请输入后按回车键搜索后在列表中选择"));
+                }
+                if (string.IsNullOrEmpty(h.agency3_no)) {
+                    return Json(new SimpleResultModel(false, "比例3大于0时，办事处3不能为空"));
                 }
             }
             var c4 = db.getClerk(h.charger_no, 1).FirstOrDefault();
@@ -559,11 +565,12 @@ namespace Sale_Order_Semi.Controllers
 
                 if (d.deal_price > 0) {
                     d.MU = 100 * (1 - ((d.cost * (1 + d.tax_rate / 100)) / (d.deal_price * (decimal)h.exchange_rate))) - d.fee_rate;
+                    d.MU = Math.Round((decimal)d.MU, 2);
                     if (d.MU <= 0) {
                         d.commission_rate = 0;
                     }
                     else {
-                        d.commission_rate = (decimal)utl.GetCommissionRate(h.product_type_name, (double)d.MU);
+                        d.commission_rate = (decimal)utl.GetCommissionRate(h.product_type_name, (double)d.MU, h.department_name);
                     }
                     //2018-10-1开始，佣金计算公式修改，将佣金再除（1+税率%）
                     if (h.product_type_name == "CCM" && d.MU < -6) {

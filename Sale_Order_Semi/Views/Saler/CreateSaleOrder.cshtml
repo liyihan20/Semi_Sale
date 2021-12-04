@@ -29,7 +29,16 @@
                 panelHeight:penelHeight,
                 panelWidth:panelWidth,
                 editable:editable,
-                required:required
+                required:required,
+                loadFilter:function(data){
+                    if(what=="product_type"){
+                        //2021-08-26 将产品类别是字母的那些过滤掉，已经不用了。
+                        return $.grep(data,function(d,idx){return !/^(\w)/.test(d.name);}); //\w:数字、字母及下划线
+                        //return data.filter(function(d){return d.name.charCodeAt()<65 || d.name.charCodeAt()>97;});
+                    }else{
+                        return data;
+                    }
+                }
             });
         });
 
@@ -320,7 +329,7 @@
             tip("@Html.Lang("one_detail_at_least")");
             return false;
         }
-        var percentSum = Number($("#percent1").numberbox("getValue")) + Number($("#percent2").numberbox("getValue"));
+        var percentSum = Number($("#percent1").numberbox("getValue")) + Number($("#percent2").numberbox("getValue"))+ Number($("#percent3").numberbox("getValue"));
         if (percentSum != 100) {
             tip("比例1和比例2之和必须为100");
             return false;
@@ -457,12 +466,15 @@
         //计算MU、佣金、佣金率
         var v_exchange = $('#exchange_rate').numberbox('getValue');
         var v_pro_type = $("#product_type_no").combobox("getText");
+        var v_dep_name=$("#department_no").combobox("getText");
 
         if (row.deal_price > 0) {
             row.MU = 100 * (1 - ((row.cost * (1 + row.tax_rate / 100)) / (row.deal_price * v_exchange))) - row.fee_rate;
         }else{
             row.MU = 0;
         }
+
+        row.MU=row.MU.toFixed(2);
 
         if (row.MU <= 0) {
             row.commission_rate = 0;
@@ -472,19 +484,16 @@
                 type: "POST",
                 dataType: "json",
                 url: "@Url.Content("~/Audit/GetCommissionRate")",
-                data: "proType=" + v_pro_type + "&MU=" + row.MU,
+                data: "proType=" + v_pro_type + "&MU=" + row.MU+"&depName="+v_dep_name,
                 async: false,
                 success: function (data) {
                     row.commission_rate = data;
                 }
             });
         }
-        //佣金，2018-10-1变更，结果再除（1+税率%）
-        if (v_pro_type == "CCM" && row.MU < -6) {
-            row.commission = (row.deal_price / (1 + row.tax_rate / 100)) * row.cost * 0.002 * v_exchange;
-        } else {
-            row.commission = (row.deal_price / (1 + row.tax_rate / 100)) * row.qty * v_exchange * row.commission_rate / 100;
-        }
+        //佣金，2018-10-1变更，结果再除（1+税率%）        
+        row.commission = (row.deal_price / (1 + row.tax_rate / 100)) * row.qty * v_exchange * row.commission_rate / 100;
+        
         row.commission = row.commission.toFixed(2);
 
         if ($("#order_detail").datagrid("getRows").length == 0) {
@@ -573,6 +582,7 @@
 
                     head.oversea_percentage = head.oversea_percentage || 0;
                     head.percent2 = head.percent2 || 0;
+                    head.percent3 = head.percent3 || 0;
 
                     //将combobox和combogrid的text设置到_name属性中并和head合并
                     Object.assign(head, getFormComboboxText($('#order_form')));
@@ -805,10 +815,10 @@ else {
                         </tr>
                         <tr>
                             <td>
-                                @Html.Lang("agency"):
+                                @Html.Lang("contract_num"):
                             </td>
                             <td>
-                                <input class="k3_item" id="department_no" name="department_no" data-what="agency" data-panelWidth="160" value="@order.department_no" />
+                                <input class="easyui-textbox" id="contract_no" name="contract_no" style="width: 140px" required="true" value="@order.contract_no" />
                             </td>
                             <td>
                                 @Html.Lang("project_team"):
@@ -892,19 +902,19 @@ else {
                                 @Html.Lang("clerk1"):
                             </td>
                             <td>
-                                <input class="clerk_box" id="clerk_no" name="clerk_no" style="width: 140px"  required="true" value="@order.clerk_no" />
+                                <input class="clerk_box" id="clerk_no" name="clerk_no" style="width: 140px"  required value="@order.clerk_no" />
                             </td>
                             <td>
                                 @Html.Lang("clerk2"):
                             </td>
                             <td>
                                 <input class="clerk_box" id="clerk2_no" name="clerk2_no" style="width: 140px" value="@order.clerk2_no" />
-                            </td>              
+                            </td>                            
                             <td>
-                                @Html.Lang("contract_num"):
+                                业务员3:
                             </td>
                             <td>
-                                <input class="easyui-textbox" id="contract_no" name="contract_no" style="width: 140px" required="true" value="@order.contract_no" />
+                                <input class="clerk_box" id="clerk3_no" name="clerk3_no" style="width: 140px" value="@order.clerk3_no" />
                             </td>
                         </tr>
                         <tr>
@@ -927,17 +937,43 @@ else {
                                 <input class="easyui-numberbox" id="percent2" name="percent2" min="0" max="100" precision="1" style="width: 140px" value="@order.percent2" />
                             </td>
                             <td>
+                                比例3:
+                            </td>
+                            <td>
+                                <input class="easyui-numberbox" id="percent3" name="percent3" min="0" max="100" precision="1" style="width: 140px" value="@order.percent3" />
+                            </td>
+                        </tr>
+                        <tr>                            
+                            <td>
                                 @Html.Lang("po_no"):
                             </td>
                             <td>
                                 <input class="easyui-textbox" id="po_number" name="po_number" style="width: 140px" value="@order.po_number" />
+                            </td>
+                            <td>
+                                办事处1:
+                            </td>
+                            <td>
+                                <input class="k3_item" id="department_no" name="department_no" data-what="agency" data-panelWidth="160" value="@order.department_no" />
+                            </td>
+                            <td>
+                                办事处2:
+                            </td>
+                            <td>
+                                <input class="k3_item" id="agency2_no" name="agency2_no" data-what="agency" data-panelWidth="160" data-required="false" value="@order.agency2_no" />
+                            </td>
+                            <td>
+                                办事处3:
+                            </td>
+                            <td>
+                                <input class="k3_item" id="agency3_no" name="agency3_no" data-what="agency" data-panelWidth="160" data-required="false" value="@order.agency3_no" />
                             </td>
                         </tr>
                     </table>
                 </div>
                 @*订单明细*@
                 <br />
-                <div id="detail_div" class="easyui-panel" title="@Html.Lang("sale_order_detail")" style="+position: relative;width:900px;height:200px">
+                <div id="detail_div" class="easyui-panel" title="@Html.Lang("sale_order_detail")" style="+position: relative;width:900px;height:300px">
                     <table id="order_detail">
                     </table>
                 </div>
@@ -1060,7 +1096,7 @@ else {
 
 @*弹出的订单明细对话框*@
 <div id="dlg_details" class="easyui-dialog" style="width: 720px;  padding: 10px 10px" closed="true" buttons="#dlg_details_buttons" modal="true">    
-    <form id="fm" method="post">
+    <form id="fm" method="post" style="padding:10px;">
     <table border="0" cellpadding="0" cellspacing="3" width="675">
         <tr>
             <td>

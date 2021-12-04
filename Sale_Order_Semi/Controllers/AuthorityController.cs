@@ -329,6 +329,11 @@ namespace Sale_Order_Semi.Controllers
             try
             {
                 User user = db.User.Single(u => u.id == id);
+
+                if (!is_forbit && user.is_forbit) {
+                    user.last_login = DateTime.Now;
+                }
+
                 user.username = col.Get("username");
                 user.real_name = col.Get("real_name");
                 user.Department1 = department;
@@ -339,6 +344,8 @@ namespace Sale_Order_Semi.Controllers
                     user.last_login = DateTime.Now;
                 }
                 user.can_check_deps = can_check_deps;
+
+
                 db.SubmitChanges();
             }
             catch
